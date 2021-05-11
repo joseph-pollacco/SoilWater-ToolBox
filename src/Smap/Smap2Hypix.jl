@@ -32,7 +32,7 @@ module smap2hydro
          SoilName, ~  = tool.readWrite.READ_HEADER_FAST(Data, Header, "SoilName")
 
          LayerDown = fill(0.0:Float64, N, 8)
-         LayerUp = []
+         LayerUp =fill(0.0:Float64, N, 8)
          iSoil = 1
          SoilName_Initial = SoilName[1]
          i = 1
