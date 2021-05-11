@@ -36,11 +36,13 @@ module smap2hydro
          iSoil = 1
          SoilName_Initial = SoilName[1]
          i = 1
+         iLayer = 1
+         iSoil =1
          for iSoilName in SoilName
 
             # Same soil profile
             if iSoilName == SoilName_Initial
-              append!(LayerDown, Z_LayerDown[i])
+            LayerDown[iSoil, iLayer] = Z_LayerDown[i]
 
               append!(LayerDown, Z_LayerUp[i])
             # Different Soil profile
