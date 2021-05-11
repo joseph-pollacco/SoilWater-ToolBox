@@ -220,65 +220,91 @@ module jules
          Path_θjules = Path_θjules_Input * OptionsJules_2_OptionsFile[Options_θjules]
 
 
-         println(NCDatasets.Dataset(Path_θjules))
+         # println(NCDatasets.Dataset(Path_θjules))
 
 
-         θdata = Float64.(NetCDF.open(Path_θjules, "obsm"))
+         θjules = NetCDF.open(Path_θjules, "smcl")
 
-         N = length(θdata)
+         Time = NetCDF.open(Path_θjules, "time")
+
+         # smcl[x y soil tstep] (1, 1, 4, 4292)
+
+         # println(θjules[1,1,1,1:10])
+
+         Data2 = NCDatasets.Dataset(Path_θjules)
+
+         Start_Date = Data2[ "timestp"].attrib["time_origin"]
+         TimeStep =  Data2[ "timestp"].attrib["tstep_sec"]
+
+         println(Time[1:10])
+         println(Start_Date)
+         println(TimeStep)
+
+
+         # θdata = Float64.(NetCDF.open(Path_θjules, "smcl"))
+
+         # NetCDF.ncinfo(Path_θjules)
+
+         # Data2 = NCDatasets.Dataset(Path_θjules, "smcl" )
+
+         # println(θdata[1:10,1,1,1])
+
+         # println(Data2)
+
+         # N = length(θdata)
       
-         # Getting the inititilal starting date in the format 1 January 2008   
-            Data = NetCDF.open(Path_θjules)
+         # # Getting the inititilal starting date in the format 1 January 2008   
+         #    Data = NetCDF.open(Path_θjules)
 
-            Data2 = NCDatasets.Dataset(Path_θjules)
+         #    Data2 = NCDatasets.Dataset(Path_θjules)
 
-            Start_Date = Data2[ "obsm"].attrib["initial_date"]
+         #    Start_Date = Data2[ "obsm"].attrib["initial_date"]
 
-            # Converting to Year Month Day
-               # day
-                  First_Space = findfirst(" ", Start_Date)
+         #    # Converting to Year Month Day
+         #       # day
+         #          First_Space = findfirst(" ", Start_Date)
       
-                  Day = Start_Date[1:First_Space[1]]
-                  Start_Date = replace(Start_Date, Day => "")
-                  Day = parse(Int, Day)
+         #          Day = Start_Date[1:First_Space[1]]
+         #          Start_Date = replace(Start_Date, Day => "")
+         #          Day = parse(Int, Day)
 
-               # Month
-                  Month = 0
-                  for iMonth = 1:12
-                     if occursin(Months[iMonth],Start_Date)
-                        Month = iMonth
-                        Start_Date = replace(Start_Date, Months[iMonth] => "")
-                        break
-                     end
-                  end
+         #       # Month
+         #          Month = 0
+         #          for iMonth = 1:12
+         #             if occursin(Months[iMonth],Start_Date)
+         #                Month = iMonth
+         #                Start_Date = replace(Start_Date, Months[iMonth] => "")
+         #                break
+         #             end
+         #          end
 
-               # Year
-                  Year = parse(Int, Start_Date)
+         #       # Year
+         #          Year = parse(Int, Start_Date)
 
-               # Date
-                  Start_Date = Dates.Date(Year,Month,Day)
+         #       # Date
+         #          Start_Date = Dates.Date(Year,Month,Day)
 
-               # Need to get dates by adding 1 day
-                  Years = Array{Int64}(undef, N)
-                  Months = Array{Int64}(undef, N)
-                  Days = Array{Int64}(undef, N)
-                  Hours  = fill(9::Int64, N)
-                  Minutes = fill(0::Int64, N)
-                  Seconds = fill(0::Int64, N)
-                  for iDay = 1:N
-                     Add_Date     = Start_Date + Dates.Day(iDay)
+         #       # Need to get dates by adding 1 day
+         #          Years = Array{Int64}(undef, N)
+         #          Months = Array{Int64}(undef, N)
+         #          Days = Array{Int64}(undef, N)
+         #          Hours  = fill(9::Int64, N)
+         #          Minutes = fill(0::Int64, N)
+         #          Seconds = fill(0::Int64, N)
+         #          for iDay = 1:N
+         #             Add_Date     = Start_Date + Dates.Day(iDay)
 
-                     Years[iDay]  = Dates.year(Add_Date)
-                     Months[iDay] = Dates.month(Add_Date)
-                     Days[iDay]   = Dates.day(Add_Date)
-                  end
+         #             Years[iDay]  = Dates.year(Add_Date)
+         #             Months[iDay] = Dates.month(Add_Date)
+         #             Days[iDay]   = Dates.day(Add_Date)
+         #          end
 
-            # Writing to file
-               Header = ["Year";"Month";"Day";"Hour";"Minute";"Second";"Z=200mm"]
+         #    # Writing to file
+         #       Header = ["Year";"Month";"Day";"Hour";"Minute";"Second";"Z=200mm"]
 
-               Output = Tables.table( [Years Months Days Hours Minutes Seconds θdata])
+         #       Output = Tables.table( [Years Months Days Hours Minutes Seconds θdata])
          
-               CSV.write(Path_θjules_Output, Output, header=Header)	   
+         #       CSV.write(Path_θjules_Output, Output, header=Header)	   
 
       return nothing
       end  # function: READ_WRITE_θobs

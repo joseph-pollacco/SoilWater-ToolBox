@@ -52,9 +52,17 @@ module discretization
 
 		ΔZ_W[N_iZ+1] = 0.0
 
-		return discret = DISCRET(N_iZ, Z_CellUp, Znode, ΔZ, ΔZ_⬓, ΔZ_Aver, ΔZ_W)
-
+	return discret = DISCRET(N_iZ, Z_CellUp, Znode, ΔZ, ΔZ_⬓, ΔZ_Aver, ΔZ_W)
 	end # function DISCRETIZATION
+
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : DISCRETISATION_AUTO
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	function DISCRETISATION_AUTO()
+		
+		return
+	end  # function: DISCRETISATION_AUTO
 	
 end  # module: discret
 # ............................................................
