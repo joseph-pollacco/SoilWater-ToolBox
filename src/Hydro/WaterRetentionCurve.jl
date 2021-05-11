@@ -355,17 +355,17 @@ module wrc
 
 
 
-	# ===============================================================================================
-	#		MODULE BROOKS AND COOREY
-	# ===============================================================================================
+	# ======================================================================================
+	#		MODULE BROOKS AND COREY
+	# ======================================================================================
 	module bc
 		import ..wrc
-		export Ψ_2_θ, GREEN_AMPT
+		export Ψ_2_θ, ∂θ∂Ψ, Ψ_2_Se, θ_2_Ψ, GREEN_AMPT
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		BC FUNCTION : Ψ_2_θ
+		#		bc FUNCTION : Ψ_2_θ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function Ψ_2_θ(Ψ₁, iZ::Int64, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψbc=hydroParam.Ψbc[iZ], λbc=hydroParam.λbc[iZ])
+			function Ψ_2_θ(Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψbc=hydroParam.Ψbc[iZ], λbc=hydroParam.λbc[iZ]) # Brooks & Corey WRC
 				if Ψ₁ > Ψbc
 					return θ₂ = θr + (θs - θr) * (Ψ₁ / Ψbc) ^ - λbc
 				else
@@ -373,6 +373,34 @@ module wrc
 				end
 			end #  function Ψ_2_θ
 
+
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#		bc FUNCTION : Ψ_2_Se
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			function Ψ_2_Se(Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψbc=hydroParam.Ψbc[iZ], λbc=hydroParam.λbc[iZ])
+
+				θ₂ = Ψ_2_θ(Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψbc=hydroParam.Ψbc[iZ], λbc=hydroParam.λbc[iZ])
+
+				return Se = wrc.θ_2_Se(θ₂, iZ::Int64, hydroParam)
+			end # function Ψ_2_Se
+
+
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#		bc FUNCTION : θ_2_Ψ
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			function θ_2_Ψ(θ₂, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψbc=hydroParam.Ψbc[iZ], λbc=hydroParam.λbc[iZ])
+
+				Se = wrc.θ_2_Se(θ₂, iZ, hydroParam)
+				return Ψ₁ = Ψbc * (Se ^ -λbc)
+			end # θ_2_Ψ
+
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#		bc FUNCTION : ∂θ∂Ψ
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			function ∂θ∂Ψ(Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψbc=hydroParam.Ψbc[iZ], λbc=hydroParam.λbc[iZ]) 
+				
+				return (-λbc / Ψbc) * (θs-θr) * (Ψ₁/Ψbc) .^ (-λbc - 1.)
+			end #  function ∂θ∂Ψ
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : GREEN_AMPT
@@ -386,17 +414,17 @@ module wrc
 		end # module brooksCorey # ...............................................
 
 
-	# ===============================================================================================
+	# ======================================================================================
 	#		MODULE CLAPP AND HORNBERGER
-	# ===============================================================================================
+	# ======================================================================================
 	module ch
 		import ..wrc
-		export Ψ_2_θ, GREEN_AMPT
+		export Ψ_2_θ, ∂θ∂Ψ, Ψ_2_Se, θ_2_Ψ, GREEN_AMPT
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		CH FUNCTION : Ψ_2_θ
+		#		ch FUNCTION : Ψ_2_θ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function Ψ_2_θ(Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψch=hydroParam.Ψch[iZ], λch=hydroParam.λch[iZ])
+			function Ψ_2_θ(Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], Ψch=hydroParam.Ψch[iZ], λch=hydroParam.λch[iZ]) # Clapp & Hornberger WRC
 				if Ψ₁ > Ψch
 					return θ₂ = θs * (Ψ₁ / Ψch) ^ - λch
 				else
@@ -404,6 +432,34 @@ module wrc
 				end
 			end #  function Ψ_2_θ
 
+
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#		ch FUNCTION : Ψ_2_Se
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			function Ψ_2_Se(Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], Ψch=hydroParam.Ψch[iZ], λch=hydroParam.λch[iZ])
+
+				θ₂ = Ψ_2_θ(Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], Ψch=hydroParam.Ψch[iZ], λch=hydroParam.λch[iZ])
+
+				return Se = wrc.θ_2_Se(θ₂, iZ::Int64, hydroParam)
+			end # function Ψ_2_Se
+
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#		ch FUNCTION : θ_2_Ψ
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			function θ_2_Ψ(θ₂, iZ, hydroParam; θs=hydroParam.θs[iZ], Ψch=hydroParam.Ψch[iZ], λch=hydroParam.λch[iZ])
+
+				Se = wrc.θ_2_Se(θ₂, iZ, hydroParam)
+				return Ψ₁ = Ψch * (Se ^ -λch)
+			end # θ_2_Ψ
+
+
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#		ch FUNCTION : ∂θ∂Ψ
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			function ∂θ∂Ψ(Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], Ψch=hydroParam.Ψch[iZ], λch=hydroParam.λch[iZ]) 
+					
+				return (-λch / Ψch) * θs * (Ψ₁/Ψch) .^ (-λch - 1.)
+			end #  function ∂θ∂Ψ
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : GREEN_AMPT
