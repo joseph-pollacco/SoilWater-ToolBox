@@ -5,7 +5,7 @@ module option
 
 		const HydroTranslateModel = false # <true>; <false>
 
-      const Hypix       = false # <true>; <false>
+      const Hypix       = true # <true>; <false>
 
       const Smap        = false # <true> ; <false>
 
@@ -19,7 +19,7 @@ module option
 
       const Temporary   = false # <true>; <false>
 
-		const Jules = true # <true>; <false>
+		const Jules = false # <true>; <false>
      	
 	# DOWNLAOD PACKAGES
       const DownloadPackage = false # <true> For first time user download packages required to run program; <false>*
@@ -73,11 +73,11 @@ module option
 			import ..option
 
 			# HYDRAULIC MODEL
-            const HydroModel      = :Kosugi # <:Kosugi>*; <:Vangenuchten>; <:BrooksCorey>; <:ClappHornberger>; <:VangenuchtenJules>
+            const HydroModel      = :Vangenuchten # <:Kosugi>*; <:Vangenuchten>; <:BrooksCorey>; <:ClappHornberger>; <:VangenuchtenJules>
 
             const θrOpt           = :Opt # <:Opt> optimises; <:ParamPsd> derive from PSD and uses α1 and α1 from parameters in Param.jl; <:σ_2_θr>	
      
-				const σ_2_Ψm          = :Constrained # <:Constrained> Ψm physical feasible range is computed from σ <:UniqueRelationship> Ψm is computed from σ; <:No> optimisation of σ & Ψm with no constraints
+				const σ_2_Ψm          = :No # <:Constrained> Ψm physical feasible range is computed from σ <:UniqueRelationship> Ψm is computed from σ; <:No> optimisation of σ & Ψm with no constraints
 
 			# Min & Max from data
 				const θs_MinFromData = false # <false> feasible range from GUI, <true> feasible range derive from data
