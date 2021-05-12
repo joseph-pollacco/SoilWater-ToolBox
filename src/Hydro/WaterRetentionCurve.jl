@@ -53,6 +53,10 @@ module wrc
 				return Se = wrc.vg.Ψ_2_Se(Ψ₁, iZ::Int64, hydroParam)
 			elseif  option.hydro.HydroModel == :VangenuchtenJules
 				return θ₂ = wrc.vgJules.Ψ_2_Se(Ψ₁, iZ::Int64, hydroParam)
+			elseif option.hydro.HydroModel == :BrooksCorey
+				return Se = wrc.bc.Ψ_2_Se(Ψ₁, iZ::Int64, hydroParam)
+			elseif option.hydro.HydroModel == :ClappHornberger
+				return Se = wrc.ch.Ψ_2_Se(Ψ₁, iZ::Int64, hydroParam)
 			else
 				error("$(option.hydro.HydroModel) model for Ψ_2_SeDual is not yet available")
 			end # function Ψ_2_θDual
@@ -67,6 +71,10 @@ module wrc
 				return Ψ₁ = wrc.kg.θ_2_ΨDual(θ₁, iZ, hydroParam)
 			elseif option.hydro.HydroModel == :Vangenuchten
 				return Ψ₁ = wrc.vg.θ_2_Ψ(θ₁, iZ, hydroParam)
+			elseif option.hydro.HydroModel == :BrooksCorey
+				return Ψ₁ = wrc.bc.θ_2_Ψ(θ₁, iZ, hydroParam)
+			elseif option.hydro.HydroModel == :ClappHornberger
+				return Ψ₁ = wrc.ch.θ_2_Ψ(θ₁, iZ, hydroParam)
 			else
 				error("$(option.hydro.HydroModel) model for  θ_2_ΨDual is not yet available")
 			end  # function  θ_2_ΨDual
@@ -93,6 +101,10 @@ module wrc
 				return ∂θ∂Ψ = wrc.kg.∂θ∂Ψ(Ψ₁, iZ::Int64, hydroParam)
 			elseif option.hydro.HydroModel == :Vangenuchten
 				return ∂θ∂Ψ = wrc.vg.∂θ∂Ψ(Ψ₁, iZ::Int64, hydroParam)
+			elseif option.hydro.HydroModel == :BrooksCorey
+				return ∂θ∂Ψ = wrc.bc.∂θ∂Ψ(Ψ₁, iZ::Int64, hydroParam)
+			elseif option.hydro.HydroModel == :ClappHornberger
+				return ∂θ∂Ψ = wrc.ch.∂θ∂Ψ(Ψ₁, iZ::Int64, hydroParam)
 			else
 				error("$(option.hydro.HydroModel) model for ∂θ∂Ψ is not yet available")	
 			end

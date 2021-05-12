@@ -42,6 +42,10 @@ module kunsat
 				return Kunsat = kunsat.kg.Se_2_KUNSAT(Se, iZ::Int64, hydroParam)
 			elseif option.hydro.HydroModel == :Vangenuchten
 				return Kunsat = kunsat.vg.Se_2_KUNSAT(Se, iZ::Int64, hydroParam)
+			elseif option.hydro.HydroModel == :BrooksCorey
+				return Kunsat = kunsat.bc.Se_2_KUNSAT(Se, iZ::Int64, hydroParam)
+			elseif option.hydro.HydroModel == :ClappHornberger
+				return Kunsat = kunsat.ch.Se_2_KUNSAT(Se, iZ::Int64, hydroParam)
 			else
 				error("$(option.hydro.HydroModel) model for Se_2_KUNSAT is not yet available")
 			end
@@ -83,6 +87,10 @@ module kunsat
 				return ∂Kunsat = kunsat.kg.∂K∂Ψ(Ψ₁, iZ::Int64, hydroParam)
 			elseif option.hydro.HydroModel == :Vangenuchten
 				return ∂Kunsat = kunsat.vg.∂K∂Ψ(Ψ₁, iZ::Int64, hydroParam)
+			elseif option.hydro.HydroModel == :BrooksCorey
+				return ∂Kunsat = kunsat.bc.∂K∂Ψ(Ψ₁, iZ::Int64, hydroParam)
+			elseif option.hydro.HydroModel == :ClappHornberger
+				return ∂Kunsat = kunsat.ch.∂K∂Ψ(Ψ₁, iZ::Int64, hydroParam)
 			else
 				error("$(option.hydro.HydroModel) model for ∂K∂Ψ is not yet available")
 			end
