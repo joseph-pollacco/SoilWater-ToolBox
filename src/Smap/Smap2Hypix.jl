@@ -2,16 +2,18 @@
 #		module: smap2hypix
 # =============================================================
 module smap2hypix
-   import ..path, ..tool, ..cst, ..discretization
-   import DelimitedFiles
+   import ..path, ..tool, ..cst, ..discretization, ..path
+   import DelimitedFiles, Tables, CSV
 
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    #		FUNCTION : SMAP_2_HYDRO
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   function SMAP_2_HYPIX()
+   function SMAP_2_HYPIX(SoilName_2_SiteName)
       IgnoreSoil = "Rang_81a.2" #TODO remove
       
-      Path_Input = "D:/Main/MODELS/SoilWater-ToolBox2/src/OUTPUT/SoilHydro/VCSNSmap/Table/VCSNSmap_Smap _Jules.csv"
+      Path_Input = "D:/Main/MODELS/SoilWater-ToolBox2/src/OUTPUT/SoilHydro/VCSNSmap/Table/VCSNSmap_Smap_Jules.csv"
+
+      Path_Output =  path.Home * "//INPUT//DataHyPix//JULES//JulesInput//"
 
       println("    ~  $(Path_Input) ~")
 
@@ -56,11 +58,13 @@ module smap2hypix
          for iLayer =1:Nlayer
             println(SoilName_Layer[iLayer], "/n")
            Zlayer_Soil = Zlayer[iLayer_Start[iLayer] : iLayer_End[iLayer]]
-           @show  Zlayer_Soil
-
            Layer, Z = discretization.DISCRETISATION_AUTO(Nlayer=length(Zlayer_Soil), Zlayer=Zlayer_Soil, Zroot=800.0)
-           @show Z
-           @show Layer
+
+           Path = Path_Output * SoilName_2_SiteName[SoilName_Layer[iLayer]] * "//" * SoilName_2_SiteName[SoilName_Layer[iLayer]] * "_Discretisation.csv"
+
+           println(Path)
+
+           TABLE_DISCRETIZATION(Layer, Path, Z)
          end
       
    return
@@ -68,16 +72,17 @@ module smap2hypix
 
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    #		FUNCTION : TABLE
- 
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   function TABLE()
-      Header = ["Year";"Month";"Day";"Hour";"Minute";"Second";"PET(mm)";"Rain(mm)"]
+      function TABLE_DISCRETIZATION(Layer, Path, Z)
+         Header = ["iZ";"Z";"Layer"]
 
-      Output = Tables.table( [iZ Z Day Hour Minute Second Pet Rain])
+         iZ = collect(1:1:length(Z))
 
-      CSV.write(Path_Output, Output, header=Header)	 
-      return
-   end  # function: TABLE
+         Output = Tables.table( [iZ Z Layer])
+
+         CSV.write(Path, Output, header=Header)	 
+      return nothing
+      end  # function: TABLE
 
 
 

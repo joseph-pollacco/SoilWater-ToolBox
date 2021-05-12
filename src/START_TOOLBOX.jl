@@ -216,8 +216,8 @@ function START_TOOLBOX()
 	end
 
 	if option.Jules
-		jules.START_JULES()
-		smap2hypix.SMAP_2_HYPIX()
+		SoilName_2_SiteName = jules.START_JULES()
+		smap2hypix.SMAP_2_HYPIX(SoilName_2_SiteName)
 		
 	end  # if: option.START_JULES()
 

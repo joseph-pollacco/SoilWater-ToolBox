@@ -30,13 +30,15 @@ module jules
          SiteName, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "SiteName")
          VCSNgridnumber, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "VCSNgridnumber")
          SiteNumber, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "SiteNumber")
+         SoilName, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "SoilName-Smap")
 
       # Dictionary
-      # SiteName2VCSNgridnumber::Dict{String, Int64} 
+      # SiteName_2_VCSNgridnumber::Dict{String, Int64} 
 
          i = 1
-         SiteName2VCSNgridnumber = Dict("a"=>9999) # Initializing
-         SiteName2SiteNumber  = Dict("a"=>9999) # Initializi
+         SiteName_2_VCSNgridnumber = Dict("a"=>9999) # Initializing
+         SiteName_2_SiteNumber  = Dict("a"=>9999)
+         SoilName_2_SiteName = Dict("a"=>"b")
          for iSiteName in SiteName
 
             # Making a new path if not exist
@@ -44,13 +46,14 @@ module jules
                mkpath(Path_Output) 
                
             # dictionary which correspond SiteName to VCSNgridnumber
-               SiteName2VCSNgridnumber[iSiteName] = VCSNgridnumber[i]
-               SiteName2SiteNumber[iSiteName] = SiteNumber[i]
+               SiteName_2_VCSNgridnumber[iSiteName] = VCSNgridnumber[i]
+               SiteName_2_SiteNumber[iSiteName] = SiteNumber[i]
+               SoilName_2_SiteName[SoilName[i]] = iSiteName
 
                i += 1
 
             # Reading climate
-               Path_Climate_Input = Path_Climate * "VCSN_obsSM_" * string(SiteName2VCSNgridnumber[iSiteName]) * ".csv"
+               Path_Climate_Input = Path_Climate * "VCSN_obsSM_" * string(SiteName_2_VCSNgridnumber[iSiteName]) * ".csv"
 
                Path_Climate_Output = Path_Output * "//" * iSiteName * "_Hourly_Climate.csv"
                
@@ -59,21 +62,21 @@ module jules
                # println(Path_Climate_Output)
 
             # Reading obs θ
-               Path_θ_Input = Path_θ * "sm_obs_" * string(SiteName2SiteNumber[iSiteName]) * ".nc"
+               Path_θ_Input = Path_θ * "sm_obs_" * string(SiteName_2_SiteNumber[iSiteName]) * ".nc"
 
                Path_θ_Output = Path_Output * "//" * iSiteName * "_Soilmoisture.csv"
 
                READ_WRITE_θobs(Path_θ_Input, Path_θ_Output)
 
             # Reading Jules simulated θ
-               Path_θjules_Input = Path_θJules * "Sta_" * string(SiteName2SiteNumber[iSiteName]) * "/"
+               Path_θjules_Input = Path_θJules * "Sta_" * string(SiteName_2_SiteNumber[iSiteName]) * "/"
 
                Path_θjules_Output =  Path_Output * "//" * iSiteName * "_Soilmoisture_Jules.csv"
 
                READ_WRITE_θJULES(Path_θjules_Input, Path_θjules_Output, Options_θjules)
          end
 
-   return
+   return SoilName_2_SiteName
    end  # function: START_JULES
 
    
