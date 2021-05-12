@@ -14,7 +14,7 @@ module hypix
 
 		println("\n	==== ==== ===  $(path.SiteName_Hypix) 	=== ==== ====\n")
 
-		Horizon, N_iHorizon, N_iZ, Z, θ_Ini = readHypix.DISCRETIZATION()
+		Layer, N_iHorizon, N_iZ, Z, θ_Ini = readHypix.DISCRETIZATION()
 	
 		# Discretisation ~~~~~
 			discret = discretization.DISCRETIZATION(N_iZ, Z)
@@ -59,14 +59,14 @@ module hypix
 			iSim_Count = iSim - param.hypix.iSim_Start + 1
 
 			# Reading hydraulic and veg param ~~~~~
-				hydro, hydroHorizon, optim, veg = readHypix.HYPIX_PARAM(Horizon, hydro, hydroHorizon, iSim, N_iZ, veg)
+				hydro, hydroHorizon, optim, veg = readHypix.HYPIX_PARAM(Layer, hydro, hydroHorizon, iSim, N_iZ, veg)
 
 			# SINK TERM 
             Laiᵀ_η            = readHypix.LOOKUPTABLE_LAI(clim, veg)
             CropCoeficientᵀ_η = readHypix.LOOKUPTABLE_CROPCOEFICIENT(clim, veg)
 
 			if optim.Flag_Opt
-				hydro, hydro_best, hydroHorizon, hydroHorizon_best, veg, veg_best, WofBest = hypixOpt.HYPIXOPTIMISATION_START(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, calibr, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Horizon, hydro, hydro_best, hydroHorizon, hydroHorizon_best, iSim_Count, Laiᵀ, Laiᵀ_η, N_∑T_Climate, N_iHorizon, N_iZ, optim, Q, Residual, veg, veg_best, WofBest, Z, ΔEvaporation, ΔHpond, ΔΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θ_Ini, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest)
+				hydro, hydro_best, hydroHorizon, hydroHorizon_best, veg, veg_best, WofBest = hypixOpt.HYPIXOPTIMISATION_START(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, calibr, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Layer, hydro, hydro_best, hydroHorizon, hydroHorizon_best, iSim_Count, Laiᵀ, Laiᵀ_η, N_∑T_Climate, N_iHorizon, N_iZ, optim, Q, Residual, veg, veg_best, WofBest, Z, ΔEvaporation, ΔHpond, ΔΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θ_Ini, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest)
 			end
 			
 			# if Flag_Opt then it will rerun with the optimal parameters

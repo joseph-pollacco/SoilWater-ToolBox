@@ -20,17 +20,17 @@ module readHypix
 
 			Z, N_iZ =  tool.readWrite.READ_HEADER_FAST(Data, Header, "Z")
 			θ_Ini, ~ =  tool.readWrite.READ_HEADER_FAST(Data, Header, "θini")
-			Horizon, ~ =  tool.readWrite.READ_HEADER_FAST(Data, Header, "Horizon")
+			Layer, ~ =  tool.readWrite.READ_HEADER_FAST(Data, Header, "Layer")
 
-			N_iHorizon = maximum(Horizon)
-			return Horizon, N_iHorizon, N_iZ, Z, θ_Ini
+			N_iHorizon = maximum(Layer)
+			return Layer, N_iHorizon, N_iZ, Z, θ_Ini
 		end # function DISCRETIZATION
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYPIX_PARAM
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function HYPIX_PARAM(Horizon, hydro, hydroHorizon, iSim::Int64, N_iZ::Int64, veg)
+		function HYPIX_PARAM(Layer, hydro, hydroHorizon, iSim::Int64, N_iZ::Int64, veg)
 
 			# Read data
 				Data = DelimitedFiles.readdlm(path.Hypix_Param, ',')
@@ -174,7 +174,7 @@ module readHypix
 
 			if !(Flag_MultiStepOpt)
 				# Hydraulic parameters per horizon to layers
-				hydro = horizonLayer.HYDROHORIZON_2_HYDRO(N_iZ, Horizon, hydroHorizon)
+				hydro = horizonLayer.HYDROHORIZON_2_HYDRO(N_iZ, Layer, hydroHorizon)
 			end
 
 			NparamOpt = length(ParamOpt)

@@ -179,7 +179,7 @@ module tableHypix
 				for i =1:N_θΨ
 					FieldName_String[i] = string(param.hypix.plot.θΨ_Table[i] * cst.Mm_2_Cm) * "cm"
 				end
-				pushfirst!(FieldName_String, string("Horizon")) # Write the "Id" at the very begenning
+				pushfirst!(FieldName_String, string("Layer")) # Write the "Id" at the very begenning
 			
 			# Computing θ at required θ
 				θ_Mod = Array{Float64}(undef, (N_iHorizon, N_θΨ))
@@ -222,7 +222,7 @@ module tableHypix
 				for i =1:N_θΨ
 					FieldName_String[i] = string(param.hypix.plot.θΨ_Table[i] * cst.Mm_2_Cm) * "cm"
 				end
-				pushfirst!(FieldName_String, string("Horizon Cm/H")) # Write the "Id" at the very begenning
+				pushfirst!(FieldName_String, string("Layer Cm/H")) # Write the "Id" at the very begenning
 			
 			# Computing θ at required θ
 				K_Mod = Array{Float64}(undef, (N_iHorizon, N_θΨ))

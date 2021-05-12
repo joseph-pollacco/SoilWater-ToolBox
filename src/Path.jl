@@ -12,7 +12,7 @@ module path
 		
 	# INPUT PATH
 		# Smap
-			Smap                    = "Horizon.csv"
+			Smap                    = "Layer.csv"
 			HydroParam_ThetaH       = "GUI_HydroParam.csv"
 
 		# DATA SoilWater_Toolbox

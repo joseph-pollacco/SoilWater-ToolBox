@@ -89,7 +89,7 @@ using Suppressor
 		include("Hypix\\ReadHypix.jl")
 		include("Hypix\\RainfalIntercept.jl")
 		include("Hypix\\Flux.jl")
-		include("Hypix\\Discret.jl")
+		include("Hypix\\Discretisation.jl")
 		include("Hypix\\Ponding.jl")
 		include("Hypix\\Residual.jl")
 		include("Hypix\\ChangeOutputTimeStep.jl")
@@ -112,7 +112,9 @@ using Suppressor
 	end  # if: option.Hypix
 
 	if option.Jules
-		include("Jules\\Jules.jl")		
+		include("Hypix\\Discretisation.jl")
+		include("Jules\\Jules.jl")
+		include("Smap/Smap2Hypix.jl")		
 	end  # if: option.Temporay
 end # Suppressor 
 
@@ -215,6 +217,7 @@ function START_TOOLBOX()
 
 	if option.Jules
 		jules.START_JULES()
+		smap2hypix.SMAP_2_HYPIX()
 		
 	end  # if: option.START_JULES()
 

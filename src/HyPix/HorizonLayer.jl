@@ -9,7 +9,7 @@ module horizonLayer
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION :   HORIZON_2_LAYER
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function HYDROHORIZON_2_HYDRO(N_iZ, Horizon, hydroHorizon)
+	function HYDROHORIZON_2_HYDRO(N_iZ, Layer, hydroHorizon)
 
 		hydro = hydroStruct.HYDROSTRUCT(N_iZ)
 
@@ -22,7 +22,7 @@ module horizonLayer
 				
 				Vector = fill(0.0::Float64, N_iZ)
 				for iZ = 1:N_iZ
-					Vector[iZ] = getfield(hydroHorizon, FieldName)[Horizon[iZ]]
+					Vector[iZ] = getfield(hydroHorizon, FieldName)[Layer[iZ]]
 				end
 				setfield!(hydro, Symbol(FieldName), Vector)
 			end

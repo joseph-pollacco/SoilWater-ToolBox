@@ -163,6 +163,11 @@ module param
          const Minute_End   = 0
          const Second_End   = 0
 
+		# AUTO DISCRETISATION
+			# If auto discretisation is selected to derive the cells sizes
+				ΔZrz_Max   = 10.00 # [mm] maximum discretisation size in the root zone
+				ΔZdeep_max = 20.00 # [mm] maximum discretisation size below the root zone
+
 		# SLOPE
 			# const α = 0.0 # slope of landscape [radiant]
 			const Cosα = 1.0

@@ -219,7 +219,7 @@ module plotHypix
 			Ks_Min = 10.0 ^ -7 * cst.MmS_2_CmH
 			Ks_Max = maximum(hydroHorizon.Ks[1:N_iHorizon]) * cst.MmS_2_CmH * 1.1
 
-			Title =" $(path.SiteName_Hypix)  Horizon = $(iZ)"
+			Title =" $(path.SiteName_Hypix)  Layer = $(iZ)"
 		
 		# Plot 1: θΨ
 			Plot_θΨ = PGFPlots.Plots.Linear(log.(Ψplot) , θplot, style=" smooth, blue, very thick", mark="none", legendentry=L"$ \theta ( \Psi ) $")

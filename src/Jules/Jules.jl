@@ -236,9 +236,9 @@ module jules
          Start_Date = Data2[ "timestp"].attrib["time_origin"]
          TimeStep =  Data2[ "timestp"].attrib["tstep_sec"]
 
-         println(Time[1:10])
-         println(Start_Date)
-         println(TimeStep)
+         # println(Time[1:10])
+         # println(Start_Date)
+         # println(TimeStep)
 
 
          # θdata = Float64.(NetCDF.open(Path_θjules, "smcl"))
