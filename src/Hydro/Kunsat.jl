@@ -33,7 +33,7 @@ module kunsat
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION :Se_2_KUNSAT
+	#		FUNCTION : Se_2_KUNSAT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	  function Se_2_KUNSAT(Se, iZ::Int64, hydroParam)
 			Se = max(min(Se, 1.0), 0.0)
@@ -49,7 +49,7 @@ module kunsat
 	
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION :Se_2_KUNSAT
+	#		FUNCTION : Se_2_KUNSAT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	  function Se_2_KR(Se, iZ::Int64, hydroParam)
 			Se = max(min(Se, 1.0), 0.0)
@@ -122,7 +122,7 @@ module kunsat
 		import ..option, ..wrc, ...cst, ...param
 		import ForwardDiff, QuadGK
 		import SpecialFunctions: erfc, erfcinv
-		export Ψ_2_KUNSAT, Se_2_KUNSAT, ∂K∂Ψ,θΨ_2_KUNSAT
+		export Ψ_2_KUNSAT, Se_2_KUNSAT, ∂K∂Ψ, θΨ_2_KUNSAT
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : Ψ_2_KUNSAT
@@ -329,7 +329,7 @@ module kunsat
 		export Ψ_2_KUNSAT, Se_2_KUNSAT, ∂K∂Ψ
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION VG: Ψ_2_KUNSAT
+		#		FUNCTION vg : Ψ_2_KUNSAT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function  Ψ_2_KUNSAT(Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψvg=hydroParam.Ψvg[iZ], N=hydroParam.N[iZ], Ks=hydroParam.Ks[iZ], Km=hydroParam.Km[iZ], L=0.5)
 				M = 1.0 - Km / N
@@ -340,7 +340,7 @@ module kunsat
 
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION VG: Se_2_KUNSAT
+		#		FUNCTION vg : Se_2_KUNSAT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function  Se_2_KUNSAT(Se, iZ, hydroParam, θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψvg=hydroParam.Ψvg[iZ], N=hydroParam.N[iZ], Ks=hydroParam.Ks[iZ], Km=hydroParam.Km[iZ], L=0.5)
 				M = 1.0 - Km / N
@@ -349,7 +349,7 @@ module kunsat
 
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION VG: ∂K∂Ψ
+		#		FUNCTION vg : ∂K∂Ψ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function ∂K∂Ψ(Ψ₁, iZ, hydroParam, θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψvg=hydroParam.Ψvg[iZ], N=hydroParam.N[iZ], Ks=hydroParam.Ks[iZ], Km=hydroParam.Km[iZ], L=0.5)
 				M = 1.0 - Km/N
@@ -362,15 +362,16 @@ module kunsat
 
 	end #module vg ...............................................
 
+
 	# =============================================================
 	#		MODULE BROOKS AND COOREY
 	# =============================================================
 	module bc
 		import ..option, ..wrc
-		export Ψ_2_KUNSAT
+		export Ψ_2_KUNSAT, Se_2_KUNSAT, ∂K∂Ψ
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION Brooks and Coorey: Ψ_2_KUNSAT
+		#		FUNCTION bc : Ψ_2_KUNSAT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function  Ψ_2_KUNSAT(Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψbc=hydroParam.Ψbc[iZ], λbc=hydroParam.λbc[iZ], Ks=hydroParam.Ks[iZ])
 				
@@ -384,8 +385,31 @@ module kunsat
 
 			end #function Ψ_2_KUNSAT
 
-	end #module bc ...............................................
 
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#		FUNCTION bc : Se_2_KUNSAT
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			function  Se_2_KUNSAT(Se, iZ, hydroParam, θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψbc=hydroParam.Ψbc[iZ], λbc=hydroParam.λbc[iZ], Ks=hydroParam.Ks[iZ])
+				
+				M = -3.0 * λbc - 2.0
+				return Kunsat = Ks * Se .^ M 
+			
+			end # function Se_2_KUNSAT
+
+
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#		FUNCTION bc : ∂K∂Ψ
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			function ∂K∂Ψ(Ψ₁, iZ, hydroParam, θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψbc=hydroParam.Ψbc[iZ], λbc=hydroParam.λbc[iZ], Ks=hydroParam.Ks[iZ])
+				
+				M = -3.0 * λbc - 2.0
+		
+				return ∂K∂Ψ = Ks * M / Ψbc * (Ψ₁/Ψbc) ^ (M-1.0) 
+
+			end # function ∂K∂Ψ
+
+
+	end #module bc ...............................................
 
 
 	# =============================================================
@@ -393,12 +417,12 @@ module kunsat
 	# =============================================================
 	module ch
 		import ..option, ..wrc
-		export Ψ_2_KUNSAT
+		export Ψ_2_KUNSAT, Se_2_KUNSAT, ∂K∂Ψ
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION Brooks and Coorey: Ψ_2_KUNSAT
+		#		FUNCTION ch : Ψ_2_KUNSAT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function  Ψ_2_KUNSAT(Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψch=hydroParam.Ψch[iZ], λch=hydroParam.λch[iZ], Ks=hydroParam.Ks[iZ])
+			function  Ψ_2_KUNSAT(Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], Ψch=hydroParam.Ψch[iZ], λch=hydroParam.λch[iZ], Ks=hydroParam.Ks[iZ])
 				
 				M = -3.0 * λch - 2.0
 
@@ -410,7 +434,30 @@ module kunsat
 
 			end #function Ψ_2_KUNSAT
 
-	end #module bc ...............................................
+
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#		FUNCTION ch : Se_2_KUNSAT
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			function  Se_2_KUNSAT(Se, iZ, hydroParam, θs=hydroParam.θs[iZ], Ψch=hydroParam.Ψbc[iZ], λch=hydroParam.λch[iZ], Ks=hydroParam.Ks[iZ])
+					
+				M = -3.0 * λch - 2.0
+				return Kunsat = Ks * Se .^ M 
+			
+			end # function Se_2_KUNSAT
+
+
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#		FUNCTION ch : ∂K∂Ψ
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			function ∂K∂Ψ(Ψ₁, iZ, hydroParam, θs=hydroParam.θs[iZ], Ψch=hydroParam.Ψch[iZ], λch=hydroParam.λch[iZ], Ks=hydroParam.Ks[iZ])
+				
+				M = -3.0 * λch - 2.0
+		
+				return ∂K∂Ψ = Ks * M / Ψch * (Ψ₁/Ψch) ^ (M-1.0) 
+
+			end # function ∂K∂Ψ
+
+	end #module ch ...............................................
 
 
 end # module kunsat 
