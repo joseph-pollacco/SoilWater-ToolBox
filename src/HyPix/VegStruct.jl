@@ -28,14 +28,14 @@ module vegStruct
       Sint_Lai             :: Float64
       Sint_Sat             :: Float64
 
-		FieldName 				::	Vector{Symbol} # Need to pu
+		# FieldName 				::	Vector{Symbol} # Need to pu
 	end # struct VEG
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : VEG
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	function VEGSTRUCT()
-		FieldName            = Array{Symbol}(undef, 1) # Need to put
+		# FieldName            = Array{Symbol}(undef, 1) # Need to put
 		
       Zroot                = 0.0
       ΔRdf_Top             = 0.0
@@ -56,9 +56,12 @@ module vegStruct
       Sint_Lai             = 0.0
       Sint_Sat             = 0.0
 
-		veg = VEG(Zroot, ΔRdf_Top, Zroot_Top, Lai, Lai_Min, Lai_Max, CropCoeficient, CropCoeficient_Min, CropCoeficient_Max, ExtinctCoefRadiation, Ψfeddes1, Ψfeddes2, Ψfeddes3, Ψfeddes4, RootWaterUptakeComp, Zevapo, Sint_Lai, Sint_Sat, FieldName)
+		# veg = VEG(Zroot, ΔRdf_Top, Zroot_Top, Lai, Lai_Min, Lai_Max, CropCoeficient, CropCoeficient_Min, CropCoeficient_Max, ExtinctCoefRadiation, Ψfeddes1, Ψfeddes2, Ψfeddes3, Ψfeddes4, RootWaterUptakeComp, Zevapo, Sint_Lai, Sint_Sat, FieldName)
+
+      veg = VEG(Zroot, ΔRdf_Top, Zroot_Top, Lai, Lai_Min, Lai_Max, CropCoeficient, CropCoeficient_Min, CropCoeficient_Max, ExtinctCoefRadiation, Ψfeddes1, Ψfeddes2, Ψfeddes3, Ψfeddes4, RootWaterUptakeComp, Zevapo, Sint_Lai, Sint_Sat)
+      return veg
 		
-		return veg = tool.readWrite.FIELDNAME_2_STRUCT_VECT(VEG, veg) # Saving the FieldNames
+		# return veg = tool.readWrite.FIELDNAME_2_STRUCT_VECT(VEG, veg) # Saving the FieldNames
 	end # function VEG
 	
 end  # module vegStruct

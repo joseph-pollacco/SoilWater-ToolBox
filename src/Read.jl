@@ -215,8 +215,7 @@ module reading
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : READFILE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function READFILE(param, Path)
-
+		function READFILE(param, Path; iStart=1, iEnd=2^63 - 1)
 			println("    ~  $(Path) ~")
 
 			# Read data
@@ -226,59 +225,32 @@ module reading
 			# Remove first READ_ROW_SELECT
 				Data = Data[2:end,1:end]
 
-			N_SoilSelect = size(Data)[1]
+				# Select data of interest
+					N_SoilSelect = size(Data)[1] # Initial
+					iEnd= min(N_SoilSelect, iEnd)
+					Data = Data[iStart:iEnd,1:end]
+					N_SoilSelect = iEnd - iStart + 1 # Final
 
 			# Reading the Model data
 			for iFieldname in propertynames(param)
-				Output_Vector, Ndata = tool.readWrite.READ_HEADER_FAST(Data, Header, string(iFieldname))
-				# Putting the values of OutPutData into the the structure hydroData
+				try
+					Output_Vector, Ndata = tool.readWrite.READ_HEADER_FAST(Data, Header, string(iFieldname))
+					# Putting the values of OutPutData into the the structure hydroData
+						if length(Output_Vector) == 1 # Not a vector
+							Output_Vector = Output_Vector[1]
+						end
+						setfield!(param, Symbol(iFieldname), Float64.(Output_Vector))
+				catch
+					@warn "SoilWater-ToolBox: cannong find $iFieldname"
+					Output_Vector = fill(0.0::Float64, N_SoilSelect)
+					if length(Output_Vector) == 1 # Not a vector
+                  Output_Vector = Output_Vector[1]
+               end
 					setfield!(param, Symbol(iFieldname), Float64.(Output_Vector))
+				end
 			end
 		return param, N_SoilSelect
 		end  # function: READFILE
-
-
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : HYDROPARAM
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		# function HYDROPARAM(Id_Select, N_SoilSelect, hydro)
-		# 	println("    ~  $(path.Table_θΨK) ~")
-
-		# 	# Read data
-		# 		Data = DelimitedFiles.readdlm(path.Ψθ, ',')
-		# 	# Read header
-		# 		Header = Data[1,1:end]
-		# 	# Remove first READ_ROW_SELECT
-		# 		Data = Data[2:end,begin:end]
-
-		# 	hydro.θs, ~ = tool.readWrite.READ_ROW_SELECT(Id_Select, Data, Header, "θs",  N_SoilSelect; DataSelect=false)
-
-      #    hydro.θr, ~ = tool.readWrite.READ_ROW_SELECT(Id_Select, Data, Header, "θr",  N_SoilSelect; DataSelect=false)
-
-      #    hydro.Ks, ~ = tool.readWrite.READ_ROW_SELECT(Id_Select, Data, Header, "Ks",  N_SoilSelect; DataSelect=false)
-
-      #    hydro.Φ, ~  = tool.readWrite.READ_ROW_SELECT(Id_Select, Data, Header, "Φ",  N_SoilSelect; DataSelect=false)
-
-		# 	if option.hydro.HydroModel == :Kosugi
-		# 		hydro.σ, ~     = tool.readWrite.READ_ROW_SELECT(Id_Select, Data, Header, "σ", N_SoilSelect; DataSelect=false)
-
-		# 		hydro.Ψm, ~    = tool.readWrite.READ_ROW_SELECT(Id_Select, Data, Header, "Ψm", N_SoilSelect; DataSelect=false)
-				
-		# 		hydro.θsMacMat, ~ = tool.readWrite.READ_ROW_SELECT(Id_Select, Data, Header, "θsMacMat", N_SoilSelect; DataSelect=false)
-				
-		# 		hydro.σMac, ~  = tool.readWrite.READ_ROW_SELECT(Id_Select, Data, Header, "σMac", N_SoilSelect; DataSelect=false)
-				
-		# 		hydro.ΨmMac, ~ = tool.readWrite.READ_ROW_SELECT(Id_Select, Data, Header, "ΨmMac", N_SoilSelect; DataSelect=false)
-				
-		# 	elseif option.HydroModel == :Vangenuchten
-      #       hydro.N, ~   = tool.readWrite.READ_ROW_SELECT(Id_Select, Data, Header, "N",  N_SoilSelect; DataSelect=false)
-
-		# 		hydro.Ψvg, ~ = tool.readWrite.READ_ROW_SELECT(Id_Select, Data, Header, "Ψvg", N_SoilSelect; DataSelect=false)
-				
-		# 	end #  option.HydroModel
-
-		# return hydro
-		# end # function HYDROPARAM
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

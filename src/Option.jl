@@ -5,7 +5,7 @@ module option
 
 		const HydroTranslateModel = false # <true>; <false>
 
-      const Hypix       = true # <true>; <false>
+      const Hypix       = false # <true>; <false>
 
       const Smap        = false # <true> ; <false>
 
@@ -19,7 +19,7 @@ module option
 
       const Temporary   = false # <true>; <false>
 
-		const Jules = false # <true>; <false>
+		const Jules = true # <true>; <false>
      	
 	# DOWNLAOD PACKAGES
       const DownloadPackage = false # <true> For first time user download packages required to run program; <false>*
@@ -73,7 +73,7 @@ module option
 			import ..option
 
 			# HYDRAULIC MODEL
-            const HydroModel      = :Vangenuchten # <:Kosugi>*; <:Vangenuchten>; <:BrooksCorey>; <:ClappHornberger>; <:VangenuchtenJules>
+            const HydroModel      = :Kosugi # <:Kosugi>*; <:Vangenuchten>; <:BrooksCorey>; <:ClappHornberger>; <:VangenuchtenJules>
 
             const θrOpt           = :Opt # <:Opt> optimises; <:ParamPsd> derive from PSD and uses α1 and α1 from parameters in Param.jl; <:σ_2_θr>	
      
