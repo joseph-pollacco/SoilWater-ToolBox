@@ -27,7 +27,7 @@ module table
 		end  # function:  TABLE_ID
 
 	# =============================================================
-	#		MODULE: name
+	#		MODULE: hydroLab
 	# =============================================================
 	module hydroLab
 		import ...path, ...tool, ...param, ...wrc, ...kunsat

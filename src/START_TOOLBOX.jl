@@ -112,6 +112,7 @@ using Suppressor
 	end  # if: option.Hypix
 
 	if option.Jules
+		include("Hypix\\VegStruct.jl")
 		include("Hypix\\Discretisation.jl")
 		include("Jules\\Jules.jl")
 		include("Smap/Smap2Hypix.jl")		

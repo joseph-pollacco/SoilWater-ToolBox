@@ -77,7 +77,7 @@ module option
 
             const θrOpt           = :Opt # <:Opt> optimises; <:ParamPsd> derive from PSD and uses α1 and α1 from parameters in Param.jl; <:σ_2_θr>	
      
-				const σ_2_Ψm          = :Constrained # <:Constrained> Ψm physical feasible range is computed from σ <:UniqueRelationship> Ψm is computed from σ; <:No> optimisation of σ & Ψm with no constraints
+				const σ_2_Ψm          = :No # <:Constrained> Ψm physical feasible range is computed from σ <:UniqueRelationship> Ψm is computed from σ; <:No> optimisation of σ & Ψm with no constraints
 
 			# Min & Max from data
 				const θs_MinFromData = false # <false> feasible range from GUI, <true> feasible range derive from data

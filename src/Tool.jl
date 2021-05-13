@@ -82,7 +82,6 @@ module tool
 			
 		# Getting the column which matches the name of the header
 			Name = replace(Name, " " => "") # Remove white spaces
-
 			try
 				iColumn = Int64(findfirst(isequal(Name), Header)[1])
 				global Data_Output = Data[1:N_X,iColumn]
@@ -90,7 +89,6 @@ module tool
 				println(Header)
 				error("\n          SOILWATERTOOLBOX ERROR: cannot find  $Name   \n \n")
 			end
-
 		return Data_Output, N_X
 		end # function READ_HEADER
 

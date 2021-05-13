@@ -182,7 +182,6 @@ module hydroStruct
 				hydro = KOSUGI(θs, θr, Ks, σ, Ψm, θsMacMat_ƞ, σMac, ΨmMac, So, θsMacMat, Φ, θs_Min, θr_Min, Ks_Min, σ_Min,Ψm_Min, θsMacMat_ƞ_Min, σMac_Min, ΨmMac_Min, So_Min, θsMacMat_Min, Φ_Min, θs_Max, θr_Max, Ks_Max, σ_Max, Ψm_Max, θsMacMat_ƞ_Max, σMac_Max, ΨmMac_Max, So_Max, θsMacMat_Max, Φ_Max)
 				return hydro
 
-
 			elseif option.hydro.HydroModel == :Vangenuchten || option.hydro.HydroModel == :VangenuchtenJules # <>=<>=<>=<>=<>
             N       = fill(0.0::Float64, N_SoilSelect)
             Ψvg     = fill(0.0::Float64, N_SoilSelect)
