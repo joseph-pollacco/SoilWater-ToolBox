@@ -123,6 +123,7 @@ module jules
          # Getting θ observed
           θdata = Float64.(NetCDF.open(Path_θ_Input, "obsm"))
 
+          θdata =  θdata ./ 100.0
           N = length(θdata)
 
          #  for i=1:N
