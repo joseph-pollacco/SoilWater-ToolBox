@@ -7,7 +7,7 @@ module timeStep
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function TIMESTEP(∑T, discret, Flag_ReRun::Bool, hydro, iT::Int64, N_∑T_Climate::Float64, N_iZ::Int64, Q, ΔΨmax, ΔSink, ΔT, θ, Ψ)
 
-			Δθ_Max = param.hypix.Δθ_Max
+			Δθ_Max = param.hyPix.Δθ_Max
 
 			# The iT is of the previous simulation
 			if !Flag_ReRun # <>=<>=<>=<>=<>	
@@ -45,9 +45,9 @@ module timeStep
 			for iZ=1:N_iZ
 				θ½ = (hydro.θsMacMat[iZ] + hydro.θr[iZ]) * 0.5
 				
-				θ△ = min(θ½ + param.hypix.Δθ_Max * 0.5, hydro.θs[iZ])
+				θ△ = min(θ½ + param.hyPix.Δθ_Max * 0.5, hydro.θs[iZ])
 
-				θ▽ = max(θ½ - param.hypix.Δθ_Max * 0.5, hydro.θr[iZ])
+				θ▽ = max(θ½ - param.hyPix.Δθ_Max * 0.5, hydro.θr[iZ])
 
 				ΔΨmax[iZ] = wrc.θ_2_ΨDual(θ▽, iZ, hydro) - wrc.θ_2_ΨDual(θ△, iZ, hydro)
 			end # for iZ=1:N_iZ
@@ -70,7 +70,7 @@ module timeStep
 				end
 			
 			# Initializing
-				Δθ₂_Max = param.hypix.Δθ_Max
+				Δθ₂_Max = param.hyPix.Δθ_Max
 
 			# Computing smallest Δθ_Max
 				for iZ = 1:N_iZ		
@@ -90,7 +90,7 @@ module timeStep
 
 					ΔT₂_New = (discret.ΔZ[iZ] * Δθ₂_Max + ΔSink[iT,iZ]) / (abs(Q[iT,iZ] - Q[iT,iZ+1]) + eps())
 
-					ΔT₂_New = min( max(param.hypix.ΔT_Min, ΔT₂_New), param.hypix.ΔT_Max)
+					ΔT₂_New = min( max(param.hyPix.ΔT_Min, ΔT₂_New), param.hyPix.ΔT_Max)
 	
 					if option.hyPix.NormMin == :Norm
 						ΔT_New_Norm += ΔT₂_New ^ 2

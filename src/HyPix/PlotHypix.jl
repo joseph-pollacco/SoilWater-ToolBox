@@ -392,10 +392,10 @@ module plotHypix
 
 				# TICKS
 					# Date_Start_Calibr = calibr.Date[1]
-					Date_Start_Calibr = DateTime(param.hypix.calibr.Year_Start, param.hypix.calibr.Month_Start, param.hypix.calibr.Day_Start, param.hypix.calibr.Hour_Start, param.hypix.calibr.Minute_Start, param.hypix.calibr.Second_Start) # since we need to compute the culmulativeof the 1rst day
+					Date_Start_Calibr = DateTime(param.hyPix.calibr.Year_Start, param.hyPix.calibr.Month_Start, param.hyPix.calibr.Day_Start, param.hyPix.calibr.Hour_Start, param.hyPix.calibr.Minute_Start, param.hyPix.calibr.Second_Start) # since we need to compute the culmulativeof the 1rst day
 					
 					# Date_End_Calibr = calibr.Date[end]
-					Date_End_Calibr = DateTime(param.hypix.Year_End, param.hypix.Month_End, param.hypix.Day_End, param.hypix.Hour_End, param.hypix.Minute_End, param.hypix.Second_End)
+					Date_End_Calibr = DateTime(param.hyPix.Year_End, param.hyPix.Month_End, param.hyPix.Day_End, param.hyPix.Hour_End, param.hyPix.Minute_End, param.hyPix.Second_End)
 					
 					DateTick=range(Date_Start_Calibr,step=Day(14),Date_End_Calibr)
 					
@@ -450,9 +450,9 @@ module plotHypix
 							Label_Sim = "Sim=" * string( Int(floor((discret.Znode[calibr.iZobs[iZobs]])))) * "mm"
 
 						# Plotting
-							# Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑T_Plot], θobs_Plot[1:N_∑T_Plot, iZobs].+param.hypix.calibr.θobs_Uncert, line=(0.5,:solid), linecolour=Style_Hypix[iZobs], label=false)
+							# Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑T_Plot], θobs_Plot[1:N_∑T_Plot, iZobs].+param.hyPix.calibr.θobs_Uncert, line=(0.5,:solid), linecolour=Style_Hypix[iZobs], label=false)
 		
-							# Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑T_Plot], max.(θobs_Plot[1:N_∑T_Plot, iZobs].-param.hypix.calibr.θobs_Uncert, 0.0), line=(0.5,:solid), linecolour=Style_Hypix[iZobs], label=false)
+							# Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑T_Plot], max.(θobs_Plot[1:N_∑T_Plot, iZobs].-param.hyPix.calibr.θobs_Uncert, 0.0), line=(0.5,:solid), linecolour=Style_Hypix[iZobs], label=false)
 
 							Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑T_Plot], θobs_Plot[1:N_∑T_Plot, iZobs], line=(2.5,:solid), linecolour=Style_Hypix[iZobs], label=Label_Obs)
 

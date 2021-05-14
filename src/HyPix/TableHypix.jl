@@ -171,20 +171,20 @@ module tableHypix
 			Path = path.Table_θΨ * "_" * string(iSim) * ".csv"
 			println("			~  $(Path) ~")
 
-			N_θΨ = Int64(length(param.hypix.plot.θΨ_Table))
+			N_θΨ = Int64(length(param.hyPix.plot.θΨ_Table))
 
 			# Writting the Header
 				FieldName_String = Array{String}(undef, N_θΨ)
 
 				for i =1:N_θΨ
-					FieldName_String[i] = string(param.hypix.plot.θΨ_Table[i] * cst.Mm_2_Cm) * "cm"
+					FieldName_String[i] = string(param.hyPix.plot.θΨ_Table[i] * cst.Mm_2_Cm) * "cm"
 				end
 				pushfirst!(FieldName_String, string("Layer")) # Write the "Id" at the very begenning
 			
 			# Computing θ at required θ
 				θ_Mod = Array{Float64}(undef, (N_iHorizon, N_θΨ))
 				for iZ=1:N_iHorizon, iΨ =1:N_θΨ
-						Ψ_Mod = param.hypix.plot.θΨ_Table[iΨ]
+						Ψ_Mod = param.hyPix.plot.θΨ_Table[iΨ]
 						θ_Mod[iZ, iΨ] = wrc.Ψ_2_θDual(Ψ_Mod, iZ, hydroHorizon)
 				end # iZ
 
@@ -214,20 +214,20 @@ module tableHypix
 			Path = path.Table_KΨ * "_" * string(iSim) * ".csv"
 			println("			~  $(Path) ~")
 
-			N_θΨ = Int64(length(param.hypix.plot.θΨ_Table))
+			N_θΨ = Int64(length(param.hyPix.plot.θΨ_Table))
 
 			# Writting the Header
 				FieldName_String = Array{String}(undef, N_θΨ)
 
 				for i =1:N_θΨ
-					FieldName_String[i] = string(param.hypix.plot.θΨ_Table[i] * cst.Mm_2_Cm) * "cm"
+					FieldName_String[i] = string(param.hyPix.plot.θΨ_Table[i] * cst.Mm_2_Cm) * "cm"
 				end
 				pushfirst!(FieldName_String, string("Layer Cm/H")) # Write the "Id" at the very begenning
 			
 			# Computing θ at required θ
 				K_Mod = Array{Float64}(undef, (N_iHorizon, N_θΨ))
 				for iZ=1:N_iHorizon, iΨ =1:N_θΨ
-						Ψ_Mod = param.hypix.plot.θΨ_Table[iΨ]
+						Ψ_Mod = param.hyPix.plot.θΨ_Table[iΨ]
 						K_Mod[iZ, iΨ] = kunsat.Ψ_2_KUNSAT(Ψ_Mod, iZ, hydroHorizon) .* cst.MmS_2_CmH
 				end # iZ
 

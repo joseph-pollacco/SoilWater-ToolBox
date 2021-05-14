@@ -30,16 +30,16 @@ module flux
 			elseif 2 ≤ iZ ≤ N_iZ # <>=<>=<>=<>=<>
 				K_Aver = K_AVER!(discret, hydro, iZ, N_iZ, ψ_, ψ▲)
 
-				return Q = K_Aver * ( ((ψ_ - ψ▲) / discret.ΔZ_Aver[iZ]) + param.hypix.Cosα )
+				return Q = K_Aver * ( ((ψ_ - ψ▲) / discret.ΔZ_Aver[iZ]) + param.hyPix.Cosα )
 
 			elseif iZ == N_iZ+1 # <>=<>=<>=<>=<>
 				K_Aver = K_AVER!(discret, hydro, N_iZ+1, N_iZ, ψ_, ψ▲)
 
 				if option.hyPix.BottomBoundary == :Free # <>=<>=<>=<>=<>
-					return Q = K_Aver * param.hypix.Cosα
+					return Q = K_Aver * param.hyPix.Cosα
 
 				elseif option.hyPix.BottomBoundary == :Pressure # <>=<>=<>=<>=<>
-					return Q = K_Aver * (((ψ_ - param.hypix.Ψ_Bot) / discret.ΔZ_⬓[N_iZ]) + param.hypix.Cosα)
+					return Q = K_Aver * (((ψ_ - param.hyPix.Ψ_Bot) / discret.ΔZ_⬓[N_iZ]) + param.hyPix.Cosα)
 				end
 			end # Case
 
@@ -72,7 +72,7 @@ module flux
 				else # elseif 2 ≤ iZ ≤ N_iZ 	<>=<>=<>=<>=<>
 					K_Aver = flux.K_AVER!(discret, hydro, iZ, N_iZ, Ψ[iT,iZ], Ψ[iT,iZ-1])
 
-					return ∂Q∂Ψ = discret.ΔZ_W[iZ] * ∂K∂Ψ[iZ] * ((Ψ[iT,iZ] - Ψ[iT,iZ-1]) / discret.ΔZ_Aver[iZ] + param.hypix.Cosα) + K_Aver / discret.ΔZ_Aver[iZ]	
+					return ∂Q∂Ψ = discret.ΔZ_W[iZ] * ∂K∂Ψ[iZ] * ((Ψ[iT,iZ] - Ψ[iT,iZ-1]) / discret.ΔZ_Aver[iZ] + param.hyPix.Cosα) + K_Aver / discret.ΔZ_Aver[iZ]	
 				end # if iZ
 			end  # function: ∂Q∂Ψ
 
@@ -86,7 +86,7 @@ module flux
 				else #elseif 2 ≤ iZ ≤ N_iZ 	# <>=<>=<>=<>=<>
 					K_Aver = flux.K_AVER!(discret, hydro, iZ, N_iZ, Ψ[iT,iZ], Ψ[iT,iZ-1])
 
-					return ∂Q∂Ψ△ = (1.0 - discret.ΔZ_W[iZ]) * ∂K∂Ψ[iZ-1] *  ((Ψ[iT,iZ] - Ψ[iT,iZ-1]) / discret.ΔZ_Aver[iZ] + param.hypix.Cosα) - K_Aver / discret.ΔZ_Aver[iZ]	
+					return ∂Q∂Ψ△ = (1.0 - discret.ΔZ_W[iZ]) * ∂K∂Ψ[iZ-1] *  ((Ψ[iT,iZ] - Ψ[iT,iZ-1]) / discret.ΔZ_Aver[iZ] + param.hyPix.Cosα) - K_Aver / discret.ΔZ_Aver[iZ]	
 				end # if iZ
 			end  # function: ∂Q∂Ψ△
 
@@ -98,15 +98,15 @@ module flux
 				if iZ ≤ N_iZ 	# <>=<>=<>=<>=<>
 					K_Aver▽ = flux.K_AVER!(discret, hydro, iZ, N_iZ, Ψ[iT,iZ], Ψ[iT,iZ-1])
 
-					return ∂Q▽∂Ψ = ∂K∂Ψ[iZ-1] * (1.0 - discret.ΔZ_W[iZ]) * ((Ψ[iT,iZ] - Ψ[iT,iZ-1]) / discret.ΔZ_Aver[iZ] + param.hypix.Cosα) - K_Aver▽ / discret.ΔZ_Aver[iZ]	
+					return ∂Q▽∂Ψ = ∂K∂Ψ[iZ-1] * (1.0 - discret.ΔZ_W[iZ]) * ((Ψ[iT,iZ] - Ψ[iT,iZ-1]) / discret.ΔZ_Aver[iZ] + param.hyPix.Cosα) - K_Aver▽ / discret.ΔZ_Aver[iZ]	
 				
 				else # <>=<>=<>=<>=<>
 					if option.hyPix.BottomBoundary == :Free # <>=<>=<>=<>=<>
-						return ∂Q▽∂Ψ = ∂K∂Ψ[N_iZ] * param.hypix.Cosα
+						return ∂Q▽∂Ψ = ∂K∂Ψ[N_iZ] * param.hyPix.Cosα
 		
 					elseif option.hyPix.BottomBoundary == :Pressure # <>=<>=<>=<>=<>
 						K_Aver = flux.K_AVER!(discret, hydro, iZ, N_iZ, Ψ[iT,iZ], Ψ[iT,iZ-1])
-						return ∂Q▽∂Ψ = ∂K∂Ψ[N_iZ] * ((Ψ[iT,N_iZ+1] - Ψ[iT,N_iZ]) / discret.ΔZ_Aver[N_iZ+1] + param.hypix.Cosα) - K_Aver / discret.ΔZ_Aver[N_iZ+1]	
+						return ∂Q▽∂Ψ = ∂K∂Ψ[N_iZ] * ((Ψ[iT,N_iZ+1] - Ψ[iT,N_iZ]) / discret.ΔZ_Aver[N_iZ+1] + param.hyPix.Cosα) - K_Aver / discret.ΔZ_Aver[N_iZ+1]	
 					end	
 				end # if iZ
 			end  # function: ∂Q▽∂Ψ
@@ -120,7 +120,7 @@ module flux
 
 					K_Aver▽ = flux.K_AVER!(discret, hydro, iZ+1, N_iZ, Ψ[iT,iZ+1], Ψ[iT,iZ])
 
-					return ∂Q▽∂Ψ▽ = discret.ΔZ_W[iZ+1] * ∂K∂Ψ[iZ+1] * ((Ψ[iT,iZ+1] - Ψ[iT,iZ]) / discret.ΔZ_Aver[iZ+1] + param.hypix.Cosα) + K_Aver▽ / discret.ΔZ_Aver[iZ+1]
+					return ∂Q▽∂Ψ▽ = discret.ΔZ_W[iZ+1] * ∂K∂Ψ[iZ+1] * ((Ψ[iT,iZ+1] - Ψ[iT,iZ]) / discret.ΔZ_Aver[iZ+1] + param.hyPix.Cosα) + K_Aver▽ / discret.ΔZ_Aver[iZ+1]
 				
 				else #elseif iZ == N_iZ  			# <>=<>=<>=<>=<>
 					if option.hyPix.BottomBoundary == :Free # <>=<>=<>=<>=<>

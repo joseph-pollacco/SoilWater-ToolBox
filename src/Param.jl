@@ -6,7 +6,7 @@
 		hydro
 		psd
 		infilt
-		hypix 
+		hyPix 
 	end
 		mutable struct GLOBALPARAM
 			N_iZ_Simulations
@@ -110,7 +110,6 @@
 			WaterBalanceResidual_Max
 			calibr # it is a structure
 			plot # it is a structure
-			signature # it is a structure
 		end
 		mutable struct CALIBR
 			NmaxFuncEvals
@@ -144,7 +143,7 @@
 			Cells_Plot
 			θΨ_Table
 		end
-		mutable struct SIGNATURE
+		mutable struct SIGNATURES
 			Month_Winter_Start
 			Month_Winter_End
 		end
@@ -369,24 +368,24 @@
 		  θΨ_Table = [0.0, 100.0, 200.0, 300.0, 400.0, 500.0, 600.0, 700.0, 800.0, 900.0, 1000.0, 2000.0, 3000.0, 4000.0, 5000.0, 6000.0, 7000, 8000, 9000, 10000.0, 2E4, 3E4, 4E4, 5E4, 6E4, 7E4, 8E4, 9E4, 1E5, 150000.0, 2E5, 3E5, 1E6] # mm
 
 		#----------------------
-		#		signiture parameters
+		#		signature parameters
 		#----------------------
 			# Seasonality
 				Month_Winter_Start = 4
 				Month_Winter_End   = 10
 			
-	signature = SIGNATURE(Month_Winter_Start, Month_Winter_End)
+	# signatures = SIGNATURES(Month_Winter_Start, Month_Winter_End)
 
 	plot = PLOT(Year_Start, Month_Start, Day_Start, Hour_Start, Minute_Start, Second_Start, Year_End, Month_End, Day_End, Hour_End, Minute_End, Second_End, Cells_Plot, θΨ_Table)
 
 	calibr = CALIBR(NmaxFuncEvals, Year_Start, Month_Start, Day_Start, Hour_Start, Minute_Start, Second_Start, Year_End, Month_End, Day_End, Hour_End, Minute_End, Second_End, θobs_Uncert)
 
-	hypix = HYPIXS(iSim_Start, iSim_End, Year_Start, Month_Start, Day_Start, Hour_Start, Minute_Start, Second_Start, Year_End, Month_End, Day_End, Hour_End, Minute_End, Second_End,	ΔZrz_Max, ΔZdeep_max, Cosα, ΔHpondMax, Ψ_Bot, ΔT_Min, ΔT_Max, N_Iter, ΔT_Rerun, Δθ_Max, NewtonStepWeaken, WaterBalanceResidual_Max, calibr, plot, signature)
+	hyPix = HYPIXS(iSim_Start, iSim_End, Year_Start, Month_Start, Day_Start, Hour_Start, Minute_Start, Second_Start, Year_End, Month_End, Day_End, Hour_End, Minute_End, Second_End,	ΔZrz_Max, ΔZdeep_max, Cosα, ΔHpondMax, Ψ_Bot, ΔT_Min, ΔT_Max, N_Iter, ΔT_Rerun, Δθ_Max, NewtonStepWeaken, WaterBalanceResidual_Max, calibr, plot)
 
 
 	# =============================================================
 	#		PARAMETERS
 	# =============================================================
-		param = PARAM(globalparam, hydro, psd, infilt, hypix)
+		param = PARAM(globalparam, hydro, psd, infilt, hyPix)
 
 # end param

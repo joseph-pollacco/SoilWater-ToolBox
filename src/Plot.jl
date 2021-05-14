@@ -27,7 +27,7 @@ module plot
 
 			Ψ_θΨ_Min = 0.0
 
-			for iZ = param.N_iZ_Plot_Start: min(param.N_iZ_Plot_End, N_SoilSelect)	
+			for iZ = param.globalparam.N_iZ_Plot_Start: min(param.globalparam.N_iZ_Plot_End, N_SoilSelect)	
 				Ψ_θΨ_Max = maximum(Ψ_θΨ[iZ,N_θΨ[iZ]]) + 100000.0
 
 				Ψ_Sim = expm1.(range(log1p(Ψ_θΨ_Min), stop=log1p(Ψ_θΨ_Max), length=N_Se)) 
@@ -186,7 +186,7 @@ module plot
 
             Ψ_θΨ_Min = 0.0
 
-            for iZ = param.N_iZ_Plot_Start: min(param.N_iZ_Plot_End, N_SoilSelect)	
+            for iZ = param.globalparam.N_iZ_Plot_Start: min(param.globalparam.N_iZ_Plot_End, N_SoilSelect)	
                Ψ_θΨ_Max = maximum(Ψ_θΨ[iZ,N_θΨ[iZ]]) + 100000.0
 
                Ψ_Sim = expm1.(range(log1p(Ψ_θΨ_Min), stop=log1p(Ψ_θΨ_Max), length=N_Se)) 
@@ -392,7 +392,7 @@ module plot
 		function PLOT_IMP_MODEL(Id_Select, Rpart, N_Psd, ∑Psd, Psd, N_SoilSelect, hydro, paramPsd)
 			println("  ==  START: PLOT_IMP_MODEL  ==")	
 
-			for iZ = param.N_iZ_Plot_Start: param.N_iZ_Plot_End
+			for iZ = param.globalparam.N_iZ_Plot_Start: param.globalparam.N_iZ_Plot_End
 				Rpart_Min = minimum(Rpart[iZ,1:N_Psd[iZ]])
 				Rpart_Max = maximum(Rpart[iZ,1:N_Psd[iZ]])
 
@@ -463,7 +463,7 @@ module plot
 
 			θ_θΨ_Psd = Array{Float64}(undef, (N_Se))
 
-			for iZ = param.N_iZ_Plot_Start:min(param.N_iZ_Plot_End, N_SoilSelect)
+			for iZ = param.globalparam.N_iZ_Plot_Start:min(param.globalparam.N_iZ_Plot_End, N_SoilSelect)
 				# Range of plots
 					Ψ_θΨ_Min = 10.0 ^ 0.0 # [mm]
 
@@ -540,7 +540,7 @@ module plot
 		function PLOT_∑INFILT(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt_3D, ∑Infilt_1D, infiltOutput)
 		println("  ==  START: PLOT_∑INFILT  == \n")
 		
-			for iZ = param.N_iZ_Plot_Start: min(param.N_iZ_Plot_End, N_SoilSelect)	
+			for iZ = param.globalparam.N_iZ_Plot_Start: min(param.globalparam.N_iZ_Plot_End, N_SoilSelect)	
 				# << PLOT 1 >>
 					Title = " iZ= $(Id_Select[iZ])"
 					# Plot_∑infilt_Obs
@@ -593,13 +593,13 @@ module plot
 				Se_Ini = collect(0:0.2:0.8)
 				N_SeIni = length(Se_Ini)
 
-			N_Infilt0 = ones(Int64, min(param.N_iZ_Plot_End, N_SoilSelect))
+			N_Infilt0 = ones(Int64, min(param.globalparam.N_iZ_Plot_End, N_SoilSelect))
 
 			
-			for iZ = param.N_iZ_Plot_Start: min(param.N_iZ_Plot_End, N_SoilSelect)			
+			for iZ = param.globalparam.N_iZ_Plot_Start: min(param.globalparam.N_iZ_Plot_End, N_SoilSelect)			
 				# COMPUTING T_TransSteady				
-					T0 =  zeros(Int64, (min(param.N_iZ_Plot_End, N_SoilSelect),1)) # Not important as a start
-					∑Infilt0 = zeros(Float64, (min(param.N_iZ_Plot_End, N_SoilSelect),1)) # Not important
+					T0 =  zeros(Int64, (min(param.globalparam.N_iZ_Plot_End, N_SoilSelect),1)) # Not important as a start
+					∑Infilt0 = zeros(Float64, (min(param.globalparam.N_iZ_Plot_End, N_SoilSelect),1)) # Not important
 
 					~, T_TransSteady = bestFunc.BEST_UNIVERSAL_START(∑Infilt0, hydroInfilt, infiltOutput, infiltParam, iZ, N_Infilt0, T0; θ_Ini=hydroInfilt.θr[iZ])
 
@@ -608,17 +608,17 @@ module plot
 				# COMPUTING TIME ARRAY which is the longest at Se = 0 
 					T0 = collect(0.0:T_Max/500.0:T_Max)
 
-					N_T = Array{Int64}(undef, (param.N_iZ_Plot_End)) # Needs to be an array
+					N_T = Array{Int64}(undef, (param.globalparam.N_iZ_Plot_End)) # Needs to be an array
 					
 					N_T[iZ] = length(T0)
 
-					T = Array{Float64}(undef, (param.N_iZ_Plot_End, N_T[iZ]))
+					T = Array{Float64}(undef, (param.globalparam.N_iZ_Plot_End, N_T[iZ]))
 
 					T[iZ, 1:N_T[iZ]] = T0[1:N_T[iZ]]
 
 					# Infiltration data
-						∑Infilt_3D = Array{Float64}(undef, (param.N_iZ_Plot_End, N_T[iZ]))
-						∑Infilt_1D = Array{Float64}(undef, (param.N_iZ_Plot_End, N_T[iZ]))
+						∑Infilt_3D = Array{Float64}(undef, (param.globalparam.N_iZ_Plot_End, N_T[iZ]))
+						∑Infilt_1D = Array{Float64}(undef, (param.globalparam.N_iZ_Plot_End, N_T[iZ]))
 
 				# Atributes for plotting
 					Fig = GRUtils.gcf()
@@ -667,7 +667,7 @@ module plot
 			Kunsat_Infilt = Array{Float64}(undef, (N_Se))
 			Kunsat_Obs    = Array{Float64}(undef, (N_Se))
 
-			for iZ = param.N_iZ_Plot_Start: param.N_iZ_Plot_End	
+			for iZ = param.globalparam.N_iZ_Plot_Start: param.globalparam.N_iZ_Plot_End	
 				Ψ_θΨ_Min = 10.0 ^ -2 # [mm]
 
 				Ψ_θΨ_Max = 200000.0 * 10.0 # [mm]
@@ -758,7 +758,7 @@ module plot
 				Se_Ini = collect(0.0:0.001:0.9)
 				N_SeIni = length(Se_Ini)
 
-			for iZ = param.N_iZ_Plot_Start: param.N_iZ_Plot_End							
+			for iZ = param.globalparam.N_iZ_Plot_Start: param.globalparam.N_iZ_Plot_End							
 				Sorptivity = Array{Float64}(undef, (N_SeIni)) # When you use undef it will populate Sorptivity with any numbers
 				θ_Ini      = Array{Float64}(undef, (N_SeIni))
 

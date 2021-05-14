@@ -52,11 +52,11 @@ module hypix
 		# =============================================
 		# Loop for the different simulations loop
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		for iSim = param.hypix.iSim_Start : param.hypix.iSim_End
+		for iSim = param.hyPix.iSim_Start : param.hyPix.iSim_End
 		println("	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 		println("	=== === === START: Looping with time $iSim steps \n")
 
-			iSim_Count = iSim - param.hypix.iSim_Start + 1
+			iSim_Count = iSim - param.hyPix.iSim_Start + 1
 
 			# Reading hydraulic and veg param ~~~~~
 				hydro, hydroHorizon, optim, veg = readHypix.HYPIX_PARAM(Layer, hydro, hydroHorizon, iSim, N_iZ, veg)

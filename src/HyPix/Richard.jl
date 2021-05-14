@@ -25,7 +25,7 @@ module richard
 	
 			# ITTERATION
 			iTer = 0::Int64
-			while iTer ≤ param.hypix.N_Iter	
+			while iTer ≤ param.hyPix.N_Iter	
 				iTer += 1
 				Iter_CountTotal += 1 # Counting the iterations
 		
@@ -45,13 +45,13 @@ module richard
 					end # Residual_Max < Residual_Max_Best 	
 
 				# Did we achieve the goals
-				if Residual_Max < param.hypix.WaterBalanceResidual_Max
+				if Residual_Max < param.hyPix.WaterBalanceResidual_Max
 					break # Move out the loop
 				end  # if: Residual
 			end # while: iTer ======================
 
 			# Making sure we get the best if convergence fails
-			if iTer ≥ param.hypix.N_Iter + 1
+			if iTer ≥ param.hyPix.N_Iter + 1
 				iNonConverge += 1
 
 				# if non converge compute Q(Ψbest)
@@ -65,7 +65,7 @@ module richard
 				end
 			else
 				Flag_NoConverge = false
-			end #  iTer == param.hypix.N_Iter
+			end #  iTer == param.hyPix.N_Iter
 
 			if option.hyPix.Qbottom_Correction
 				Q[iT,N_iZ+1] = max(( - ΔSink[iT,N_iZ] - discret.ΔZ[N_iZ] * ((θ[iT,N_iZ] - θ[iT-1,N_iZ]) - hydro.So[N_iZ] * (Ψ[iT,N_iZ]- Ψ[iT-1,N_iZ]) * (θ[iT,N_iZ] / hydro.θs[N_iZ]))) / ΔT[iT] + Q[iT,N_iZ], 0.0)
@@ -167,11 +167,11 @@ module richard
 							Ψ[iT,iZ] = min(max(Ψ[iT,iZ], eps()), 10.0^7)
 							# Ψ_Max[iZ]
 
-							Ψ[iT,iZ] = param.hypix.NewtonStepWeaken * Ψ[iT,iZ] + (1.0 - param.hypix.NewtonStepWeaken) * Ψ₀
+							Ψ[iT,iZ] = param.hyPix.NewtonStepWeaken * Ψ[iT,iZ] + (1.0 - param.hyPix.NewtonStepWeaken) * Ψ₀
 					end
 
 				# # Under ralation of Ψ Averaging to help with convergence
-				# 	Ψ[iT,iZ] = param.hypix.NewtonStepWeaken * Ψ[iT,iZ] + (1.0 - param.hypix.NewtonStepWeaken) * Ψ₀
+				# 	Ψ[iT,iZ] = param.hyPix.NewtonStepWeaken * Ψ[iT,iZ] + (1.0 - param.hyPix.NewtonStepWeaken) * Ψ₀
 
 				# if isnan(Ψ[iT,iZ])		
 				# 	println(iT," , " ,Ψ[iT,:])
@@ -236,7 +236,7 @@ module richard
 				# 	Flag_ReRun = true
 				# 	Count_ReRun += 1
 
-				if ΔT[iT] / ΔT_New > param.hypix.ΔT_Rerun # <>=<>=<>=<>=<>
+				if ΔT[iT] / ΔT_New > param.hyPix.ΔT_Rerun # <>=<>=<>=<>=<>
 					ΔT[iT] = ΔT_New
 					Flag_ReRun = true
 					Count_ReRun += 1
@@ -250,7 +250,7 @@ module richard
 				Flag_ReRun = false
 				Flag_NoConverge = false
 				Count_ReRun = 0
-			end  # if: param.hypix.ΔT_Rerun
+			end  # if: param.hyPix.ΔT_Rerun
 
 			return Count_ReRun, Flag_ReRun, ΔT
 		end  # function: RERUN_HYPIX

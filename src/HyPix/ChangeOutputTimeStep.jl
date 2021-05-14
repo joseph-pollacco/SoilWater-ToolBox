@@ -30,9 +30,9 @@ module Δtchange
 		# PREPARING DATA FOR PLOTS
 			Date_Start = clim.Date[2]
 					
-			Date_Start_Calibr = DateTime(param.hypix.calibr.Year_Start, param.hypix.calibr.Month_Start, param.hypix.calibr.Day_Start, param.hypix.calibr.Hour_Start, param.hypix.calibr.Minute_Start, param.hypix.calibr.Second_Start)
+			Date_Start_Calibr = DateTime(param.hyPix.calibr.Year_Start, param.hyPix.calibr.Month_Start, param.hyPix.calibr.Day_Start, param.hyPix.calibr.Hour_Start, param.hyPix.calibr.Minute_Start, param.hyPix.calibr.Second_Start)
 				
-			Date_End_Calibr = DateTime(param.hypix.calibr.Year_End, param.hypix.calibr.Month_End, param.hypix.calibr.Day_End, param.hypix.calibr.Hour_End, param.hypix.calibr.Minute_End, param.hypix.calibr.Second_End)
+			Date_End_Calibr = DateTime(param.hyPix.calibr.Year_End, param.hyPix.calibr.Month_End, param.hyPix.calibr.Day_End, param.hyPix.calibr.Hour_End, param.hyPix.calibr.Minute_End, param.hyPix.calibr.Second_End)
 
 			ΔT_Sim = value(Date_End_Calibr - Date_Start_Calibr) / 1000
 

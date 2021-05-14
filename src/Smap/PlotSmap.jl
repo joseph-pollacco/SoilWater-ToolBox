@@ -80,7 +80,7 @@ module plotSmap
          end # if Flag_OtherData
 
 
-         for iZ = param.N_iZ_Plot_Start: min(param.N_iZ_Plot_End, N_SoilSelect)	
+         for iZ = param.globalparam.N_iZ_Plot_Start: min(param.globalparam.N_iZ_Plot_End, N_SoilSelect)	
             Ψ_θΨ_Max = maximum(Ψ_θΨ[iZ,N_θΨ[iZ]]) + 100000.0
 
             Ψ_Sim = expm1.(range(log1p(Ψ_θΨ_Min), stop=log1p(Ψ_θΨ_Max), length=N_Se)) 
@@ -230,7 +230,7 @@ module plotSmap
             # end # if Flag_OtherData
 
 
-            for iZ = param.N_iZ_Plot_Start: min(param.N_iZ_Plot_End, N_SoilSelect)	
+            for iZ = param.globalparam.N_iZ_Plot_Start: min(param.globalparam.N_iZ_Plot_End, N_SoilSelect)	
                Ψ_θΨ_Max = maximum(Ψ_θΨ[iZ,N_θΨ[iZ]]) + 100000.0
 
                Ψ_Sim = expm1.(range(log1p(Ψ_θΨ_Min), stop=log1p(Ψ_θΨ_Max), length=N_Se)) 

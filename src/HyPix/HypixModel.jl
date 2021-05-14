@@ -55,7 +55,7 @@ module hypixModel
 			end #  option.hyPix.AdaptiveTimeStep == :ΔΨ
 
 		# Water balance of residuals computed from equation
-			# WaterBalanceResidual_Max = param.hypix.ΔPr_Error * ∑Pr_Climate[clim.N_Climate] / (Z[N_iZ] * ∑T_Climate[clim.N_Climate])
+			# WaterBalanceResidual_Max = param.hyPix.ΔPr_Error * ∑Pr_Climate[clim.N_Climate] / (Z[N_iZ] * ∑T_Climate[clim.N_Climate])
 		
 		# FIRST TIME STEP
 				# INITIALIZE 

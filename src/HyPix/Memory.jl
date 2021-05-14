@@ -10,7 +10,7 @@ module memory
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	function MEMORY(calibr, clim, N_∑T_Climate::Int64, N_iZ::Int64)
 
-		N_Memory = ceil(Int, N_∑T_Climate / param.hypix.ΔT_Min) + Int(N_∑T_Climate % param.hypix.ΔT_Min + 1)
+		N_Memory = ceil(Int, N_∑T_Climate / param.hyPix.ΔT_Min) + Int(N_∑T_Climate % param.hyPix.ΔT_Min + 1)
 		
       ΔEvaporation = fill(0.0::Float64, N_Memory)
       ΔHpond       = fill(0.0::Float64, N_Memory)
@@ -37,7 +37,7 @@ module memory
       ∂R∂Ψ△    = fill(0.0::Float64, N_iZ)
       ∂R∂Ψ▽    = fill(0.0::Float64, N_iZ)
       
-      N_∑T_Plot                  = param.hypix.iSim_End - param.hypix.iSim_Start + 1
+      N_∑T_Plot                  = param.hyPix.iSim_End - param.hyPix.iSim_Start + 1
 
       iNonConverge_iSim          = fill(0  ::Int64, N_∑T_Plot)
       

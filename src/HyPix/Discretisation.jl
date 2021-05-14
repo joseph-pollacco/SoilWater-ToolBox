@@ -81,9 +81,9 @@ module discretization
 				for iLayer =1:Nlayer
 
 					if  Zlayer[iLayer] < Zroot
-						ΔZ_Max = param.hypix.ΔZrz_Max
+						ΔZ_Max = param.hyPix.ΔZrz_Max
 					else
-						ΔZ_Max = param.hypix.ΔZdeep_max
+						ΔZ_Max = param.hyPix.ΔZdeep_max
 					end
 
 					Nsplit = ceil(ΔZlayer[iLayer] / ΔZ_Max) # Number of splitting from Layer->Cell

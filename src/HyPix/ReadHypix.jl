@@ -74,7 +74,7 @@ module readHypix
 			"""Determening if multistep optimisation is performed (not the first step)
 			This is such that the optimal values of the previous optimisation step is kept in memory
 			We need to determine what next param to optimize"""
-				if Flag_Opt && (iSim ≥ param.hypix.iSim_Start + 1)
+				if Flag_Opt && (iSim ≥ param.hyPix.iSim_Start + 1)
 					Flag_MultiStepOpt = true
 				else
 					Flag_MultiStepOpt = false 
@@ -256,9 +256,9 @@ module readHypix
 			Temp, ~         = tool.readWrite.READ_HEADER_FAST(Data, Header, Temperature_Name)
 			
 			# REDUCING THE NUMBER OF SIMULATIONS SUCH THAT IT IS WITHIN THE SELECTED RANGE
-				Date_Start = DateTime(param.hypix.Year_Start, param.hypix.Month_Start, param.hypix.Day_Start, param.hypix.Hour_Start, param.hypix.Minute_Start, param.hypix.Second_Start)
+				Date_Start = DateTime(param.hyPix.Year_Start, param.hyPix.Month_Start, param.hyPix.Day_Start, param.hyPix.Hour_Start, param.hyPix.Minute_Start, param.hyPix.Second_Start)
 				
-				Date_End = DateTime(param.hypix.Year_End, param.hypix.Month_End, param.hypix.Day_End, param.hypix.Hour_End, param.hypix.Minute_End, param.hypix.Second_End)
+				Date_End = DateTime(param.hyPix.Year_End, param.hyPix.Month_End, param.hyPix.Day_End, param.hyPix.Hour_End, param.hyPix.Minute_End, param.hyPix.Second_End)
 
 			# CHECKING THAT
 				# Date_End is feasible
@@ -374,12 +374,12 @@ module readHypix
 				end #  iHeader
 
 			# REDUCING THE NUMBER OF SIMULATIONS SUCH THAT IT IS WITHIN THE SELECTED RANGE
-				Date_Start_Calibr = DateTime(param.hypix.calibr.Year_Start, param.hypix.calibr.Month_Start, param.hypix.calibr.Day_Start, param.hypix.calibr.Hour_Start, param.hypix.calibr.Minute_Start, param.hypix.calibr.Second_Start)
+				Date_Start_Calibr = DateTime(param.hyPix.calibr.Year_Start, param.hyPix.calibr.Month_Start, param.hyPix.calibr.Day_Start, param.hyPix.calibr.Hour_Start, param.hyPix.calibr.Minute_Start, param.hyPix.calibr.Second_Start)
 				
-				Date_End_Calibr = DateTime(param.hypix.calibr.Year_End, param.hypix.calibr.Month_End, param.hypix.calibr.Day_End, param.hypix.calibr.Hour_End, param.hypix.calibr.Minute_End, param.hypix.calibr.Second_End)
+				Date_End_Calibr = DateTime(param.hyPix.calibr.Year_End, param.hyPix.calibr.Month_End, param.hyPix.calibr.Day_End, param.hyPix.calibr.Hour_End, param.hyPix.calibr.Minute_End, param.hyPix.calibr.Second_End)
 
 			# ERROR CHECKING Assuring that Date_End ≤ Date_Clim_End
-				Date_Clim_End = DateTime(param.hypix.Year_End, param.hypix.Month_End, param.hypix.Day_End, param.hypix.Hour_End, param.hypix.Minute_End, param.hypix.Second_End)
+				Date_Clim_End = DateTime(param.hyPix.Year_End, param.hyPix.Month_End, param.hyPix.Day_End, param.hyPix.Hour_End, param.hyPix.Minute_End, param.hyPix.Second_End)
 
 				Date_End_Calibr = min(Date_Clim_End, Date_End_Calibr)
 

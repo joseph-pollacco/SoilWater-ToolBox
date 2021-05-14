@@ -82,7 +82,7 @@ using Suppressor
 		include("Infilt\\SorptivityNonInfinity.jl")
 		include("Hypix\\Interpolate.jl")
 		include("Hypix\\Opt\\Zobs.jl")
-		include("Hypix\\Opt\\Signature.jl")
+		# include("Hypix\\Opt\\Signature.jl")
 		include("Hypix\\Opt\\OfHypix.jl")
 		include("Hypix\\TableHypix.jl")
 		include("Hypix\\VegStruct.jl")
@@ -151,7 +151,7 @@ function START_TOOLBOX()
 				Id_Select, Id_Select_True, N_SoilSelect = reading.ID()
 
 			# Determine the soils to simulale
-				N_SoilSelect = Int(min(N_SoilSelect, param.N_iZ_Simulations))
+				N_SoilSelect = Int(min(N_SoilSelect, param.globalparam.N_iZ_Simulations))
 				Id_Select = Id_Select[1:N_SoilSelect]
 
 			# Reading bulk density
