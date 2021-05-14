@@ -14,11 +14,11 @@ module infiltInitialize
 			# CORRECTION FOR θr & θs
 				for iZ=1:N_SoilSelect
 					# θr computation
-						# if option.Psd
+						# if option.globalopt.Psd
 							hydroInfilt.θr[iZ] = psdThetar.PSD_2_θr_FUNC(∑Psd, hydroInfilt, iZ)
 						# else
 						# 	hydroInfilt.θr[iZ] = param.hydro.θr
-						# end # option.Psd
+						# end # option.globalopt.Psd
 
 					# θr < θ_Ini
 						infiltParam.θ_Ini[iZ] = max(hydroInfilt.θr[iZ] + eps(), infiltParam.θ_Ini[iZ])

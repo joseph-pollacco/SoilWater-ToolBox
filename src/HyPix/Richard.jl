@@ -55,7 +55,7 @@ module richard
 				iNonConverge += 1
 
 				# if non converge compute Q(Ψbest)
-				# if option.hypix.NoConverge_Ψbest
+				# if option.hyPix.NoConverge_Ψbest
 				# 	Flag_NoConverge = true
 				# end
 
@@ -67,7 +67,7 @@ module richard
 				Flag_NoConverge = false
 			end #  iTer == param.hypix.N_Iter
 
-			if option.hypix.Qbottom_Correction
+			if option.hyPix.Qbottom_Correction
 				Q[iT,N_iZ+1] = max(( - ΔSink[iT,N_iZ] - discret.ΔZ[N_iZ] * ((θ[iT,N_iZ] - θ[iT-1,N_iZ]) - hydro.So[N_iZ] * (Ψ[iT,N_iZ]- Ψ[iT-1,N_iZ]) * (θ[iT,N_iZ] / hydro.θs[N_iZ]))) / ΔT[iT] + Q[iT,N_iZ], 0.0)
 			end
 
@@ -93,7 +93,7 @@ module richard
 			for iZ=1:N_iZ		
 				Q, Residual, θ = residual.RESIDUAL(discret, hydro, iT, iZ, N_iZ, Q, Residual, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min)
 
-				if option.hypix.∂R∂Ψ_Numerical				
+				if option.hyPix.∂R∂Ψ_Numerical				
 					∂R∂Ψ[iZ] = residual.∂R∂Ψ_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, N_iZ, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,N_iZ)], Ψ[iT, iZ], Ψ[iT, min(iZ+1,N_iZ)], Ψ_Max)
 
 					∂R∂Ψ▽[iZ]  = residual.∂R∂Ψ▽_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, N_iZ, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,N_iZ)], Ψ[iT, iZ], Ψ[iT, min(iZ+1,N_iZ)], Ψ_Max)
@@ -102,7 +102,7 @@ module richard
 				else		
 					∂R∂Ψ[iZ], ∂R∂Ψ△[iZ], ∂R∂Ψ▽[iZ] = residual.∂RESIDUAL∂Ψ(∂K∂Ψ, discret, hydro, iT, iZ, N_iZ, ΔT, θ, Ψ)
 
-				end # if option.hypix.∂R∂Ψ_Numerical
+				end # if option.hyPix.∂R∂Ψ_Numerical
 
 			end #for iZ= 1:N_iZ
 
@@ -124,14 +124,14 @@ module richard
 
 				# Does not take into consideration the last cell which has a perfect mass balance
 				for iZ=1:N_iZ
-					if option.hypix.NormMin == :Norm
+					if option.hyPix.NormMin == :Norm
 						Residual_Norm += (Residual[iZ] / (ΔT[iT] * discret.ΔZ[iZ])) ^ 2
 					else
 						Residual_Max = max( Residual_Max, abs(Residual[iZ]) / (ΔT[iT] * discret.ΔZ[iZ]) ) 
 					end
 				end # for: iZ=N_iZ
 
-				if option.hypix.NormMin == :Norm
+				if option.hyPix.NormMin == :Norm
 					Residual_Max = √(Residual_Norm / N_iZ)
 				end
 			
@@ -222,7 +222,7 @@ module richard
 		function RERUN_HYPIX(Count_ReRun::Int64, discret, Flag_NoConverge::Bool, hydro, iT::Int64, N_iZ::Int64, Q, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, θ, Ψ)
 			# Rerun if updated ΔT is smaller compared to previously Ψ
 
-			if option.hypix.Flag_ReRun	&& Count_ReRun ≤ 3	
+			if option.hyPix.Flag_ReRun	&& Count_ReRun ≤ 3	
 
 				for iZ= 1:N_iZ
 					Q[iT,iZ] = flux.Q!(discret, hydro, iZ, iT, N_iZ, ΔHpond, ΔPr, ΔT, Ψ[iT,iZ], Ψ[iT,max(iZ-1,1)])

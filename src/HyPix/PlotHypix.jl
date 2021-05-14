@@ -26,7 +26,7 @@ module plotHypix
 
 			# PLOTTING GRAPHs
 				#  Plotting Pr and Pet
-				if option.hypix.Plot_Climate
+				if option.hyPix.Plot_Climate
 					Plot_Pr = PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], ΔPr_Plot[1:N_∑T_Plot].*cst.Mm_2_Cm, style="ybar,fill=blue, blue", mark="none", legendentry=L"$ Pr_{Through} \ [cm \ day^{-1}] $")
 
 					Plot_Pet = PGFPlots.Plots.Linear(∑T_Plot[2:N_∑T_Plot], ΔPet_Plot[2:N_∑T_Plot], mark="none", style=" smooth, red, very thick", legendentry= L"$ Pet \ [mm \ day^{-1}] $")
@@ -42,10 +42,10 @@ module plotHypix
 					end # Flag_Plot_Pond	
 
 					push!(Plot_TimeSeries, PGFPlots.Axis(Plot_Climate, style="width=20cm, height=8cm", xlabel=L"$\ Time \ [Day]$", ylabel=L"$Pr \ [cm \ day^{-1}]  \ \ Pet \ [mm \ day^{-1}]$", title=path.SiteName_Hypix, xmax=∑T_Plot[N_∑T_Plot], ymin=0.0, legendStyle ="{at={(0.0,-0.25)}, anchor=south west, legend columns=4}"))
-				end # if: option.hypix.Plot_Climate
+				end # if: option.hyPix.Plot_Climate
 					
 				# PLOT Θ
-				if option.hypix.Plot_θ
+				if option.hyPix.Plot_θ
 					# Observation θplot obs
 						Plot_θobs = map(1:calibr.Ndepth) do iZobs
 							Label_Obs = "Obs=" * string((calibr.Z[iZobs])) * "mm"
@@ -71,10 +71,10 @@ module plotHypix
 
 					push!(Plot_TimeSeries, PGFPlots.Axis(Ploting_θ, style="width=20cm, height=8cm", xlabel=L"$\ Time \ [Day]$", ylabel=L"$\theta \ [mm^3 \ mm^{-3}]$", xmax=∑T_Plot[N_∑T_Plot], legendStyle ="{at={(0.0,-0.3)}, anchor=south west, legend columns=5}"))
 					#
-				end # if: option.hypix.Plot_θ
+				end # if: option.hyPix.Plot_θ
 
 				# PLOTTING GRAPH WATER BALANCE
-				if option.hypix.Plot_WaterBalance
+				if option.hyPix.Plot_WaterBalance
 					Plot_Wb = PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], ∑WaterBalance_η_Plot[1:N_∑T_Plot], style="smooth, red, very thick", mark="none", legendentry=L"$∑WaterBalance_η$")
 
 					# Plot_Line = PGFPlots.Plots.Linear(x->1, (0, ∑T_Plot[N_∑T_Plot]), xbins=10, style="blue, dashed")
@@ -86,7 +86,7 @@ module plotHypix
 
 
 				# PLOTTING ΔT
-				if option.hypix.Plot_ΔT
+				if option.hyPix.Plot_ΔT
 					Plot_ΔT = PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], ΔT_Plot[1:N_∑T_Plot], style="smooth, cyan, very thick", mark="none", legendentry=L"$ \Delta T $")
 
 					Ploting_ΔT = [Plot_ΔT]
@@ -96,7 +96,7 @@ module plotHypix
 
 				
 				# PLOTTING GRAPH Ψplot
-				if option.hypix.Plot_Ψ
+				if option.hyPix.Plot_Ψ
 						Plot_Ψhypix = map(1:calibr.Ndepth) do iZobs
 							Label_Sim = "HyPix=" * string( (discret.Znode[calibr.iZobs[iZobs]])) * "mm"
 
@@ -113,11 +113,11 @@ module plotHypix
 
 						push!(Plot_TimeSeries, PGFPlots.Axis(Ploting_Ψ, style="width=20cm, height=8cm", xlabel=L"$\ Time \ [Day]$", ylabel=L"$\Psi \ [cm]$", xmax=∑T_Plot[N_∑T_Plot], ymode="log", legendStyle ="{at={(0.0,-0.3)}, anchor=south west, legend columns=5}"))
 
-				end # if option.hypix.Plot_Ψ
+				end # if option.hyPix.Plot_Ψ
 
 
 				# PLOTTING GRAPH FLUX
-				if option.hypix.Plot_Flux
+				if option.hyPix.Plot_Flux
 					Plot_Qhypix = map(1:calibr.Ndepth) do iZobs
 						Label_Sim = "HyPix=" * string( (discret.Znode[calibr.iZobs[iZobs]])) * "mm"
 
@@ -136,7 +136,7 @@ module plotHypix
 
 					push!(Plot_TimeSeries, PGFPlots.Axis(Ploting_Q, style="width=20cm, height=8cm", xlabel=L"$\ Time \ [Day]$", ylabel=L"$\Delta Q \ [mm \ day^{-1}]$", xmax=∑T_Plot[N_∑T_Plot], legendStyle ="{at={(0.0,-0.3)}, anchor=south west, legend columns=6}"))
 
-				end # if option.hypix.Plot_Flux
+				end # if option.hyPix.Plot_Flux
 
 			Path = path.Hypix_calibr * "2_" * string(iSim) * ".svg"	
 			PGFPlots.save(Path, Plot_TimeSeries) 
@@ -409,7 +409,7 @@ module plotHypix
 
 				# Plot Climate	
 				iSubplot = 0
-				if option.hypix.Plot_Climate
+				if option.hyPix.Plot_Climate
 					iSubplot += 1		
 
 					Plot_Climate = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑T_Plot], -ΔFlux_Plot[1:N_∑T_Plot, N_iZ+1], label=L"$\Delta Q$", line=(:solid, 1), linecolour=:red, fillcolor=:darkred, fill=(0,:darkred))
@@ -421,7 +421,7 @@ module plotHypix
 					Plot_Climate = Plots.plot!(Plot, clim.Date[i∑T_CalibrStart_Day:clim.N_Climate], clim.Pr_Through[i∑T_CalibrStart_Day:clim.N_Climate], color=:cyan, line =(:sticks, :solid, 4), colorbar=false, label=L"$\Delta Pr_{through}$")
 	
 					Plot_Climate = Plots.plot!(Plot, subplot=iSubplot, ylabel=L"$Daily \ Simulation \ [mm]$", title=path.SiteName_Hypix, xtickfont = (0.01, :white), xrotation=rad2deg(pi/2))
-				end # if: option.hypix.Plot_Climate
+				end # if: option.hyPix.Plot_Climate
 
 				# PLOT EVAPOYTRANSPIRATION
 					iSubplot += 1	
@@ -437,7 +437,7 @@ module plotHypix
 					Plot_Climate = Plots.plot!(Plot, subplot=iSubplot, ylabel=L"$Daily \ Simulation \ [mm]$", xtickfont = (0.01, :white), xrotation=rad2deg(pi/2))
 
 				# PLOT Θ
-				if option.hypix.Plot_θ
+				if option.hyPix.Plot_θ
 					iSubplot += 1
 
 					Style_Hypix = [:red, :darkviolet, :orange, :teal, :blue]
@@ -463,7 +463,7 @@ module plotHypix
 
 					Plot = Plots.plot(Plot, Plot_θ, Plot_Climate, xmin=∑T_Date_Plot[1], xmax=∑T_Date_Plot[N_∑T_Plot], ymin=0.0, xtick=(DateTick,DateTick2), xrotation=rad2deg(pi/4), framestyle=:box, grid=true)
 
-				end # if: option.hypix.Plot_θ
+				end # if: option.hyPix.Plot_θ
 				
 				Plots.savefig(Plot, Path)
 				println("			 ~ ", path.Hypix_calibr, "~")

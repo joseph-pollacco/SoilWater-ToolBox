@@ -10,13 +10,13 @@ module rootwateruptake
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 function ROOT_WATER_UPTAKE(CropCoeficient, iT::Int64, N_iRoot::Int64, veg, ΔPet_Transp, ΔRootDensity, ΔSink, Ψ)
 
-		if option.hypix.RootWaterUptakeComp
+		if option.hyPix.RootWaterUptakeComp
 			for iZ = 1:N_iRoot
 				RootCompensation = rootwateruptake.rootCompensation.ROOT_COMPENSATION(iT, iZ, N_iRoot, veg, ΔRootDensity, Ψ)
 
 				ΔSink[iT,iZ] = CropCoeficient * ΔPet_Transp * rootwateruptake.stressReduction.WATER_STRESS_FUNCTION(iT, iZ, veg, Ψ) * RootCompensation
 			end # for
-		else # option.hypix.RootWaterUptakeComp
+		else # option.hyPix.RootWaterUptakeComp
 
 			for iZ = 1:N_iRoot
 				ΔSink[iT,iZ] = CropCoeficient * ΔPet_Transp * ΔRootDensity[iZ] * rootwateruptake.stressReduction.WATER_STRESS_FUNCTION(iT, iZ, veg, Ψ)

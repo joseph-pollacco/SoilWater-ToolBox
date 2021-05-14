@@ -6,7 +6,7 @@ module path
 
 	# NAME OF FILE
 		SiteName_Soilhyro = "VCSNSmap"  # "SFF"; "PAF"; K10KPA; Smap; Smap20210226; SmapSouthland2; CantyLysimSmap; VCSNSmap; "WaikLysim"; "Convert; "SmapNZAllSoilsSmap20210326"; "Smap20210226"
-		SiteName_Hypix = "JULES" # TAUPO OTOROHANGA WAIHOU WAITOA HAMILTON JULES;
+		SiteName_Hypix = "WAITOA" # TAUPO OTOROHANGA WAIHOU WAITOA HAMILTON JULES;
 		const Model_Name ="A"
 		const Select = "SELECT_1" # Select data to model
 		
@@ -49,9 +49,9 @@ module path
          Input_OfStep   = "Wof_Steps.csv"
 			
 			
-			if option.hypix.θΨKmodel == :Kosugi
+			if option.hyPix.θΨKmodel == :Kosugi
 				Hydraulic = Hydraulic_Kg
-			else option.hypix.hypix.θΨKmodel == :vanGenuchten
+			else option.hyPix.hypix.θΨKmodel == :vanGenuchten
 				Hydraulic = Hydraulic_Vang
 			end
 
@@ -130,7 +130,7 @@ module path
 				FileHypix_Input = Home * "//INPUT//DataHyPix//" * SiteName_Hypix * "//" * SiteName_Hypix * "_" 
 
 					# Name varies depending if hourly or daily
-					Climate        = FileHypix_Input * option.hypix.ClimateDataTimestep * "_" * Climate
+					Climate        = FileHypix_Input * option.hyPix.ClimateDataTimestep * "_" * Climate
 					Discretization = FileHypix_Input * Discretization
 					Hypix_Param    = FileHypix_Input * HyPix_Param
 					Hydraulic      = FileHypix_Input * Hydraulic

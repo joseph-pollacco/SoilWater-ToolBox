@@ -14,23 +14,23 @@ module hypixModel
 
 		# Vegetation parameters which vary with time
 			for iT = 1:clim.N_Climate
-				if option.hypix.LookupTable_Lai
+				if option.hyPix.LookupTable_Lai
 					Laiᵀ[iT]  = (veg.Lai_Max - veg.Lai_Min) * Laiᵀ_η[iT] + veg.Lai_Min
 				else
 					Laiᵀ[iT] = veg.Lai
 				end
-				if option.hypix.LookUpTable_CropCoeficient
+				if option.hyPix.LookUpTable_CropCoeficient
 					CropCoeficientᵀ[iT]  = (veg.CropCoeficient_Max - veg.CropCoeficient_Min) * CropCoeficientᵀ_η[iT]  + veg.CropCoeficient_Min
 				else
 					CropCoeficientᵀ[iT]  = veg.CropCoeficient
 				end
 			end # for
 
-		if option.hypix.RainfallInterception
+		if option.hyPix.RainfallInterception
 			∑Pet_Climate, ∑Pr_Climate, clim = interception.RAINFALL_INTERCEPTION_START(∑Pet_Climate, ∑Pr_Climate, clim, Laiᵀ, veg)
 		end
 		
-		if option.hypix.RootWaterUptake
+		if option.hyPix.RootWaterUptake
 			# Last cell of rootzone
 			N_iRoot = rootwateruptake.rootDistribution.N_IROOT(N_iZ, veg, Z)
 
@@ -38,11 +38,11 @@ module hypixModel
 		else
 			ΔRootDensity = 0.0
 			N_iRoot = 1
-		end # option.hypix.RootWaterUptake
+		end # option.hyPix.RootWaterUptake
 
-		# if option.hypix.Evaporation 
+		# if option.hyPix.Evaporation 
 		# 	N_iEvapo = evapo.N_IEVAPO(N_iZ, veg, Z) # Depth where evaporation can occure
-		# end # option.hypix.Evaporation
+		# end # option.hyPix.Evaporation
 
 		# Minimum or maximum Ψ values this is such that ∂θ∂Ψ ≠ 0 which influences the Newton-Raphson method to be removed
 			for iZ=1:N_iZ
@@ -50,9 +50,9 @@ module hypixModel
 			end  # for iZ=1:N_iZ
 
 		# IF AdaptiveTimeStep
-			if option.hypix.AdaptiveTimeStep == :ΔΨ
+			if option.hyPix.AdaptiveTimeStep == :ΔΨ
 				ΔΨmax = timeStep.ΔΨMAX(ΔΨmax, hydro, N_iZ)
-			end #  option.hypix.AdaptiveTimeStep == :ΔΨ
+			end #  option.hyPix.AdaptiveTimeStep == :ΔΨ
 
 		# Water balance of residuals computed from equation
 			# WaterBalanceResidual_Max = param.hypix.ΔPr_Error * ∑Pr_Climate[clim.N_Climate] / (Z[N_iZ] * ∑T_Climate[clim.N_Climate])
@@ -103,11 +103,11 @@ module hypixModel
 				∑Pr[iT], ΔPr[iT], iT_Pr = interpolate.∑_2_Δ(∑Pr[iT-1], ∑Pr_Climate, ∑T, ∑T_Climate, iT_Pr, clim.N_Climate, Flag_ReRun, iT)
 
 			# POTENTIAL EVAPOTRANSPIRATION
-				if option.hypix.RootWaterUptake || option.hypix.Evaporation
+				if option.hyPix.RootWaterUptake || option.hyPix.Evaporation
 					∑Pet[iT], ΔPet[iT], iT_Pet = interpolate.∑_2_Δ(∑Pet[iT-1], ∑Pet_Climate, ∑T, ∑T_Climate, iT_Pet, clim.N_Climate, Flag_ReRun, iT)
-				end # option.hypix.RootWaterUptake || option.hypix.Evaporation
+				end # option.hyPix.RootWaterUptake || option.hyPix.Evaporation
 
-				if option.hypix.Evaporation						
+				if option.hyPix.Evaporation						
 					ΔPet_Evap, ΔPet_Transp = pet.BEER_LAMBERT_LAW(iT, Laiᵀ[iT_Pr-1], ΔPet, veg)
 				else
 					ΔPet_Transp = ΔPet[iT]
@@ -115,19 +115,19 @@ module hypixModel
 				end
 				
 			# ROOT WATER UPTAKE MODEL
-				if option.hypix.RootWaterUptake
+				if option.hyPix.RootWaterUptake
 					ΔSink = rootwateruptake.ROOT_WATER_UPTAKE( CropCoeficientᵀ[iT_Pr-1], iT, N_iRoot, veg, ΔPet_Transp, ΔRootDensity, ΔSink, Ψ)					
-				end # option.hypix.RootWaterUptake
+				end # option.hyPix.RootWaterUptake
 
 			# EVAPORATION FROM THE SURFACE WITH HIGHEST Se
-				if option.hypix.Evaporation
+				if option.hyPix.Evaporation
 					ΔEvaporation = evapo.EVAPORATION!(hydro, iT, ΔEvaporation, ΔPet_Evap, θ)
 					
 					ΔSink[iT,1] += ΔEvaporation[iT]
-				end # option.hypix.Evaporation
+				end # option.hyPix.Evaporation
 
 			# Checking that not too much water is removed from the layer
-				if option.hypix.RootWaterUptake || option.hypix.Evaporation
+				if option.hyPix.RootWaterUptake || option.hyPix.Evaporation
 					for iZ=1:N_iRoot
 						ΔSink[iT,iZ] = min(ΔSink[iT,iZ], discret.ΔZ[iZ] * (θ[iT-1,iZ] - hydro.θr[iZ]))
 					end

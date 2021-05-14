@@ -76,14 +76,14 @@ module hypixOpt
 			ParamOpt_Max₂ = copy(optim.ParamOpt_Max)
 
 			# Making sure that for constrained optimisation Ψm is between 0 & 1
-			if (option.hypix.σ_2_Ψm==:Constrained) && ("Ψm" ∈ optim.ParamOpt)
+			if (option.hyPix.σ_2_Ψm==:Constrained) && ("Ψm" ∈ optim.ParamOpt)
 				iψm = findfirst(isequal("Ψm"), optim.ParamOpt)[1]
 
 				ParamOpt_Min₂[iψm] = 0.0
 				ParamOpt_Max₂[iψm] = 1.0
-			end # option.hypix.σ_2_Ψm==:Constrained
+			end # option.hyPix.σ_2_Ψm==:Constrained
 
-			if  ("θs" ∈ optim.ParamOpt) && (option.hypix.θs_Opt ≠ :No)
+			if  ("θs" ∈ optim.ParamOpt) && (option.hyPix.θs_Opt ≠ :No)
 				iθs = findfirst(isequal("θs"), optim.ParamOpt)[1]
 
 				ParamOpt_Min₂[iθs] = 0.0
@@ -140,7 +140,7 @@ module hypixOpt
 			# ==================== SPECIAL CASE ====================
 
 			# RELATIONSHIP BETWEEN σ AND Ψm
-			if (option.hypix.σ_2_Ψm ≠ :No) && ("Ψm" ∈ optim.ParamOpt)
+			if (option.hyPix.σ_2_Ψm ≠ :No) && ("Ψm" ∈ optim.ParamOpt)
 		
 				# <>=<>=<>=<>=<>=<> Horizons wanting to optimize the selected hydraulic parameter
 					iParam = findfirst(isequal("σ"), optim.ParamOpt)[1]
@@ -148,16 +148,16 @@ module hypixOpt
 					iHorizon_Start = optim.ParamOpt_HorizonEq[iParam][1]
 					iHorizon_End   = optim.ParamOpt_HorizonEq[iParam][2]
 
-					hydroHorizon = hydroRelation.FUNCTION_σ_2_Ψm_SOFTWARE(hydroHorizon, iHorizon_Start, option.hypix)
+					hydroHorizon = hydroRelation.FUNCTION_σ_2_Ψm_SOFTWARE(hydroHorizon, iHorizon_Start, option.hyPix)
 
 				# Updating the horizons which are optimised simultaneously
 					for iZ = iHorizon_Start:iHorizon_End
 						hydroHorizon.Ψm[iZ] = hydroHorizon.Ψm[iHorizon_Start]
 					end  # for iZ
-			end # option.hypix.σ_2_Ψm ≠ :No
+			end # option.hyPix.σ_2_Ψm ≠ :No
 
 			#  <>=<>=<>=<>=<>=<> Relationship between σ and θr
-				if option.hypix.σ_2_θr && ("θr" ∉ optim.ParamOpt) && ("σ" ∈ optim.ParamOpt)
+				if option.hyPix.σ_2_θr && ("θr" ∉ optim.ParamOpt) && ("σ" ∈ optim.ParamOpt)
 					iParam = findfirst(isequal("σ"), optim.ParamOpt)[1]
 
 					iHorizon_Start = optim.ParamOpt_HorizonEq[iParam][1]
@@ -170,11 +170,11 @@ module hypixOpt
 				end
 
 			#  <>=<>=<>=<>=<>=<> Assuring the limits of 
-				if  ("θs" ∈ optim.ParamOpt) && (option.hypix.θs_Opt == :θs_Opt)
+				if  ("θs" ∈ optim.ParamOpt) && (option.hyPix.θs_Opt == :θs_Opt)
 					for iZ = iHorizon_Start:iHorizon_End
 						hydroHorizon.θs[iZ] = tool.norm.∇NORM_2_PARAMETER(hydroHorizon.θs[iZ], hydroHorizon.θs_Min[iZ], hydroHorizon.θs_Max[iZ])
 					end # iZ
-				end # if  ("θs" ∈ optim.ParamOpt) && (option.hypix.θs_Opt == :θs_Opt)
+				end # if  ("θs" ∈ optim.ParamOpt) && (option.hyPix.θs_Opt == :θs_Opt)
 		
 
 			# Converting θsMacMat_ƞ -> θsMacMat

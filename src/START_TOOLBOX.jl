@@ -9,9 +9,9 @@ using Suppressor
 @suppress begin
 	include("Option.jl")
 	# Install packages to run program
-	if option.DownloadPackage
+	if option.globalopt.DownloadPackage
 		include("Packages.jl")
-	end # option.DownloadPackage
+	end # option.globalopt.DownloadPackage
 	include("Path.jl")
 	include("Cst.jl")
 	include("Param.jl")
@@ -21,26 +21,26 @@ using Suppressor
 	include("Hydro\\HydroRelation.jl")
 	include("Hydro\\WaterRetentionCurve.jl")
 	include("Optim\\Optimize.jl")
-	if !(option.Hypix)
+	if !(option.globalopt.Hypix)
 		include("Read.jl")
 		include("Hydro\\TotalPorosity.jl")
 	end
 	include("Checking.jl")
 	include("Hydro\\Kunsat.jl")
 	include("Stats.jl")
-	if !(option.Hypix)
+	if !(option.globalopt.Hypix)
 		include("Table.jl")
 		include("Psd\\PsdThetar.jl")
 	end
 
-	if option.Smap
+	if option.globalopt.Smap
 		include("Smap\\StoneSmap.jl")
 		include("Smap\\ReadSmap.jl")
 		include("Smap\\PlotSmap.jl")
 		include("Smap\\TableSmap.jl")
 	end
 
-	if option.θΨ ≠ :No && option.θΨ ≠ :File &&  !(option.Hypix)
+	if option.globalopt.θΨ ≠ :No && option.globalopt.θΨ ≠ :File &&  !(option.globalopt.Hypix)
 		# include("HydroLab\\HydrolabInitialize.jl")	
 		include("HydroLab\\ObjectiveFunction_Lab.jl")
 		# include("HydroLab\\START_Lab.jl")
@@ -48,7 +48,7 @@ using Suppressor
 		include("Hypix\\Other\\PlotOther.jl")
 	end
 	
-	if option.Infilt
+	if option.globalopt.Infilt
 		if option.infilt.SortivityVersion == :NonInfinity
 			include("Infilt\\SorptivityNonInfinity.jl")
 		elseif option.infilt.SortivityVersion == :Traditional
@@ -62,21 +62,22 @@ using Suppressor
 		include("Infilt\\InfiltStruct.jl")
 		include("Infilt\\InfiltInitialize.jl")
 		include("Infilt\\START_Infilt.jl")
-	end # option.Infilt
+	end # option.globalopt.Infilt
 	
-	if option.Psd
+	if option.globalopt.Psd
 		include("Psd\\PsdStruct.jl")
 		include("Psd\\PsdInitialize.jl")
 		include("Psd\\PsdFunc.jl")
 		include("Psd\\PsdOpt.jl")
 		include("Psd\\START_PSD.jl")
-	end # option.Psd
+	end # option.globalopt.Psd
 
-	if option.Plot && !(option.Hypix)
+	if option.globalopt.Plot && !(option.globalopt.Hypix)
 		include("Plot.jl")
-	end # option.Plot
+	end # option.globalopt.Plot
 
-	if option.Hypix
+	println(option.globalopt.Hypix)
+	if option.globalopt.Hypix
 		include("Hydro\\ΨminΨmax.jl")
 		include("Infilt\\SorptivityNonInfinity.jl")
 		include("Hypix\\Interpolate.jl")
@@ -104,14 +105,14 @@ using Suppressor
 		include("Hypix\\PriorProcess.jl")
 		include("Hypix\\HypixModel.jl")
 		include("Hypix\\Opt\\HypixOpt.jl")
-		if option.Plot
+		include("Hypix\\Hypix_Start.jl")
+		if option.globalopt.Plot
 			include("Hypix\\Other\\PlotOther.jl")
 			include("Hypix\\PlotHypix.jl")
 		end
-		include("Hypix\\Hypix_Start.jl")
-	end  # if: option.Hypix
+	end  # if: option.globalopt.Hypix
 
-	if option.Jules
+	if option.globalopt.Jules
 		include("Hypix\\VegStruct.jl")
 		include("Hypix\\Discretisation.jl")
 		include("Jules\\Jules.jl")
@@ -126,7 +127,7 @@ end # Suppressor
 function START_TOOLBOX()
 
 	# READING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		if option.HydroTranslateModel
+		if option.globalopt.HydroTranslateModel
 
 			# Creating 
 			hydroTranslate = hydroStruct.HYDROSTRUCT(1000)
@@ -145,7 +146,7 @@ function START_TOOLBOX()
 			# Creating an Id output required by the program
 				table.TABLE_ID(N_SoilSelect::Int64, path.Id_Select)
 			
-		elseif !(option.Hypix)
+		elseif !(option.globalopt.Hypix)
 			# Selecting soils of interest
 				Id_Select, Id_Select_True, N_SoilSelect = reading.ID()
 
@@ -154,12 +155,12 @@ function START_TOOLBOX()
 				Id_Select = Id_Select[1:N_SoilSelect]
 
 			# Reading bulk density
-				if option.BulkDensity
+				if option.globalopt.BulkDensity
 					RockW, ρ_Rock, ρbSoil, ρp_Fine = reading.BULKDENSITY(Id_Select, N_SoilSelect)
 				end
 
 			# Reading θ(Ψ)
-				if option.θΨ ≠ :No # <> = <> = <> = <> = <> = <>
+				if option.globalopt.θΨ ≠ :No # <> = <> = <> = <> = <> = <>
 					θ_θΨ, Ψ_θΨ, N_θΨ = reading.θΨ(Id_Select, N_SoilSelect)
 				else
 					θ_θΨ = [] 
@@ -177,24 +178,24 @@ function START_TOOLBOX()
 				end # option.hydro.KunsatΨ
 
 			# Reading Particle Size distribution
-				if option.Psd
+				if option.globalopt.Psd
 					Rpart, ∑Psd, N_Psd = reading.PSD(Id_Select, N_SoilSelect)
 				else
 					∑Psd = zeros(Float64, N_SoilSelect, 1)
 					Rpart = zeros(Float64, N_SoilSelect, 1)
 					N_Psd = zeros(Float64, N_SoilSelect)	
-				end # option.Psd
+				end # option.globalopt.Psd
 		
 			# Reading infiltration	
-				if option.Infilt # <>=<>=<>=<>=<>
+				if option.globalopt.Infilt # <>=<>=<>=<>=<>
 					Tinfilt, ∑Infilt_Obs, N_Infilt, infiltParam  = reading.INFILTRATION(Id_Select, N_SoilSelect)
-				end # option.Infilt
+				end # option.globalopt.Infilt
 
 			# Reading Smap data
-				if option.Smap
+				if option.globalopt.Smap
 					smap = readSmap.SMAP(Id_Select_True, N_SoilSelect)
 					rfWetable = readSmap.ROCKFRAGMENT_WETTABLE()
-				end # option.Smap
+				end # option.globalopt.Smap
 
 			else # TODO: Needs to be removed
 				N_SoilSelect = 1
@@ -203,7 +204,7 @@ function START_TOOLBOX()
 			
 
 		# END READING ................................................................
-	if option.Smap
+	if option.globalopt.Smap
 		if option.smap.CorrectStone
 			θ_θΨ = stoneCorrection.STONECORRECTION(N_SoilSelect, N_θΨ, smap, θ_θΨ, Ψ_θΨ)
 		end
@@ -216,13 +217,13 @@ function START_TOOLBOX()
 		end
 	end
 
-	if option.Jules
+	if option.globalopt.Jules
 		SoilName_2_SiteName = jules.START_JULES()
 		smap2hypix.SMAP_2_HYPIX(SoilName_2_SiteName)
 		
 	end  # if: option.START_JULES()
 
-	if option.θΨ ≠ :No # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	if option.globalopt.θΨ ≠ :No # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	println("\n === START: DERIVING HYDRO PARAMETERS  === \n")
 	println("         ===== Model Name= $(path.Model_Name) =====")
 		
@@ -235,7 +236,7 @@ function START_TOOLBOX()
 
 			checking.CHECKING(optim)
 
-			if option.Smap
+			if option.globalopt.Smap
 				hydroParam, optim = stoneCorrection.STONECORRECTION_HYDRO(hydro, N_SoilSelect, optim, smap)
 			end
 
@@ -244,12 +245,12 @@ function START_TOOLBOX()
 			# plotOther.σ_ψM_SCEARIO()
 
 		# If the hydraulic parameters were already derived than get the data from file instead or rerunning the model	
-		if option.θΨ == :File
+		if option.globalopt.θΨ == :File
 			println(println("    ~ HydroLab HydroParam reading from file ~"))
 			hydro = reading.HYDROPARAM(Id_Select, N_SoilSelect, hydro)
 		else
 			# Total Porosity= Φ
-				if option.BulkDensity
+				if option.globalopt.BulkDensity
 					hydro.Φ = Φ.ρB_2_Φ(N_SoilSelect, RockW, ρ_Rock, ρbSoil, ρp_Fine)
 				end
 
@@ -266,7 +267,7 @@ function START_TOOLBOX()
 						hydro.Ψga[iZ] = wrc.GREEN_AMPT(iZ, hydro)
 					end
 				end #  option.hydro.HydroModel
-		end # option.θΨ == :File
+		end # option.globalopt.θΨ == :File
 
 
 		# Deriving Kunsat from θ(Ψ)
@@ -275,7 +276,7 @@ function START_TOOLBOX()
 			if option.hydro.HydroModel==:Kosugi 
 			println("	=== START: Dering Ks from lab θ(Ψ) data ===")
 				for iZ=1:N_SoilSelect
-					if option.Smap
+					if option.globalopt.Smap
 						if smap.IsTopsoil[iZ] == 1
 							TopsoilSubsoil="Topsoil"
 						else
@@ -299,7 +300,7 @@ function START_TOOLBOX()
 	end
 
 
-	if option.Psd  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	if option.globalopt.Psd  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	println("=== START: PSD MODEL  ===")
 		# Structure of hydroPsd
 			hydroPsd = hydroStruct.HYDROSTRUCT(N_SoilSelect)
@@ -307,7 +308,7 @@ function START_TOOLBOX()
 			hydroPsd, optim_Psd = reading.HYDRO_PARAM(hydroPsd, N_SoilSelect, path.HydroParam_ThetaH)
 
 		# Total Porosity= Φ
-		if option.BulkDensity
+		if option.globalopt.BulkDensity
 			hydroPsd.Φ = Φ.ρB_2_Φ(N_SoilSelect, RockW, ρ_Rock, ρbSoil, ρp_Fine)
 		end
 
@@ -330,10 +331,10 @@ function START_TOOLBOX()
 		hydroPsd = hydroStruct.HYDROSTRUCT(N_SoilSelect)
 		N_Psd = zeros(Float64, N_SoilSelect)
 
-	end # option.Psd ...............................................................................
+	end # option.globalopt.Psd ...............................................................................
 
 	
-	if option.Infilt  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	if option.globalopt.Infilt  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	println("=== START: INFILTRATION  ===")
 		# Structure of hydroInfilt
 			hydroInfilt = hydroStruct.HYDROSTRUCT(N_SoilSelect)
@@ -349,17 +350,17 @@ function START_TOOLBOX()
 	println("=== END  : INFILTRATION  === \n")
 	else
 		hydroInfilt = []
-	end # option.Infilt
+	end # option.globalopt.Infilt
 
-	if option.Hypix
+	if option.globalopt.Hypix
 		hypix.HYPIX_START()
-	end # option.Hypix
+	end # option.globalopt.Hypix
 
 
 	# TABLES OUTPUT ======================================================================================
-		if option.θΨ ≠ :No && option.θΨ ≠ :File # <>=<>=<>=<>=<>
+		if option.globalopt.θΨ ≠ :No && option.globalopt.θΨ ≠ :File # <>=<>=<>=<>=<>
 
-			if !(option.Smap)
+			if !(option.globalopt.Smap)
 				table.hydroLab.θΨK(hydro, hydroOther, Id_Select[1:N_SoilSelect], KunsatModel_Lab, N_SoilSelect)
 			else
 				tableSmap.θΨK(hydro, hydroOther, Id_Select[1:N_SoilSelect], KunsatModel_Lab, N_SoilSelect, smap)
@@ -379,9 +380,9 @@ function START_TOOLBOX()
 				end
 			end
 
-		end # option.θΨ 
+		end # option.globalopt.θΨ 
 
-		if option.Psd # <>=<>=<>=<>=<>
+		if option.globalopt.Psd # <>=<>=<>=<>=<>
 			table.psd.PSD(Id_Select[1:N_SoilSelect], N_SoilSelect, paramPsd)
 
 			if option.psd.HydroParam  && option.psd.HydroParam
@@ -391,16 +392,16 @@ function START_TOOLBOX()
 			if option.psd.Table_Psd_θΨ_θ
 				table.psd.PSD_θΨ_θ(Id_Select, N_SoilSelect, hydroPsd)
 			end
-		end # option.Psd
+		end # option.globalopt.Psd
 
-		if option.Infilt # <>=<>=<>=<>=<>
+		if option.globalopt.Infilt # <>=<>=<>=<>=<>
 			table.infilt.HYDRO_INFILT(hydroInfilt, Id_Select, KunsatModel_Infilt, N_SoilSelect)
 
 			table.infilt.INFILT(Id_Select, N_SoilSelect, infiltOutput)
 		end
 
 	# PRINT OUTPUT ======================================================================================
-	if option.Plot && !option.Hypix
+	if option.globalopt.Plot && !option.globalopt.Hypix
 	println("		=== START: PLOTTING  ===")
 	
 	# Changing values of param, N_iZ_Plot_End (ERROR: cannot assign variables in other modules)
@@ -410,48 +411,48 @@ function START_TOOLBOX()
 			plotSmap.PLOT_KUNSAT(hydro, N_SoilSelect, smap; N_Se= 1000)
 		end
 
-		if option.θΨ ≠ :No && option.hydro.Plot_θΨ # <>=<>=<>=<>=<>
+		if option.globalopt.θΨ ≠ :No && option.hydro.Plot_θΨ # <>=<>=<>=<>=<>
 			# plot.lab.σ_Ψm(hydro)
-			if option.Smap
+			if option.globalopt.Smap
 				plotSmap.makie.HYDROPARAM(Ψ_θΨ, Ψ_KΨ, θ_θΨ, N_θΨ, N_SoilSelect, N_KΨ, K_KΨ, Id_Select, hydro, KunsatModel_Lab; smap=smap)
 			else
 				plot.lab.makie.HYDROPARAM(Ψ_θΨ, Ψ_KΨ, θ_θΨ, N_θΨ, N_SoilSelect, N_KΨ, K_KΨ, Id_Select, hydro, KunsatModel_Lab)
 			end	
-		end # option.θΨ
-		if  option.θΨ ≠ :No && option.hydro.Plot_σ_Ψm && option.hydro.HydroModel == :Kosugi
+		end # option.globalopt.θΨ
+		if  option.globalopt.θΨ ≠ :No && option.hydro.Plot_σ_Ψm && option.hydro.HydroModel == :Kosugi
 			plot.lab.σ_Ψm(hydro)
 		end
-		if option.Psd && option.psd.Plot_θr # <>=<>=<>=<>=<>
+		if option.globalopt.Psd && option.psd.Plot_θr # <>=<>=<>=<>=<>
 			plot.psd.PLOT_θr(∑Psd, N_SoilSelect, hydro, hydroPsd)
 		end
-		if option.Psd && option.psd.Plot_IMP_Model # <>=<>=<>=<>=<>
+		if option.globalopt.Psd && option.psd.Plot_IMP_Model # <>=<>=<>=<>=<>
 			plot.psd.PLOT_IMP_MODEL(Id_Select, Rpart, N_Psd, ∑Psd, Psd, N_SoilSelect, hydro, paramPsd) 
 		end
-		if  option.Psd && option.psd.Plot_Psd_θΨ && !option.psd.HydroParam
+		if  option.globalopt.Psd && option.psd.Plot_Psd_θΨ && !option.psd.HydroParam
 			println("			~ PSD WARNING Sorry cannot plot Plot_Psd_θΨ as option.psd.HydroParam==false ~")
 		end
-		if option.Psd && option.psd.Plot_Psd_θΨ && option.psd.HydroParam # <>=<>=<>=<>=<>
+		if option.globalopt.Psd && option.psd.Plot_Psd_θΨ && option.psd.HydroParam # <>=<>=<>=<>=<>
 			plot.psd.PLOT_PSD_θΨ(Ψ_θΨ, Ψ_Rpart, θ_θΨ, θ_Rpart, N_θΨ, N_SoilSelect, N_Psd, Id_Select, hydroPsd, hydro)
 		end
-		if option.Infilt && option.infilt.Plot_∑Infilt  # <>=<>=<>=<>=<>
+		if option.globalopt.Infilt && option.infilt.Plot_∑Infilt  # <>=<>=<>=<>=<>
 			plot.infilt.PLOT_∑INFILT(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt_3D, ∑Infilt_1D, infiltOutput)
 		end
-		if option.Infilt && option.infilt.Plot_SeIni_Range # <>=<>=<>=<>=<>
+		if option.globalopt.Infilt && option.infilt.Plot_SeIni_Range # <>=<>=<>=<>=<>
 			plot.infilt.PLOT_∑INFILT_SEINI(hydroInfilt, Id_Select, infiltOutput, infiltParam, N_SoilSelect)
 		end
-		if  option.Infilt && option.θΨ ≠ :No && option.infilt.Plot_Sorptivity_SeIni # <>=<>=<>=<>=<>
+		if  option.globalopt.Infilt && option.globalopt.θΨ ≠ :No && option.infilt.Plot_Sorptivity_SeIni # <>=<>=<>=<>=<>
 			plot.infilt.PLOT_SORPTIVITY_SEINI(hydro, Id_Select, N_SoilSelect) 
 		end
-		if option.Infilt && option.infilt.Plot_θΨ
-			if option.θΨ ≠ :No
+		if option.globalopt.Infilt && option.infilt.Plot_θΨ
+			if option.globalopt.θΨ ≠ :No
 				plot.infilt.PLOT_∑INFILT_θΨ(hydroInfilt, Id_Select, N_SoilSelect; hydro=hydro)
 			else
 				plot.infilt.PLOT_∑INFILT_θΨ(hydroInfilt, Id_Select, N_SoilSelect)
-			end # option.θΨ
-		end # option.Infilt
+			end # option.globalopt.θΨ
+		end # option.globalopt.Infilt
 
 	println("=== END: PLOTTING  === \n")
-	end # if option.Plot
+	end # if option.globalopt.Plot
 
 	# Playing sounds...
 		println("\007")

@@ -13,7 +13,7 @@ module interception
 
 		@fastmath @inbounds for iT = 2:clim.N_Climate
 			# Maximum water storage of the vegetation
-				if option.hypix.Lai_2_SintMax
+				if option.hyPix.Lai_2_SintMax
 					Sint_Sat = LAI_2_SINTMAX(iT, Laiᵀ_Norm, veg)
 				else
 					Sint_Sat = veg.Sint_Sat

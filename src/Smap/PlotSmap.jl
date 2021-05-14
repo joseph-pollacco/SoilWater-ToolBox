@@ -358,7 +358,7 @@ module plotSmap
                AbstractPlotting.save(Path, Fig)
      
                # Displaying figure in VScode
-               if option.Plot_Show
+               if option.globalopt.Plot_Show
                   display(Fig)
                end
 

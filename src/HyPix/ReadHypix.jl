@@ -180,17 +180,17 @@ module readHypix
 			NparamOpt = length(ParamOpt)
 
 			# CHECKING FOR UNCONSISTENCY WITH OPTIONS	
-			if Flag_Opt && option.hypix.σ_2_Ψm ≠ :No && "Ψm" ∈ ParamOpt
+			if Flag_Opt && option.hyPix.σ_2_Ψm ≠ :No && "Ψm" ∈ ParamOpt
 				iψm = findfirst(isequal("Ψm"), ParamOpt)[1]
 
-				if option.hypix.σ_2_Ψm==:UniqueRelationship && "Ψm" ∈ ParamOpt
-					error( "**** HyPix Error: combination of options which are not possible (option.hypix.σ_2_Ψm==:UniqueRelationship) && (Optimise=Ψm)!")
+				if option.hyPix.σ_2_Ψm==:UniqueRelationship && "Ψm" ∈ ParamOpt
+					error( "**** HyPix Error: combination of options which are not possible (option.hyPix.σ_2_Ψm==:UniqueRelationship) && (Optimise=Ψm)!")
 
-				elseif option.hypix.σ_2_Ψm==:Constrained && !("Ψm" ∈ ParamOpt)
-					error("*** HyPix Error: combination of options which are not possible (option.hypix.σ_2_Ψm==:Constrained) && (not Optimising=Ψm)!")
+				elseif option.hyPix.σ_2_Ψm==:Constrained && !("Ψm" ∈ ParamOpt)
+					error("*** HyPix Error: combination of options which are not possible (option.hyPix.σ_2_Ψm==:Constrained) && (not Optimising=Ψm)!")
 
-				elseif option.hypix.σ_2_Ψm==:Constrained && ParamOpt_LogTransform[iψm]==1
-					error("*** option.hypix.σ_2_Ψm==:Constrained CANNOT log transforme Ψm") 
+				elseif option.hyPix.σ_2_Ψm==:Constrained && ParamOpt_LogTransform[iψm]==1
+					error("*** option.hyPix.σ_2_Ψm==:Constrained CANNOT log transforme Ψm") 
 				end
 			end # Flag_Opt
 
@@ -227,16 +227,16 @@ module readHypix
 		end
 
 		function CLIMATE()
-			if option.hypix.ClimateDataTimestep == "Daily"
+			if option.hyPix.ClimateDataTimestep == "Daily"
 				Pr_Name          = "Rain(mm)"
 				Pet_Name         = "PET(mm)"
 				Temperature_Name = "Tmax(C)" # Maximum temperature which is not correct
 
-			elseif option.hypix.ClimateDataTimestep == "Hourly"
+			elseif option.hyPix.ClimateDataTimestep == "Hourly"
 				Pr_Name          = "Pr_mm"
 				Pet_Name         = "Pet_mm"
 				Temperature_Name = "Temp_c"
-			end #  option.hypix.ClimateDataTimestep
+			end #  option.hyPix.ClimateDataTimestep
 
 			# Read data
 				Data = DelimitedFiles.readdlm(path.Climate, ',')
@@ -403,7 +403,7 @@ module readHypix
 				N_iT = iCount # New number of data
 
 			# REDUCING THE AMOUNT OF DATA TO HOURLY
-				if option.hypix.θobs_Hourly
+				if option.hyPix.θobs_Hourly
 					True = falses(N_iT)
 					iCount = 0 
 					for iT=1:N_iT
@@ -433,7 +433,7 @@ module readHypix
 	#		Parameters as a function of time
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function LOOKUPTABLE_LAI(clim, veg)	
-			if option.hypix.LookupTable_Lai == true
+			if option.hyPix.LookupTable_Lai == true
 				LookUpTable_Lai, ~   = tool.readWrite.READ_HEADER(path.LookUpTable_Lai, "Lai")
 			end
 			
@@ -441,7 +441,7 @@ module readHypix
 			Laiᵀ_Norm = Array{Float64}(undef, clim.N_Climate) 
 			for Date in clim.Date
 				Month = month(Date)
-				if option.hypix.LookupTable_Lai == true
+				if option.hyPix.LookupTable_Lai == true
 					Laiᵀ_Norm[i] = LookUpTable_Lai[Month]
 				else
 					Laiᵀ_Norm[i] = veg.Lai
@@ -454,7 +454,7 @@ module readHypix
 
 
 		function LOOKUPTABLE_CROPCOEFICIENT(clim, veg)
-			if option.hypix.LookUpTable_CropCoeficient == true
+			if option.hyPix.LookUpTable_CropCoeficient == true
 				LookUpTable_CropCoeficient, ~   = tool.readWrite.READ_HEADER(path.LookUpTable_CropCoeficient, "CropCoeficient")
 			end
 			
@@ -462,7 +462,7 @@ module readHypix
 			CropCoeficientᵀ_Norm = Array{Float64}(undef, clim.N_Climate) 
 			for Date in clim.Date
 				Month = month(Date)
-				if option.hypix.LookUpTable_CropCoeficient == true
+				if option.hyPix.LookUpTable_CropCoeficient == true
 					CropCoeficientᵀ_Norm[i] = LookUpTable_CropCoeficient[Month]
 				else
 					CropCoeficientᵀ_Norm[i] = veg.CropCoeficient

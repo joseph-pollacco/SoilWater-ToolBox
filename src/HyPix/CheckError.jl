@@ -23,11 +23,11 @@ module checkerror
 			CHECK_IFOPEN(path.Table_Se)
 
 		# CHECKING IF THE OPTIONS ARE VALID	
-			if option.hypix.θΨKmodel ≠ :Kosugi && option.hypix.θΨKmodel ≠ :vanGenuchten
+			if option.hyPix.θΨKmodel ≠ :Kosugi && option.hyPix.θΨKmodel ≠ :vanGenuchten
 				error("\n Hypix error: θΨKmodel option = $θΨKmodel not yet supported. θΨKmodel must = either [vanGenuchten] or [Kosugi]")
 			end
 
-			if option.hypix.BottomBoundary ≠ :Free && option.hypix.BottomBoundary ≠ :Pressure
+			if option.hyPix.BottomBoundary ≠ :Free && option.hyPix.BottomBoundary ≠ :Pressure
 				error("\n Hypix error: BottomBoundary option = $BottomBoundary not yet supported. BottomBoundary must = either [Free] or [Pressure]")
 			end
 
@@ -40,21 +40,21 @@ module checkerror
 			end
 
 		# CHECKING HYDRO PARAMETERS
-			if option.hypix.θΨKmodel == :Kosugi
+			if option.hyPix.θΨKmodel == :Kosugi
 				for iHorizon in 1:N_iHorizon
 					if hydroHorizon.θs[iHorizon] <  hydroHorizon.θsMacMat[iHorizon]
 						error("\n Hypix error: at iHorizon = $iHorizon θs must be ≥ θsMacMat : $(path.Hydraulic)")
 					end
 				end # for iHorizon in 1:N_iHorizon
-			end # option.hypix.θΨKmodel
+			end # option.hyPix.θΨKmodel
 		
 		# CHECKING THE ROOT DENSITY PARAMETERS
-			if option.hypix.RootWaterUptake
+			if option.hyPix.RootWaterUptake
 				CHECK_ROOTDISTRIBUTION(veg, N_iRoot, Z)
 			end
 
 		# CHECKING STARTING & ENDING DATES OF PLOTS 
-			if option.Plot
+			if option.globalopt.Plot
 				CHECK_DATES_PLOTS(clim, param)
 			end
 

@@ -25,12 +25,12 @@ module hypix
 			∑Pet_Climate, ∑Pr_Climate, ∑T_Climate, N_∑T_Climate, Temp = priorprocess.CLIMATE(clim)
 
 		# calibr data  ~~~~~
-			if option.hypix.calibr
+			if option.hyPix.calibr
 				calibr = readHypix.TIME_SERIES()
 				
 				# Deriving calibr.∑T and Cells for which calibr are measured
 				calibr = zobs.ZOBS(calibr, clim, discret, Z)
-			end #  option.hypix.calibr
+			end #  option.hyPix.calibr
 
 			∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑∑ΔSink, ∑Pet, ∑Pr, ∑T, ∑ΔQ_Bot, CropCoeficientᵀ, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, iNonConverge_iSim, Laiᵀ, N_Memory, Q, Residual, RmseBest, SwcRoots, WofBest, ΔEvaporation, ΔHpond, ΔΨmax, ΔPet, ΔPr, ΔRunTimeHypix, ΔSink, ΔT, ΔT_Average, θ, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest = memory.MEMORY(calibr, clim, N_∑T_Climate, N_iZ)
 		
@@ -77,7 +77,7 @@ module hypix
 			∑∑WaterBalance, ∑WaterBalance_η, ∑ΔSink, i∑T_CalibrStart, ΔStorage = waterBalance.WATERBALANCE(∑T, calibr, discret, hydro, N_iRoot, N_iT, N_iZ, Q, ΔSink, ΔT, θ, Ψ)
 
 			# SIGNATURE
-			if option.hypix.Signature_Run
+			if option.hyPix.Signature_Run
 				Signature_Deficit_Obs, Signature_Max_Obs, Signature_Saturated_Obs, Signature_Senescence_Obs, Signature_Deficit_Sim, Signature_Max_Sim, Signature_Saturated_Sim, Signature_Senescence_Sim = signature.SIGNATURE(∑T[1:N_iT], calibr, hydroHorizon, N_iRoot, N_iT, N_iZ, veg, ΔRootDensity, Ψ[1:N_iT,1:N_iZ])
 			end 
 
@@ -92,7 +92,7 @@ module hypix
 				∑Pet_Net = sum(clim.Pet[i∑T_CalibrStart_Day:clim.N_Climate])
 				
 				# In optim.Flag_Opt it is already computed
-				if option.hypix.calibr
+				if option.hyPix.calibr
 					RmseBest[iSim_Count] = ofHypix.θof.RMSE_θ(∑T, calibr, N_iT, N_iZ, θ, θSim)
 				end
 
@@ -147,7 +147,7 @@ module hypix
 					println("			ΔT_HyPix 			= ", ceil(Int, ΔRunTimeHypix[iSim_Count]) , "  [seconds]")			
 					println("			Efficiency 			= ", Efficiency[iSim_Count], "  [iTer day-1], \n")
 
-					if option.hypix.calibr
+					if option.hyPix.calibr
 						println("			RmseBest 			= ", round(RmseBest[iSim_Count], digits=5), "  [mm3 mm-3]")
 					end
 				println("		=== === END: summary \n")
@@ -160,40 +160,40 @@ module hypix
 				println("		=== === END: increasing time step === ===")
 
 				
-			if option.Plot
+			if option.globalopt.Plot
 			println("		=== === START: Plotting === ===")
 
-				if option.hypix.Plot_Other
+				if option.hyPix.Plot_Other
 					# plotOther.ΨMINΨMAX(hydro)
 					plotOther.WOF_STEPS()
 					# plotOther.SE_Ψ_CONSTRAINED(hydro)
 					# plotOther.PLOT_σ_2_θr(hydro)
 					# plotOther.PLOT_θΨ_Δθ(hydro)
-				end # option.hypix.Plot_Other
+				end # option.hyPix.Plot_Other
 				
-				if option.hypix.Plot_Hypix
+				if option.hyPix.Plot_Hypix
 
 					plotHypix.plots.TIMESERIES(∑T_Date_Plot, ∑T_Plot, calibr, discret, Flag_Plot_Pond, iSim, N_∑T_Plot, N_iZ, ΔEvaporation_Plot, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, θ_Plot, θobs_Plot, clim, i∑T_CalibrStart_Day)
 					
 					# plotHypix.TIME_SERIES(∑T_Plot, ∑WaterBalance_η_Plot, calibr, discret, Flag_Plot_Pond, iSim, N_∑T_Plot, N_iZ, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, ΔT_Plot, θ_Plot, θobs_Plot, Ψ_Plot)
 				end
-				if option.hypix.Plot_θΨK
+				if option.hyPix.Plot_θΨK
 					plotHypix.θΨK(hydroHorizon, N_iHorizon, iSim)
 				end
-				if option.hypix.Plot_Vegetation && option.hypix.RootWaterUptake
+				if option.hyPix.Plot_Vegetation && option.hyPix.RootWaterUptake
 					plotHypix.VEG_FUNCTIONS(discret, iSim, N_iRoot, veg, Z, ΔRootDensity)
 				end
-				if option.hypix.Plot_Interception
+				if option.hyPix.Plot_Interception
 					plotHypix.plots.RAINFALL_INTERCEPTION(clim, i∑T_CalibrStart_Day, iSim)
 				end
-				if  option.hypix.Plot_Sorptivity
+				if  option.hyPix.Plot_Sorptivity
 					plotHypix.plots.PLOT_SORPTIVITY(iSim, hydro)
 				end
 			println("		=== === END: Plotting === === \n")
-			end # if option.hypix.Plotting
+			end # if option.hyPix.Plotting
 
 			
-			if option.hypix.Table
+			if option.hyPix.Table
 			println("		=== === START: Table === ===")
 
 				# Writing values of hydraulic parameters
@@ -204,36 +204,36 @@ module hypix
 
 				tableHypix.PERFORMANCE(∑∑ΔSink, ∑ΔQ_Bot, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, iNonConverge_iSim, iSim, RmseBest, SwcRoots, WofBest, ΔRunTimeHypix, ΔT_Average)		
 
-				if option.hypix.Table_Discretization
+				if option.hyPix.Table_Discretization
 					tableHypix.DISCRETIZATION(discret, N_iZ, Z[1:N_iZ])
 				end
-				if  option.hypix.Table_TimeSeries
+				if  option.hyPix.Table_TimeSeries
 					tableHypix.TIME_SERIES(∑T[1:N_iT], ΔT[1:N_iT], ∑Pr[1:N_iT], ΔPr[1:N_iT], ΔHpond[1:N_iT], ΔT[1:N_iT].*Q[1:N_iT,1], ∑WaterBalance_η[1:N_iT], iSim)
 				end
-				if option.hypix.Table_TimeSeriesDaily
+				if option.hyPix.Table_TimeSeriesDaily
 					tableHypix.TIME_SERIES_DAILY(∑T_Plot[1:N_∑T_Plot], ∑WaterBalance_η_Plot[1:N_∑T_Plot], Date_Plot[1:N_∑T_Plot], iSim, N_∑T_Plot, ΔEvaporation_Plot[1:N_∑T_Plot], ΔFlux_Plot[1:N_∑T_Plot, N_iZ+1], ΔPet_Plot[1:N_∑T_Plot], ΔPond_Plot[1:N_∑T_Plot], ΔPr_Plot[1:N_∑T_Plot], ΔSink_Plot[1:N_∑T_Plot])
 				end
-				if option.hypix.Table_θ
+				if option.hyPix.Table_θ
 					tableHypix.θ(∑T[1:N_iT], θ[1:N_iT,1:N_iZ], discret.Znode[1:N_iZ], iSim)
 				end
-				if option.hypix.Table_Ψ
+				if option.hyPix.Table_Ψ
 					tableHypix.Ψ(∑T[1:N_iT], Ψ[1:N_iT,1:N_iZ], discret.Znode[1:N_iZ], iSim)
 				end
-				if option.hypix.Table_Q
+				if option.hyPix.Table_Q
 					tableHypix.Q(∑T[1:N_iT], Q[1:N_iT,1:N_iZ+1], Z[N_iZ], discret.Znode[1:N_iZ], iSim)
 				end
-				if option.hypix.Signature_Run
+				if option.hyPix.Signature_Run
 					tableHypix.SIGNATURE(iSim, Signature_Deficit_Obs, Signature_Max_Obs, Signature_Saturated_Obs, Signature_Senescence_Obs, Signature_Deficit_Sim, Signature_Max_Sim, Signature_Saturated_Sim, Signature_Senescence_Sim)
 				end
-				if option.hypix.Tabule_θΨ
+				if option.hyPix.Tabule_θΨ
 					tableHypix.θΨ(hydroHorizon, iSim, N_iHorizon)
 					tableHypix.KΨ(hydroHorizon, iSim, N_iHorizon)
 				end
-				if option.hypix.Table_Climate
+				if option.hyPix.Table_Climate
 					tableHypix.DAILY_CLIMATE(∑T_Climate, clim, iSim)
 				end
 			println("		=== === END: Table === === \n")
-			end  # if option.hypix.Table
+			end  # if option.hyPix.Table
 
 	println("	=== === === END  : Looping with time ")
 	println("	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n \n")

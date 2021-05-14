@@ -30,7 +30,7 @@ module priorprocess
 				∑T_Climate[iT] = value(clim.Date[iT] - Start_Date) / 1000
 
 				# Cumulative
-				if !(option.hypix.RainfallInterception)
+				if !(option.hyPix.RainfallInterception)
 					∑Pr_Climate[iT] = ∑Pr_Climate[iT-1] + clim.Pr[iT]  # Cumulate Pr
 					∑Pet_Climate[iT] = ∑Pet_Climate[iT-1] + clim.Pet[iT] # Cumulative Potential evaporation
 				end
