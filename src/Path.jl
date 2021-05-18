@@ -5,7 +5,7 @@ module path
 	import ..option
 
 	# NAME OF FILE
-		SiteName_Soilhyro = "VCSNSmap"  # "SFF"; "PAF"; K10KPA; Smap; Smap20210226; SmapSouthland2; CantyLysimSmap; VCSNSmap; "WaikLysim"; "Convert; "SmapNZAllSoilsSmap20210326"; "Smap20210226"
+		SiteName_Soilhyro = "VCSNSmap2"  # "SFF"; "PAF"; K10KPA; Smap; Smap20210226; SmapSouthland2; CantyLysimSmap; VCSNSmap; "WaikLysim"; "Convert; "SmapNZAllSoilsSmap20210326"; "Smap20210226"
 		SiteName_Hypix = "JULES" # TAUPO OTOROHANGA WAIHOU WAITOA HAMILTON JULES;
 		const Model_Name ="A"
 		const Select = "SELECT_1" # Select data to model

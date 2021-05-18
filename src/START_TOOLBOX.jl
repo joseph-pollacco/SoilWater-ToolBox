@@ -206,6 +206,7 @@ function START_TOOLBOX()
 		# END READING ................................................................
 	if option.globalopt.Smap
 		if option.smap.CorrectStone
+			println("=\n  				~~~~ Stone correction ~~~~~ \n")
 			θ_θΨ = stoneCorrection.STONECORRECTION(N_SoilSelect, N_θΨ, smap, θ_θΨ, Ψ_θΨ)
 		end
 		if option.smap.CorrectStoneWetability

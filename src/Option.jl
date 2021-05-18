@@ -3,7 +3,6 @@
 # ===========================================================
 	mutable struct OPTION
 		globalopt 		# Structure
-		rockfragment 	# Structure
 		smap 				# Structure
 		hydro 			# Structure
 		psd 				# Structure
@@ -24,11 +23,11 @@
 			Plot
 			Plot_Show
 		end
-		mutable struct ROCKFRAGMENT
-			rockFragment
-			RockInjected
-			RockWettable
-		end
+		# mutable struct ROCKFRAGMENT
+		# 	rockFragment
+		# 	RockInjected
+		# 	RockWettable
+		# end
 		mutable struct SMAP
 			CorrectStone
 			CorrectStoneWetability
@@ -140,13 +139,13 @@
 		#General
          HydroTranslateModel = false # <true>; <false>
          Hypix               = false # <true>; <false>
-         Smap                = false # <true> ; <false>
+         Smap                = true # <true> ; <false>
          BulkDensity         = false # <true> <false>
-         θΨ                  = :No # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:No> not available
+         θΨ                  = :true # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:No> not available
          Psd                 = false	# <true> Derive θ(Ψ) AND/OR hydraulic parameters from Psd; <false>
          Infilt              = false # <true> Derive θ(Ψ) AND/OR hydraulic parameters from Infiltration data; <false>
          Temporary           = false # <true>; <false>                
-         Jules               = true # <true>; <false>
+         Jules               = false # <true>; <false>
 		
 		# Download packages
 			DownloadPackage = false # <true> For first time user download packages required to run program; <false>*
@@ -161,12 +160,12 @@
 	# =============================================================
 	#	   ROCK FRAGMENT OPTIONS
 	# =============================================================
-		#Rocks options
-			RockFragment = true # <true> make correction for rock fragment; <false> no correction for rock fragment
-			RockInjected = true # <true> rocks are injected in to the fine soils; <false> rocks are included in the bulk BulkDensity_Infilt
-			RockWettable = false # <true> rocks are wettable; <false> 
+		# Rocks options
+		# 	RockFragment = true # <true> make correction for rock fragment; <false> no correction for rock fragment
+		# 	RockInjected = true # <true> rocks are injected in to the fine soils; <false> rocks are included in the bulk BulkDensity_Infilt
+		# 	RockWettable = true # <true> rocks are wettable; <false> 
 
-		rockfragment = ROCKFRAGMENT(RockFragment, RockInjected, RockWettable)
+		# rockfragment = ROCKFRAGMENT(RockFragment, RockInjected, RockWettable)
 		
 
 	# =============================================================
@@ -174,8 +173,8 @@
 	# =============================================================
 		# Smap-Hydro options
 			CorrectStone = true # <true> or <false>
-			CorrectStoneWetability = true # <true> or <false>
-			UsePointKosugiBimodal = true # <true> or <false>
+			CorrectStoneWetability = false # <true> or <false>
+			UsePointKosugiBimodal = false # <true> or <false>
 			CombineData = true # <true> or <false>
 			Plot_Kunsat = false  # <true> or <false>
 
@@ -197,9 +196,9 @@
 			Ks_MinMaxFromData = false # <false> feasible range from GUI, <true> feasible range derive from data
 				
 		# HAVE WE Kunsat(ψ)DATA
-			KunsatΨ         = true #  <true>* Optimize hydraulic parameters from θ(Ψ) & K(Ψ); <false>
-			KsOpt = :Opt # <:Opt> Optimize Ks (require KunsatΨ=true); <:Data> derived from Max K(Ψ)
-			Kunsat_JustRun = false
+			KunsatΨ         = false #  <true>* Optimize hydraulic parameters from θ(Ψ) & K(Ψ); <false>
+				KsOpt = :Opt # <:Opt> Optimize Ks (require KunsatΨ=true); <:Data> derived from Max K(Ψ)
+				Kunsat_JustRun = false
 
 		# PLOTTING
 			Plot_θΨ = true
@@ -346,6 +345,6 @@
 	# =============================================================
 	#		GLOBAL OPTION
 	# ===========================================================
-		option = OPTION(globalopt, rockfragment, smap, hydro, psd, infilt, hyPix)
+		option = OPTION(globalopt, smap, hydro, psd, infilt, hyPix)
 
 # end OPTION
