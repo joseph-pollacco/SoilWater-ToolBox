@@ -2,7 +2,7 @@
 #		module: jules joseph2
 # =============================================================
 module jules
-   import ..path, ..option, ..tool
+   import ..option, ..param, ..path, ..tool, ..θini
    import DelimitedFiles, Dates, CSV, Tables, NCDatasets, NetCDF
 
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -66,14 +66,21 @@ module jules
 
                Path_θ_Output = Path_Output * "//" * iSiteName * "_Soilmoisture.csv"
 
-               READ_WRITE_θobs(Path_θ_Input, Path_θ_Output)
+               θᵢₙᵢ = READ_WRITE_θobs(iSiteName, Path_θ_Input, Path_θ_Output)
 
             # Reading Jules simulated θ
-               Path_θjules_Input = Path_θJules * "Sta_" * string(SiteName_2_SiteNumber[iSiteName]) * "/"
+               # Path_θjules_Input = Path_θJules * "Sta_" * string(SiteName_2_SiteNumber[iSiteName]) * "/"
 
-               Path_θjules_Output =  Path_Output * "//" * iSiteName * "_Soilmoisture_Jules.csv"
+               # Path_θjules_Output =  Path_Output * "//" * iSiteName * "_Soilmoisture_Jules.csv"
 
-               READ_WRITE_θJULES(Path_θjules_Input, Path_θjules_Output, Options_θjules)
+               # READ_WRITE_θJULES(Path_θjules_Input, Path_θjules_Output, Options_θjules)
+
+            # Writting θini
+
+            # Path = Path_Output * SoilName_2_SiteName[SoilName_Layer[iLayer]] * "//" * SoilName_2_SiteName[SoilName_Layer[iLayer]] * "_Discretisation.csv"
+
+            #    Path_Output_θini =  Path_Output * "//" * iSiteName * "_ThetaIni.csv"
+
          end
 
    return SoilName_2_SiteName
@@ -83,54 +90,49 @@ module jules
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    #		FUNCTION : READ_CLIMATE
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   function READ_WRIITE_CLIMATE(Path_Input, Path_Output)
+      function READ_WRIITE_CLIMATE(Path_Input, Path_Output)
 
-      # Read data
-         Data = DelimitedFiles.readdlm(Path_Input, ',')
-      # Read header
-         Header = Data[1,1:end]
-      # Remove first READ_ROW_SELECT
-         Data = Data[2:end,begin:end]
-      # Reading
-         Date, N = tool.readWrite.READ_HEADER_FAST(Data, Header, "OBS_DATE")
-         Rain, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "rain_fill")
-         Pet, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "pet_fao56")
+         # Read data
+            Data = DelimitedFiles.readdlm(Path_Input, ',')
+         # Read header
+            Header = Data[1,1:end]
+         # Remove first READ_ROW_SELECT
+            Data = Data[2:end,begin:end]
+         # Reading
+            Date, N = tool.readWrite.READ_HEADER_FAST(Data, Header, "OBS_DATE")
+            Rain, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "rain_fill")
+            Pet, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "pet_fao56")
 
-         Year  = Dates.year.(Dates.DateTime.(Date))
-         Month = Dates.month.(Dates.DateTime.(Date))
-         Day   = Dates.day.(Dates.DateTime.(Date))
-         Hour  = fill(9::Int64, N)
-         Minute = fill(0::Int64, N)
-         Second = fill(0::Int64, N)
-         
-         Header = ["Year";"Month";"Day";"Hour";"Minute";"Second";"PET(mm)";"Rain(mm)"]
+            Year  = Dates.year.(Dates.DateTime.(Date))
+            Month = Dates.month.(Dates.DateTime.(Date))
+            Day   = Dates.day.(Dates.DateTime.(Date))
+            Hour  = fill(9::Int64, N)
+            Minute = fill(0::Int64, N)
+            Second = fill(0::Int64, N)
+            
+            Header = ["Year";"Month";"Day";"Hour";"Minute";"Second";"PET(mm)";"Rain(mm)"]
 
-         Output = Tables.table( [Year Month Day Hour Minute Second Pet Rain])
+            Output = Tables.table( [Year Month Day Hour Minute Second Pet Rain])
 
-         CSV.write(Path_Output, Output, header=Header)	
-         
-      return nothing
-      end  # function: READ_CLIMATE
+            CSV.write(Path_Output, Output, header=Header)	
+            
+         return nothing
+         end  # function: READ_CLIMATE
 
 
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    #		FUNCTION : READ_WRITE_θobs
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      function READ_WRITE_θobs(Path_θ_Input, Path_θ_Output)
+      function READ_WRITE_θobs(iSiteName, Path_θ_Input, Path_θ_Output)
 
          Months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
          # Getting θ observed
           θdata = Float64.(NetCDF.open(Path_θ_Input, "obsm"))
 
+
           θdata =  θdata ./ 100.0
           N = length(θdata)
-
-         #  for i=1:N
-         #    if θdata[i] == -999
-         #       θdata[i] = NaN
-         #    end
-         #  end
 
          # Getting the inititilal starting date in the format 1 January 2008   
             Data = NetCDF.open(Path_θ_Input)
@@ -164,19 +166,40 @@ module jules
                   Start_Date = Dates.Date(Year,Month,Day)
 
                 # Need to get dates by adding 1 day
-                  Years = Array{Int64}(undef, N)
-                  Months = Array{Int64}(undef, N)
-                  Days = Array{Int64}(undef, N)
-                  Hours  = fill(9::Int64, N)
+                  Years   = Array{Int64}(undef, N)
+                  Months  = Array{Int64}(undef, N)
+                  Days    = Array{Int64}(undef, N)
+                  Hours   = fill(9::Int64, N)
                   Minutes = fill(0::Int64, N)
                   Seconds = fill(0::Int64, N)
-                  for iDay = 1:N
-                     Add_Date     = Start_Date + Dates.Day(iDay)
 
+                  Add_Date = Start_Date
+                  iFirst_NoData = false
+                  for iDay = 1:N
+                     if θdata[iDay] < 0 && iFirst_NoData == false
+                        println("AA")
+                     end
                      Years[iDay]  = Dates.year(Add_Date)
                      Months[iDay] = Dates.month(Add_Date)
                      Days[iDay]   = Dates.day(Add_Date)
+
+                     Add_Date     = Start_Date + Dates.Day(iDay)
                   end
+
+                  # Searching for θᵢₙᵢ
+                  θᵢₙᵢ = 0.0
+                  println(θdata[1]," , " , θdata[N])
+                  for iDay = 1:N
+                     param.hyPix.Year_Start = 2010
+                     if Years[iDay]==param.hyPix.Year_Start && Months[iDay]==param.hyPix.Month_Start && Days[iDay]==param.hyPix.Day_Start
+                        θᵢₙᵢ = θdata[iDay]
+                     break
+                     end
+                  end
+
+                  if θᵢₙᵢ == 0.0
+                     error("HyPix error for $iSiteName, date= $(param.hyPix.Year_Start) \\ $(param.hyPix.Month_Start) \\ $(param.hyPix.Day_Start) cannot find θobs or θobs is negative")
+                  end 
 
             # Writing to file
                Header = ["Year";"Month";"Day";"Hour";"Minute";"Second";"Z=200mm"]
@@ -185,7 +208,7 @@ module jules
          
                CSV.write(Path_θ_Output, Output, header=Header)	   
 
-      return nothing
+      return θᵢₙᵢ
       end  # function: READ_WRITE_θobs
 
 
@@ -312,6 +335,31 @@ module jules
 
       return nothing
       end  # function: READ_WRITE_θobs
+
+      # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      #		FUNCTION : COMPUTE_θINI
+      # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         function COMPUTE_θINI(hydroSmap, N_iZ, θini, Path_Output_θini)
+
+            # Computting θini
+               θ₁ = fill(0.0::Float64, N_iZ)
+               θ₁[1] = max(min(θini, hydroSmap.θs[1]), hydroSmap.θr[1])
+               for iZ=1:N_iZ
+                  θ₁ = θini.θINI_TOP(hydroSmap, N_iZ, θ₁)
+               end
+
+            # Computing 1..N_iZ for output file
+               iZ = collect(1:1:N_iZ)
+
+            # Writing to file
+               Header = ["iZ";"Z";"θini"]
+
+               Output = Tables.table( [iZ Z θ₁])
+         
+               CSV.write(Path_Output_θini, Output, header=Header)	   
+   
+         return nothing
+         end  # function: COMPUTE_θINI
       
       
    end  # module: jules

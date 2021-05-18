@@ -82,6 +82,7 @@ using Suppressor
 		include("Infilt\\SorptivityNonInfinity.jl")
 		include("Hypix\\Interpolate.jl")
 		include("Hypix\\Opt\\Zobs.jl")
+		include("HyPix\\ThetaIni.jl")
 		# include("Hypix\\Opt\\Signature.jl")
 		include("Hypix\\Opt\\OfHypix.jl")
 		include("Hypix\\TableHypix.jl")
@@ -116,6 +117,7 @@ using Suppressor
 		include("Hypix\\VegStruct.jl")
 		include("Hypix\\Discretisation.jl")
 		include("Jules\\Jules.jl")
+		include("HyPix\\ThetaIni.jl")
 		include("Smap/Smap2Hypix.jl")		
 	end  # if: option.Temporay
 end # Suppressor 

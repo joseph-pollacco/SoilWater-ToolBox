@@ -8,7 +8,7 @@ module wrc
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : θ_2_Se
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function θ_2_Se(θ₂, iZ::Int64, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ])
+		function θ_2_Se(θ₂, iZ::Int64, hydroParam; θs=hydroParam.θs[iZ], θr = hydroParam.θr[iZ])
 			Se = (θ₂ - θr) / (θs - θr)
 			return Se = max( min(Se, 1.0), 0.0)
 		end # function θ_2_Se

@@ -31,7 +31,6 @@ module readHypix
 	#		FUNCTION : HYPIX_PARAM
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function HYPIX_PARAM(Layer, hydro, hydroHorizon, iSim::Int64, N_iZ::Int64, veg)
-
 			# Read data
 				Data = DelimitedFiles.readdlm(path.Hypix_Param, ',')
 			# Read header

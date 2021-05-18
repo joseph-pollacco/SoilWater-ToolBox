@@ -139,13 +139,13 @@
 		#General
          HydroTranslateModel = false # <true>; <false>
          Hypix               = false # <true>; <false>
-         Smap                = true # <true> ; <false>
+         Smap                = false # <true> ; <false>
          BulkDensity         = false # <true> <false>
-         θΨ                  = :true # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:No> not available
+         θΨ                  = :No # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:No> not available
          Psd                 = false	# <true> Derive θ(Ψ) AND/OR hydraulic parameters from Psd; <false>
          Infilt              = false # <true> Derive θ(Ψ) AND/OR hydraulic parameters from Infiltration data; <false>
          Temporary           = false # <true>; <false>                
-         Jules               = false # <true>; <false>
+         Jules               = true # <true>; <false>
 		
 		# Download packages
 			DownloadPackage = false # <true> For first time user download packages required to run program; <false>*

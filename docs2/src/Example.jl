@@ -1,12 +1,14 @@
 module Example
 
-export func
+export One
 
 """
-    func(x)
+    One(x)
 
 Returns double the number `x` plus `1`.
 """
-func(x) = 2x + 1
+function One(x) 
+   return  2x + 1
+end
 
 end

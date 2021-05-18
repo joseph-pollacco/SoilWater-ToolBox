@@ -249,26 +249,6 @@ module tool
 			end
 			return Matrix, FieldName_String
 		end # function STRUCT_2_FIELDNAME
-
-
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION : DATES_2_INDEX
-		# 		Not in current usage 
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			# function DATES_2_INDEX(N_iT, ∑T, clim)						
-			# 	∑T_Start = value( DateTime(param.hyPix.plot.Year_Start, param.hyPix.plot.Month_Start, param.hyPix.plot.Day_Start, param.hyPix.plot.Hour_Start, param.hyPix.plot.Minute_Start, param.hyPix.plot.Second_Start) - clim.Date[1]) / 1000
-						
-			# 	i∑T_Start, ∑T_Start = tool.array.SEARCH_INDEX2(∑T_Start, ∑T, N_iT)
-
-			# 	∑T_End = value( DateTime(param.hyPix.plot.Year_End, param.hyPix.plot.Month_End, param.hyPix.plot.Day_End, param.hyPix.plot.Hour_End, param.hyPix.plot.Minute_End, param.hyPix.plot.Second_End) - clim.Date[1]) / 1000
-
-			# 	i∑T_End, ∑T_End = tool.array.SEARCH_INDEX2(∑T_End, ∑T, N_iT)
-
-			# 	i∑T_SelectPlot = Int.(round.((range(i∑T_Start, stop=i∑T_End, length = param.hyPix.plot.N_SelectTimeStep_Plot)),digits=0))
-
-			# 	return i∑T_Start, i∑T_End, i∑T_SelectPlot
-
-			# end  # function DATES_2_INDEX
 			
 			
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
