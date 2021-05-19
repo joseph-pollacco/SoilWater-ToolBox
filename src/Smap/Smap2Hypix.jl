@@ -63,18 +63,21 @@ module smap2hypix
                Zlayer_Soil = Zlayer[iLayer_Start[iLayer] : iLayer_End[iLayer]]
                Path = Path_Output * SoilName_2_SiteName[SoilName_Layer[iLayer]] * "//" * SoilName_2_SiteName[SoilName_Layer[iLayer]] * "_Layer.csv"
                Layer = collect(1:1:length( Zlayer_Soil))
+
                TABLE_DISCRETIZATION(Layer, Path, Zlayer_Soil)      
 
             # Automatic Disscretizing of layers per soil =====
                Layer, Z = discretization.DISCRETISATION_AUTO(Nlayer=length(Zlayer_Soil), Zlayer=Zlayer_Soil, Zroot=800.0)
+
                Path = Path_Output * SoilName_2_SiteName[SoilName_Layer[iLayer]] * "//" * SoilName_2_SiteName[SoilName_Layer[iLayer]] * "_Discretisation.csv"
+
                TABLE_DISCRETIZATION(Layer, Path, Z)
 
             # Smap_Hydro Hydraulic parameters of layers per soil ====
                hydroSmap = hydroStruct.HYDROSTRUCT(N) # Making a structure
 
                # Abstracting data
-               hydroSmap, N_SoilSelect =  reading.READFILE(hydroSmap, Path_Input; iStart=iLayer_Start[iLayer], iEnd=iLayer_End[iLayer])
+               hydroSmap, N_SoilSelect =  reading.READ_STRUCT(hydroSmap, Path_Input; iStart=iLayer_Start[iLayer], iEnd=iLayer_End[iLayer])
 
                Path = Path_Output * SoilName_2_SiteName[SoilName_Layer[iLayer]] * "//" * SoilName_2_SiteName[SoilName_Layer[iLayer]] * "_HypixHydro.csv"
 
@@ -90,7 +93,7 @@ module smap2hypix
 
                vegSmap.Zroot = min(vegSmap.Zroot, ZrootDepth_Max[1])
 
-               vegSmap, N_SoilSelect = reading.READFILE(vegSmap, Path_Vegetaion; iStart=1, iEnd=1)
+               vegSmap, N_SoilSelect = reading.READ_STRUCT(vegSmap, Path_Vegetaion; iStart=1, iEnd=1)
 
                 Path = Path_Output * SoilName_2_SiteName[SoilName_Layer[iLayer]] * "//" * SoilName_2_SiteName[SoilName_Layer[iLayer]] * "_Vegetation.csv"
 

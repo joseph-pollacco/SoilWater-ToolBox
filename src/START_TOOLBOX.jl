@@ -134,7 +134,7 @@ function START_TOOLBOX()
 			# Creating 
 			hydroTranslate = hydroStruct.HYDROSTRUCT(1000)
 			
-			hydroTranslate, N_SoilSelect = reading.READFILE(hydroTranslate, path.ConvertModel)
+			hydroTranslate, N_SoilSelect = reading.READ_STRUCT(hydroTranslate, path.ConvertModel)
 			
 			# Temporary Id
 				Id_Select = collect(1:1:N_SoilSelect)

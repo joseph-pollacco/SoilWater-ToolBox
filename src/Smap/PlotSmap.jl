@@ -76,7 +76,7 @@ module plotSmap
                hydroData = hydroStruct.HYDROSTRUCT(N_SoilSelect)
 
             # Populate the values of the parameters
-               hydroData, ~ = reading.READFILE(hydroData, Path)
+               hydroData, ~ = reading.READ_STRUCT(hydroData, Path)
          end # if Flag_OtherData
 
 
@@ -225,7 +225,7 @@ module plotSmap
             #    # Structure of the hydroparameters
             #       hydroData = hydroStruct.HYDROSTRUCT(N_SoilSelect)
             #    # Populate the values of the parameters
-            #       hydroData, ~ = reading.READFILE(hydroData, Path)
+            #       hydroData, ~ = reading.READ_STRUCT(hydroData, Path)
               
             # end # if Flag_OtherData
 

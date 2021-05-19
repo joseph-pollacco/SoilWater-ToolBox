@@ -5,7 +5,7 @@ module reading
 	import ..option, ..path, ..tool, ..param
 	import  DelimitedFiles
 
-	export ID, θΨ, KUNSATΨ, INFILTRATION, PSD, READFILE
+	export ID, θΨ, KUNSATΨ, INFILTRATION, PSD, READ_STRUCT
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -213,9 +213,9 @@ module reading
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : READFILE
+	#		FUNCTION : READ_STRUCT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function READFILE(param, Path; iStart=1, iEnd=2^63 - 1)
+		function READ_STRUCT(param, Path; iStart=1, iEnd=2^63 - 1)
 			println("    ~  $(Path) ~")
 
 			# Read data
@@ -250,7 +250,7 @@ module reading
 				end
 			end
 		return param, N_SoilSelect
-		end  # function: READFILE
+		end  # function: READ_STRUCT
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

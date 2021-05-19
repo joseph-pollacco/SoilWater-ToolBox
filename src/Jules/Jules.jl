@@ -2,7 +2,7 @@
 #		module: jules joseph2
 # =============================================================
 module jules
-   import ..option, ..param, ..path, ..tool, ..θini
+   import ..option, ..param, ..path, ..tool, ..θini, ..hydroStruct, ..reading, ..tool, ..wrc
    import DelimitedFiles, Dates, CSV, Tables, NCDatasets, NetCDF
 
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -76,9 +76,11 @@ module jules
                # READ_WRITE_θJULES(Path_θjules_Input, Path_θjules_Output, Options_θjules)
 
             # Writting θini
-               # Path = Path_Output * SoilName_2_SiteName[SoilName_Layer[iLayer]] * "//" * SoilName_2_SiteName[SoilName_Layer[iLayer]] * "_Discretisation.csv"
+               Path_SmapHydro = Path_Output * "//" * iSiteName * "_HypixHydro.csv"
 
-               #    Path_Output_θini =  Path_Output * "//" * iSiteName * "_ThetaIni.csv"
+               Path_Output_θini =  Path_Output * "//" * iSiteName * "_ThetaIni.csv"
+
+               COMPUTE_θINI(Path_Output_θini, Path_SmapHydro, θᵢₙᵢ)
 
          end
 
@@ -349,22 +351,39 @@ module jules
       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       #		FUNCTION : COMPUTE_θINI
       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         function COMPUTE_θINI(hydroSmap, N_iZ, θini, Path_Output_θini)
+         function COMPUTE_θINI(Path_Output_θini, Path_SmapHydro, θᵢₙᵢ)
 
-            # Computting θini
+            # READING HYDRAULIC PARAMETERS
+               # Deriving the number of soil layers
+               println(Path_SmapHydro)
+                  Data = DelimitedFiles.readdlm(Path_SmapHydro, ',')
+
+                  N_iZ= size(Data)[1] - 1
+
+                  hydroSmap = hydroStruct.HYDROSTRUCT(N_iZ) # Making a structure
+
+               # Reading structure of hydro parameters
+                  hydroSmap, N_SoilSelect = reading.READ_STRUCT(hydroSmap, Path_SmapHydro)
+
+            # COMPUTING θini
                θ₁ = fill(0.0::Float64, N_iZ)
-               θ₁[1] = max(min(θini, hydroSmap.θs[1]), hydroSmap.θr[1])
+
+               θ₁[1] = max(min(θᵢₙᵢ, hydroSmap.θs[1]), hydroSmap.θr[1])
+
+               Se = wrc.θ_2_Se(θ₁[1], 1, hydroSmap)
+
+               # Assuming that all layers have the same Se
                for iZ=1:N_iZ
-                  θ₁ = θini.θINI_TOP(hydroSmap, N_iZ, θ₁)
+                  θ₁[iZ] = wrc.Se_2_θ(Se, iZ,hydroSmap)
                end
 
             # Computing 1..N_iZ for output file
                iZ = collect(1:1:N_iZ)
 
             # Writing to file
-               Header = ["iZ";"Z";"θini"]
+               Header = ["iZ";"θini"]
 
-               Output = Tables.table( [iZ Z θ₁])
+               Output = Tables.table( [iZ θ₁])
          
                CSV.write(Path_Output_θini, Output, header=Header)	   
    
@@ -372,14 +391,7 @@ module jules
          end  # function: COMPUTE_θINI
 
 
-      # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      #		FUNCTION : TABLE_STARTEND_DATES
-      # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      function TABLE_STARTEND_DATES()
-         
-         return
-      end  # function: TABLE_STARTEND_DATES
-      
+     
       
    end  # module: jules
 # ............................................................
