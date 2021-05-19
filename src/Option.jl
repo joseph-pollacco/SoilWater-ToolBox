@@ -329,7 +329,7 @@
         Plot_Vegetation   = false
         Plot_θΨK          = false
         Plot_Interception = false
-        Plot_Other        = true
+        Plot_Other        = false
         Plot_Sorptivity   = false
         Plot_Hypix        = true
           Plot_Climate      = true

@@ -59,14 +59,14 @@ module jules
                
                READ_WRIITE_CLIMATE(Path_Climate_Input, Path_Climate_Output)
          
-               # println(Path_Climate_Output)
-
             # Reading obs θ
                Path_θ_Input = Path_θ * "sm_obs_" * string(SiteName_2_SiteNumber[iSiteName]) * ".nc"
 
                Path_θ_Output = Path_Output * "//" * iSiteName * "_Soilmoisture.csv"
 
-               θᵢₙᵢ = READ_WRITE_θobs(iSiteName, Path_θ_Input, Path_θ_Output)
+               Path_Date_Output = Path_Output * "//" * iSiteName * "_Dates.csv"
+
+               θᵢₙᵢ = READ_WRITE_θobs(iSiteName, Path_Date_Output, Path_θ_Input, Path_θ_Output)
 
             # Reading Jules simulated θ
                # Path_θjules_Input = Path_θJules * "Sta_" * string(SiteName_2_SiteNumber[iSiteName]) * "/"
@@ -76,10 +76,9 @@ module jules
                # READ_WRITE_θJULES(Path_θjules_Input, Path_θjules_Output, Options_θjules)
 
             # Writting θini
+               # Path = Path_Output * SoilName_2_SiteName[SoilName_Layer[iLayer]] * "//" * SoilName_2_SiteName[SoilName_Layer[iLayer]] * "_Discretisation.csv"
 
-            # Path = Path_Output * SoilName_2_SiteName[SoilName_Layer[iLayer]] * "//" * SoilName_2_SiteName[SoilName_Layer[iLayer]] * "_Discretisation.csv"
-
-            #    Path_Output_θini =  Path_Output * "//" * iSiteName * "_ThetaIni.csv"
+               #    Path_Output_θini =  Path_Output * "//" * iSiteName * "_ThetaIni.csv"
 
          end
 
@@ -123,49 +122,49 @@ module jules
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    #		FUNCTION : READ_WRITE_θobs
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      function READ_WRITE_θobs(iSiteName, Path_θ_Input, Path_θ_Output)
+      function READ_WRITE_θobs(iSiteName, Path_Date_Output, Path_θ_Input, Path_θ_Output)
 
          Months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
-         # Getting θ observed
-          θdata = Float64.(NetCDF.open(Path_θ_Input, "obsm"))
+         # NETCDF
+            # Getting daily θ observed
+            θdata = Float64.(NetCDF.open(Path_θ_Input, "obsm"))
 
+            θdata =  θdata ./ 100.0
+            N = length(θdata)
 
-          θdata =  θdata ./ 100.0
-          N = length(θdata)
+            # Getting the inititilal starting date in the format 1 January 2008   
+               Data = NetCDF.open(Path_θ_Input)
 
-         # Getting the inititilal starting date in the format 1 January 2008   
-            Data = NetCDF.open(Path_θ_Input)
+               Data2 = NCDatasets.Dataset(Path_θ_Input)
 
-            Data2 = NCDatasets.Dataset(Path_θ_Input)
+               Date_Start_Obs = Data2[ "obsm"].attrib["initial_date"]
 
-            Start_Date = Data2[ "obsm"].attrib["initial_date"]
+               # Converting to Year Month Day
+                  # Day
+                     First_Space = findfirst(" ", Date_Start_Obs)
+         
+                     Day = Date_Start_Obs[1:First_Space[1]]
+                     Date_Start_Obs = replace(Date_Start_Obs, Day => "")
+                     Day = parse(Int, Day)
 
-            # Converting to Year Month Day
-               # day
-                  First_Space = findfirst(" ", Start_Date)
-      
-                  Day = Start_Date[1:First_Space[1]]
-                  Start_Date = replace(Start_Date, Day => "")
-                  Day = parse(Int, Day)
-
-               # Month
-                  Month = 0
-                  for iMonth = 1:12
-                     if occursin(Months[iMonth],Start_Date)
-                        Month = iMonth
-                        Start_Date = replace(Start_Date, Months[iMonth] => "")
-                        break
+                  # Month
+                     Month = 0
+                     for iMonth = 1:12
+                        if occursin(Months[iMonth],Date_Start_Obs)
+                           Month = iMonth
+                           Date_Start_Obs = replace(Date_Start_Obs, Months[iMonth] => "")
+                           break
+                        end
                      end
-                  end
 
-               # Year
-                  Year = parse(Int, Start_Date)
+                  # Year
+                     Year = parse(Int, Date_Start_Obs)
 
-               # Date
-                  Start_Date = Dates.Date(Year,Month,Day)
+                  # Date
+                     Date_Start_Obs = Dates.Date(Year,Month,Day)
 
-                # Need to get dates by adding 1 day
+                # Need to provide dates by adding 1 day
                   Years   = Array{Int64}(undef, N)
                   Months  = Array{Int64}(undef, N)
                   Days    = Array{Int64}(undef, N)
@@ -173,40 +172,121 @@ module jules
                   Minutes = fill(0::Int64, N)
                   Seconds = fill(0::Int64, N)
 
-                  Add_Date = Start_Date
-                  iFirst_NoData = false
-                  for iDay = 1:N
-                     if θdata[iDay] < 0 && iFirst_NoData == false
-                        println("AA")
-                     end
-                     Years[iDay]  = Dates.year(Add_Date)
-                     Months[iDay] = Dates.month(Add_Date)
-                     Days[iDay]   = Dates.day(Add_Date)
+          # CHECKING IF WE HAVE θ IN THE GIVEN DATES        
+            # Determening when we start to have θobs with data 
+               Add_Date = Date_Start_Obs
+               iFirst_NoData = false
+               iTrueStart = 1
+               for iDay = 1:N
+                  if θdata[iDay] < 0 && iFirst_NoData == false
+                     iFirst_NoData == true
+                     iTrueStart = iDay + 1
+                  else
+                     iFirst_NoData = true
+                  end
+                  Years[iDay]  = Dates.year(Add_Date)
+                  Months[iDay] = Dates.month(Add_Date)
+                  Days[iDay]   = Dates.day(Add_Date)
 
-                     Add_Date     = Start_Date + Dates.Day(iDay)
+                  Add_Date     = Date_Start_Obs + Dates.Day(iDay)
+               end
+
+               Year_Obs_Start  = Years[iTrueStart]
+               Month_Obs_Start = Months[iTrueStart]
+               Day_Obs_Start   = Days[iTrueStart]
+
+               Date_Start_Obs = Dates.Date(Year_Obs_Start, Month_Obs_Start, Day_Obs_Start)
+                  
+            # Determening when we end of having data starting in reverse
+               iTrueEnd = N
+               iFirst_NoData = false
+               for iDay in reverse(1:N)
+                  if θdata[iDay] < 0 && iFirst_NoData == false
+                     iFirst_NoData == true
+                     iTrueEnd = iDay - 1
+                  else
+                     iFirst_NoData = true
+                  end
+               end
+
+               Year_Obs_End  = Years[iTrueEnd]
+               Month_Obs_End = Months[iTrueEnd]
+               Day_Obs_End   = Days[iTrueEnd]
+
+               Date_End_Obs = Dates.Date(Year_Obs_End, Month_Obs_End, Day_Obs_End)
+
+         # SIMULATING DATES      
+            # Initial guess
+               Year_Sim_Start = 2008
+               Month_Sim_Start = 7
+               Day_Sim_Start = 1
+
+               Date_Start_Sim = Dates.Date(Year_Sim_Start, Month_Sim_Start, Day_Sim_Start)
+
+               Year_Sim_End = 2011
+               Month_Sim_End = 10
+               Day_Sim_End = 1
+
+               Date_End_Sim = Dates.Date(Year_Sim_End, Month_Sim_End, Day_Sim_End)
+
+            # Checking if the dates are available or else we shift the dates by one year
+               if (Date_Start_Sim < Date_Start_Obs)
+                  error("$iSiteName Date_Start_Sim $Date_Start_Sim < Date_Start_Obs $Date_Start_Obs")
+               end 
+                     
+               if (Date_End_Sim > Date_End_Obs)
+                  Year_Shift = -(Dates.year(Date_End_Sim) - Dates.year(Date_End_Obs) + 1)
+
+                  Year_Sim_Start += Year_Shift
+                  Date_Start_Sim = Dates.Date(Year_Sim_Start, Month_Sim_Start, Day_Sim_Start)
+                  
+                  Year_Sim_End += Year_Shift
+                  Date_End_Sim = Dates.Date(Year_Sim_End, Month_Sim_End, Day_Sim_End)
+
+                  if (Date_End_Sim > Date_End_Obs)
+                     error("$iSiteName Date_End_Sim $Date_End_Sim > Date_End_Obs $Date_End_Obs")
                   end
 
-                  # Searching for θᵢₙᵢ
-                  θᵢₙᵢ = 0.0
-                  println(θdata[1]," , " , θdata[N])
-                  for iDay = 1:N
-                     param.hyPix.Year_Start = 2010
-                     if Years[iDay]==param.hyPix.Year_Start && Months[iDay]==param.hyPix.Month_Start && Days[iDay]==param.hyPix.Day_Start
-                        θᵢₙᵢ = θdata[iDay]
-                     break
-                     end
-                  end
+                  # Lets check again
+                  if (Date_Start_Sim < Date_Start_Obs)
+                     error("$iSiteName Date_Start_Sim $Date_Start_Sim < Date_Start_Obs $Date_Start_Obs")
+                  end 
+               end 
 
-                  if θᵢₙᵢ == 0.0
-                     error("HyPix error for $iSiteName, date= $(param.hyPix.Year_Start) \\ $(param.hyPix.Month_Start) \\ $(param.hyPix.Day_Start) cannot find θobs or θobs is negative")
+         # CHECKING IF WE HAVE θ on Date_Start_Sim which is used as θᵢₙᵢ 
+            # Searching for θᵢₙᵢ
+               θᵢₙᵢ = 0.0
+               for iDay = 1:N
+                  param.hyPix.Year_Start = 2010
+                  if Years[iDay]==Year_Sim_Start && Months[iDay]==Month_Sim_Start && Days[iDay]==Day_Sim_Start
+                     θᵢₙᵢ = θdata[iDay]
+                  break
+                  end
+               end
+
+            # Testing
+               if θᵢₙᵢ == 0.0
+                  error("JulesM error for $iSiteName, date= $(Year_Sim_Start) \\ $(Month_Sim_Start) \\ $(Day_Sim_Start) cannot find θobs")
+               end 
+
+               if θᵢₙᵢ < 0.0
+                  error("JulesM error for $iSiteName, date= $(Year_Sim_Start) \\ $(Month_Sim_Start) \\ $(Day_Sim_Start) θobs is not available for that date")
                   end 
 
-            # Writing to file
+         # WRITING TO FILES
+            # Writting θ
                Header = ["Year";"Month";"Day";"Hour";"Minute";"Second";"Z=200mm"]
 
                Output = Tables.table( [Years Months Days Hours Minutes Seconds θdata])
          
-               CSV.write(Path_θ_Output, Output, header=Header)	   
+               CSV.write(Path_θ_Output, Output, header=Header)
+            
+            # Writting Start end dates
+               Header = ["Year_Obs_Start";"Month_Obs_Start";"Day_Obs_Start";"Year_Obs_End";"Month_Obs_End";"Day_Obs_End";"Year_Sim_Start"; "Month_Sim_Start"; "Day_Sim_Start"; "Year_Sim_End"; "Month_Sim_End"; "Day_Sim_End"]
+
+               Output = Tables.table([Year_Obs_Start Month_Obs_Start Day_Obs_Start Year_Obs_End Month_Obs_End Day_Obs_End Year_Sim_Start Month_Sim_Start Day_Sim_Start Year_Sim_End Month_Sim_End Day_Sim_End])
+         
+               CSV.write(Path_Date_Output, Output, header=Header)
 
       return θᵢₙᵢ
       end  # function: READ_WRITE_θobs
@@ -260,78 +340,8 @@ module jules
 
          Data2 = NCDatasets.Dataset(Path_θjules)
 
-         Start_Date = Data2[ "timestp"].attrib["time_origin"]
+         Date_Start_Obs = Data2[ "timestp"].attrib["time_origin"]
          TimeStep =  Data2[ "timestp"].attrib["tstep_sec"]
-
-         # println(Time[1:10])
-         # println(Start_Date)
-         # println(TimeStep)
-
-
-         # θdata = Float64.(NetCDF.open(Path_θjules, "smcl"))
-
-         # NetCDF.ncinfo(Path_θjules)
-
-         # Data2 = NCDatasets.Dataset(Path_θjules, "smcl" )
-
-         # println(θdata[1:10,1,1,1])
-
-         # println(Data2)
-
-         # N = length(θdata)
-      
-         # # Getting the inititilal starting date in the format 1 January 2008   
-         #    Data = NetCDF.open(Path_θjules)
-
-         #    Data2 = NCDatasets.Dataset(Path_θjules)
-
-         #    Start_Date = Data2[ "obsm"].attrib["initial_date"]
-
-         #    # Converting to Year Month Day
-         #       # day
-         #          First_Space = findfirst(" ", Start_Date)
-      
-         #          Day = Start_Date[1:First_Space[1]]
-         #          Start_Date = replace(Start_Date, Day => "")
-         #          Day = parse(Int, Day)
-
-         #       # Month
-         #          Month = 0
-         #          for iMonth = 1:12
-         #             if occursin(Months[iMonth],Start_Date)
-         #                Month = iMonth
-         #                Start_Date = replace(Start_Date, Months[iMonth] => "")
-         #                break
-         #             end
-         #          end
-
-         #       # Year
-         #          Year = parse(Int, Start_Date)
-
-         #       # Date
-         #          Start_Date = Dates.Date(Year,Month,Day)
-
-         #       # Need to get dates by adding 1 day
-         #          Years = Array{Int64}(undef, N)
-         #          Months = Array{Int64}(undef, N)
-         #          Days = Array{Int64}(undef, N)
-         #          Hours  = fill(9::Int64, N)
-         #          Minutes = fill(0::Int64, N)
-         #          Seconds = fill(0::Int64, N)
-         #          for iDay = 1:N
-         #             Add_Date     = Start_Date + Dates.Day(iDay)
-
-         #             Years[iDay]  = Dates.year(Add_Date)
-         #             Months[iDay] = Dates.month(Add_Date)
-         #             Days[iDay]   = Dates.day(Add_Date)
-         #          end
-
-         #    # Writing to file
-         #       Header = ["Year";"Month";"Day";"Hour";"Minute";"Second";"Z=200mm"]
-
-         #       Output = Tables.table( [Years Months Days Hours Minutes Seconds θdata])
-         
-         #       CSV.write(Path_θjules_Output, Output, header=Header)	   
 
       return nothing
       end  # function: READ_WRITE_θobs
@@ -360,6 +370,15 @@ module jules
    
          return nothing
          end  # function: COMPUTE_θINI
+
+
+      # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      #		FUNCTION : TABLE_STARTEND_DATES
+      # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      function TABLE_STARTEND_DATES()
+         
+         return
+      end  # function: TABLE_STARTEND_DATES
       
       
    end  # module: jules
