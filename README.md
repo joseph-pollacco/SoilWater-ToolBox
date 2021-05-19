@@ -1,6 +1,6 @@
 # SoilWater-ToolBox
 
-**The package was developped by Joseph Pollacco and Jesus-Fernandez**
+**The package was developped by Joseph Pollacco and Jesús Fernández Gálvez**
 
 The HyPix model  is open source under the **GP-3.0** License. This software is part of a set of interlinked modules implemented into the SoilWater-ToolBox ecosystem led by J.A.P Pollacco from Manaaki Whenua – Landcare Research in New-Zealand and J. Fernández-Gálvez from the University of Granada in Spain. The preliminary objectives of the SoilWater-ToolBox are to derive the soil hydraulic parameters by using a wide range of cost-effective methods. The estimated hydraulic parameters can be directly implemented into HyPix to compute the soil water budget. The SoilWater-Toolbox enables to perform inter comparison and sensitivity analyses of the hydraulic parameters computed from different methods on the soil water fluxes. To date, the following modules are currently included into the SoilWater-ToolBox:
 
