@@ -16,9 +16,9 @@ module jules
 
       Path_Climate = "D:\\DATAraw\\JULESdata\\Climate\\VCSN_Obs\\"
 
-      Path_θ= "D:\\DATAraw\\JULESdata\\SoilMoisture\\SoilMoisture_Site\\"
+      Path_θ       = "D:\\DATAraw\\JULESdata\\SoilMoisture\\SoilMoisture_Site\\"
 
-      Path_θJules= "D:\\DATAraw\\JULESdata\\SoilMoisture_Jules\\SoilMoistureJules_Site\\"
+      Path_θJules  = "D:\\DATAraw\\JULESdata\\SoilMoisture_Jules\\SoilMoistureJules_Site\\"
 
       # Read data
          Data = DelimitedFiles.readdlm(path.JulesMetadata, ',')
@@ -27,7 +27,7 @@ module jules
       # Remove first READ_ROW_SELECT
          Data = Data[2:end,begin:end]
       # Reading
-         SiteName, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "SiteName")
+         SiteName, NsiteName   = tool.readWrite.READ_HEADER_FAST(Data, Header, "SiteName")
          VCSNgridnumber, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "VCSNgridnumber")
          SiteNumber, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "SiteNumber")
          SoilName, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "SoilName-Smap")
@@ -35,7 +35,8 @@ module jules
       # Dictionary
       # SiteName_2_VCSNgridnumber::Dict{String, Int64} 
 
-         i = 1
+         θᵢₙᵢ = fill(0.0::Float64, NsiteName)
+         iSite = 1
          SiteName_2_VCSNgridnumber = Dict("a"=>9999) # Initializing
          SiteName_2_SiteNumber  = Dict("a"=>9999)
          SoilName_2_SiteName = Dict("a"=>"b")
@@ -46,16 +47,15 @@ module jules
                mkpath(Path_Output) 
                
             # dictionary which correspond SiteName to VCSNgridnumber
-               SiteName_2_VCSNgridnumber[iSiteName] = VCSNgridnumber[i]
-               SiteName_2_SiteNumber[iSiteName] = SiteNumber[i]
-               SoilName_2_SiteName[SoilName[i]] = iSiteName
+               SiteName_2_VCSNgridnumber[iSiteName] = VCSNgridnumber[iSite]
+               SiteName_2_SiteNumber[iSiteName] = SiteNumber[iSite]
+               SoilName_2_SiteName[SoilName[iSite]] = iSiteName
 
-               i += 1
-
+          
             # Reading climate
                Path_Climate_Input = Path_Climate * "VCSN_obsSM_" * string(SiteName_2_VCSNgridnumber[iSiteName]) * ".csv"
 
-               Path_Climate_Output = Path_Output * "//" * iSiteName * "_Hourly_Climate.csv"
+               Path_Climate_Output = Path_Output * "//" * iSiteName * "_Daily_Climate_2.csv"
                
                READ_WRIITE_CLIMATE(Path_Climate_Input, Path_Climate_Output)
          
@@ -66,24 +66,30 @@ module jules
 
                Path_Date_Output = Path_Output * "//" * iSiteName * "_Dates.csv"
 
-               θᵢₙᵢ = READ_WRITE_θobs(iSiteName, Path_Date_Output, Path_θ_Input, Path_θ_Output)
+               θᵢₙᵢ[iSite] = READ_WRITE_θobs(iSiteName, Path_Date_Output, Path_θ_Input, Path_θ_Output)
 
-            # Reading Jules simulated θ
-               # Path_θjules_Input = Path_θJules * "Sta_" * string(SiteName_2_SiteNumber[iSiteName]) * "/"
+               # Reading Jules simulated θ
+                  # Path_θjules_Input = Path_θJules * "Sta_" * string(SiteName_2_SiteNumber[iSiteName]) * "/"
+   
+                  # Path_θjules_Output =  Path_Output * "//" * iSiteName * "_Soilmoisture_Jules.csv"
+   
+                  # READ_WRITE_θJULES(Path_θjules_Input, Path_θjules_Output, Options_θjules)
+            iSite += 1
+         end #  for iSiteName
 
-               # Path_θjules_Output =  Path_Output * "//" * iSiteName * "_Soilmoisture_Jules.csv"
+         # WRITTING θini
+         iSite = 1
+         for iSiteName in SiteName
+            Path_Output =  path.Home * "//INPUT//DataHyPix//JULES//JulesInput//" * iSiteName
 
-               # READ_WRITE_θJULES(Path_θjules_Input, Path_θjules_Output, Options_θjules)
+            Path_SmapHydro = Path_Output * "//" * iSiteName * "_HypixHydro.csv"
+               
+            Path_Output_θini =  Path_Output * "//" * iSiteName * "_ThetaIni.csv"
+               
+             COMPUTE_θINI(Path_Output_θini, Path_SmapHydro, θᵢₙᵢ[iSite])
 
-            # Writting θini
-               Path_SmapHydro = Path_Output * "//" * iSiteName * "_HypixHydro.csv"
-
-               Path_Output_θini =  Path_Output * "//" * iSiteName * "_ThetaIni.csv"
-
-               COMPUTE_θINI(Path_Output_θini, Path_SmapHydro, θᵢₙᵢ)
-
+            iSite += 1
          end
-
    return SoilName_2_SiteName
    end  # function: START_JULES
 
@@ -226,7 +232,7 @@ module jules
                Date_Start_Sim = Dates.Date(Year_Sim_Start, Month_Sim_Start, Day_Sim_Start)
 
                Year_Sim_End = 2011
-               Month_Sim_End = 10
+               Month_Sim_End = 12
                Day_Sim_End = 1
 
                Date_End_Sim = Dates.Date(Year_Sim_End, Month_Sim_End, Day_Sim_End)
@@ -328,7 +334,6 @@ module jules
          # Getting θ observed
          Path_θjules = Path_θjules_Input * OptionsJules_2_OptionsFile[Options_θjules]
 
-
          # println(NCDatasets.Dataset(Path_θjules))
 
 
@@ -348,6 +353,7 @@ module jules
       return nothing
       end  # function: READ_WRITE_θobs
 
+
       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       #		FUNCTION : COMPUTE_θINI
       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -358,7 +364,7 @@ module jules
                println(Path_SmapHydro)
                   Data = DelimitedFiles.readdlm(Path_SmapHydro, ',')
 
-                  N_iZ= size(Data)[1] - 1
+                  N_iZ = size(Data)[1] - 1
 
                   hydroSmap = hydroStruct.HYDROSTRUCT(N_iZ) # Making a structure
 
@@ -381,17 +387,14 @@ module jules
                iZ = collect(1:1:N_iZ)
 
             # Writing to file
-               Header = ["iZ";"θini"]
+               Header = ["iZ";"θini"; "Layer"]
 
-               Output = Tables.table( [iZ θ₁])
+               Output = Tables.table( [iZ θ₁ iZ])
          
                CSV.write(Path_Output_θini, Output, header=Header)	   
    
          return nothing
          end  # function: COMPUTE_θINI
 
-
-     
-      
    end  # module: jules
 # ............................................................

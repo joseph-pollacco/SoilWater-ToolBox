@@ -69,7 +69,7 @@ module smap2hypix
             # Automatic Disscretizing of layers per soil =====
                Layer, Z = discretization.DISCRETISATION_AUTO(Nlayer=length(Zlayer_Soil), Zlayer=Zlayer_Soil, Zroot=800.0)
 
-               Path = Path_Output * SoilName_2_SiteName[SoilName_Layer[iLayer]] * "//" * SoilName_2_SiteName[SoilName_Layer[iLayer]] * "_Discretisation.csv"
+               Path = Path_Output * SoilName_2_SiteName[SoilName_Layer[iLayer]] * "//" * SoilName_2_SiteName[SoilName_Layer[iLayer]] * "_Discretization_2.csv"
 
                TABLE_DISCRETIZATION(Layer, Path, Z)
 
