@@ -388,7 +388,10 @@ module plotHypix
 
 				# PATH
 					Path = path.Hypix_calibr * "_" * string(iSim) * ".svg"
-					rm(Path, force=true, recursive=true)	
+					rm(Path, force=true, recursive=true)
+					
+				# READING DATES
+					param.readHypix.DATES()
 
 				# TICKS
 					# Date_Start_Calibr = calibr.Date[1]

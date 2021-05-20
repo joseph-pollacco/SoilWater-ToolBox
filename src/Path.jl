@@ -6,7 +6,8 @@ module path
 
 	# NAME OF FILE
 		SiteName_Soilhyro = "VCSNSmap2"  # "SFF"; "PAF"; K10KPA; Smap; Smap20210226; SmapSouthland2; CantyLysimSmap; VCSNSmap; "WaikLysim"; "Convert; "SmapNZAllSoilsSmap20210326"; "Smap20210226"
-		SiteName_Hypix = "JULES" # TAUPO OTOROHANGA WAIHOU WAITOA HAMILTON JULES;
+		ProjectName_Hypix = "JULES" # "JULES"; "LYSIMETERS" 
+		SiteName_Hypix = "Lincoln" # "TAUPO"; "OTOROHANGA"; "WAIHOU"; "WAITOA"; "HAMILTON"; "Lincoln";
 		const Model_Name ="A"
 		const Select = "SELECT_1" # Select data to model
 		
@@ -41,12 +42,13 @@ module path
 
 		# DATA HYPIX
          Climate        = "Climate_2.csv"
+         Dates          = "Dates.csv"
          Discretization = "Discretization_2.csv"
          HyPix_Param    = "HyPix_Param_2.csv"
          Hydraulic_Kg   = "Hydraulic_Uni_Kg2.csv"
          Hydraulic_Vang = "Hydraulic_Vang.csv"
-         calibr         = "Soilmoisture.csv"
          Input_OfStep   = "Wof_Steps.csv"
+         calibr         = "Soilmoisture.csv"
 			
 			
 			if option.hyPix.θΨKmodel == :Kosugi
@@ -127,15 +129,16 @@ module path
                HydroParam_Infilt  = FileDataSoilhydro_Input * HydroParam_Infilt
 
 			# HYPIX
-				FileHypix_Input = Home * "//INPUT//DataHyPix//" * SiteName_Hypix * "//" * SiteName_Hypix * "_" 
+				FileHypix_Input = Home * "//INPUT//DataHyPix//" * ProjectName_Hypix * "//" * SiteName_Hypix * "//" * SiteName_Hypix * "_" 
 
 					# Name varies depending if hourly or daily
-					Climate        = FileHypix_Input * option.hyPix.ClimateDataTimestep * "_" * Climate
-					Discretization = FileHypix_Input * Discretization
-					Hypix_Param    = FileHypix_Input * HyPix_Param
-					Hydraulic      = FileHypix_Input * Hydraulic
-					calibr         = FileHypix_Input * calibr
-					JulesMetadata  = FileHypix_Input * JulesMetadata
+						Climate        = FileHypix_Input * option.hyPix.ClimateDataTimestep * "_" * Climate
+						Dates          = FileHypix_Input * Dates
+						Discretization = FileHypix_Input * Discretization
+						Hydraulic      = FileHypix_Input * Hydraulic
+						Hypix_Param    = FileHypix_Input * HyPix_Param
+						JulesMetadata  = FileHypix_Input * JulesMetadata
+						calibr         = FileHypix_Input * calibr
 					
 					Input_OfStep = Home * "//INPUT//DataHyPix//RESULTS//"
 
@@ -169,10 +172,10 @@ module path
 					Table_Psd_θΨ_θ    = FileSoilHydro_Table₁ * string(option.psd.HydroModel) *  "_" * Model_Name * "_" *  Table_Psd_θΨ_θ
 
 			#HYPIX
-				FileSoilHydro_Table = Home * "//OUTPUT//Hypix//" * SiteName_Hypix * "//Table//" 
+				FileSoilHydro_Table = Home * "//OUTPUT//Hypix//" * ProjectName_Hypix * "//Table//" 
 				#Make Folder if not exist
 				mkpath(FileSoilHydro_Table) 
-				FileSoilHydro_Table = FileSoilHydro_Table * SiteName_Hypix * "_"
+				FileSoilHydro_Table = FileSoilHydro_Table * ProjectName_Hypix * "_"
 
 					Table_Discretisation  = FileSoilHydro_Table * Table_Discretisation
 					Table_Hydro           = FileSoilHydro_Table * Table_Hydro
@@ -236,15 +239,15 @@ module path
                Plots_Sorptivity_Se      = Plots_Sorptivity_Se * SiteName_Soilhyro * "_"
 			
 			# HYPIX
-				FileHypix_Plot = Home * "//OUTPUT//Hypix//" * SiteName_Hypix  * "//Plots//"
+				FileHypix_Plot = Home * "//OUTPUT//Hypix//" * ProjectName_Hypix  * "//Plots//"
 				mkpath(FileHypix_Plot)
-					Hypix_calibr  = FileHypix_Plot * SiteName_Hypix  * "_" * "Plot_ThetaCalibr"
-					Plot_Hypix_θΨK = FileHypix_Plot * SiteName_Hypix  * "_" * "Plot_ThetaPsiK"
-					Plot_Se_Time   = FileHypix_Plot * SiteName_Hypix  * "_" * "Plot_Se_Time.png"
-					Plot_Se_Z      = FileHypix_Plot * SiteName_Hypix  * "_" * "Plot_Se_Z.png"
-					Vegetation     = FileHypix_Plot * SiteName_Hypix  * "_" * "Plot_Vegetation"
-					Plot_Sorptivity =  FileHypix_Plot * SiteName_Hypix  * "_" * "Plot_Sorptivity"
-					Plot_RainfallInterception = FileHypix_Plot * SiteName_Hypix  * "_" * "Plot_RainfallInterception"
+					Hypix_calibr  = FileHypix_Plot * ProjectName_Hypix  * "_" * "Plot_ThetaCalibr"
+					Plot_Hypix_θΨK = FileHypix_Plot * ProjectName_Hypix  * "_" * "Plot_ThetaPsiK"
+					Plot_Se_Time   = FileHypix_Plot * ProjectName_Hypix  * "_" * "Plot_Se_Time.png"
+					Plot_Se_Z      = FileHypix_Plot * ProjectName_Hypix  * "_" * "Plot_Se_Z.png"
+					Vegetation     = FileHypix_Plot * ProjectName_Hypix  * "_" * "Plot_Vegetation"
+					Plot_Sorptivity =  FileHypix_Plot * ProjectName_Hypix  * "_" * "Plot_Sorptivity"
+					Plot_RainfallInterception = FileHypix_Plot * ProjectName_Hypix  * "_" * "Plot_RainfallInterception"
 
 				FileHypix_Plot_Results = Home * "//OUTPUT//Hypix//RESULTS//"
 				mkpath(FileHypix_Plot_Results)

@@ -65,7 +65,7 @@ module discretization
 
 	Automatically performs the discretisatio of the HyPix model wheh you enter the depth of the layers
 	"""
-		function DISCRETISATION_AUTO(; Nlayer, Zlayer, Zroot)
+		function DISCRETISATION_AUTO(; Nlayer, Zlayer, Zroot, θᵢₙᵢ)
 
 			ΔZlayer = fill(0.0::Float64, Nlayer)
 
@@ -76,8 +76,9 @@ module discretization
 				end # for
 
 			# Computing the number of discretization
-				ΔZcell = []
-            Layer = []
+            ΔZcell    = []
+            Layer     = []
+            θᵢₙᵢ_Cell = []
 				for iLayer =1:Nlayer
 
 					if  Zlayer[iLayer] < Zroot
@@ -92,6 +93,7 @@ module discretization
 					for iDiscret=1:Nsplit
 						append!(ΔZcell, ΔZcell₀)
                   append!(Layer, iLayer)
+						append!(θᵢₙᵢ_Cell, θᵢₙᵢ[iLayer])
 					end
 				end # ilayer
 				N = length(ΔZcell)
@@ -104,7 +106,7 @@ module discretization
 					Z[iZ] = Z[iZ-1] + ΔZcell[iZ]
 				end
 			
-		return Layer, Z
+		return Layer, Z, θᵢₙᵢ_Cell
 		end  # function: DISCRETISATION_AUTO
 	
 end  # module: discret

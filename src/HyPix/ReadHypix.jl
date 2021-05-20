@@ -7,6 +7,55 @@ module readHypix
 	import DelimitedFiles
 	export CLIMATE, DISCRETIZATION, HYPIX_PARAM, LOOKUPTABLE_LAI, LOOKUPTABLE_CROPCOEFICIENT
 
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : DATES
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function DATES()
+			# Read data
+				Data = DelimitedFiles.readdlm(path.Dates, ',')
+			# Read header
+				Header = Data[1,1:end]
+			# Remove first READ_ROW_SELECT
+				Data = Data[2:end,begin:end]
+
+			# Dates of climate data
+				Year_Start₀ , ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "Year_Sim_Start")
+					param.hyPix.Year_Start = Year_Start₀[1]
+				Month_Start₀, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "Month_Sim_Start")
+						param.hyPix.Month_Start = Month_Start₀[1]
+				Day_Start₀, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "Day_Sim_Start")
+					param.hyPix.Day_Start = Day_Start₀[1]
+
+				Year_End₀, ~    = tool.readWrite.READ_HEADER_FAST(Data, Header, "Year_Sim_End")
+					param.hyPix.Year_End = Year_End₀[1] - 2
+				Month_End₀, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "Month_Sim_End")
+					param.hyPix.Month_End = Month_End₀[1]
+				Day_End₀, ~     = tool.readWrite.READ_HEADER_FAST(Data, Header, "Day_Sim_End")
+					param.hyPix.Day_End = Day_End₀[1]
+				
+
+			# Dates of observed data
+            param.hyPix.calibr.Year_Start  = param.hyPix.Year_Start
+            param.hyPix.calibr.Month_Start = 12
+            param.hyPix.calibr.Day_Start   = param.hyPix.Day_Start
+
+            param.hyPix.calibr.Year_End    = param.hyPix.Year_End
+            param.hyPix.calibr.Month_End   = param.hyPix.Month_End
+            param.hyPix.calibr.Day_End     = param.hyPix.Day_End
+
+			# Dates of plots
+            param.hyPix.plot.Year_Start  = param.hyPix.Year_Start + 1
+            param.hyPix.plot.Month_Start = param.hyPix.Month_Start
+            param.hyPix.plot.Day_Start   = param.hyPix.Day_Start
+
+            param.hyPix.plot.Year_End    = param.hyPix.Year_End
+            param.hyPix.plot.Month_End   = param.hyPix.Month_End
+            param.hyPix.plot.Day_End     = param.hyPix.Day_End
+
+		return param
+		end  # function: DATES
+
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : DISCRETIZATION
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -161,15 +210,6 @@ module readHypix
 				end
 			end # for loop
 
-			# # Getting the minimum and maximum value of θs for every iHorizonOpt_Start::iHorizonOpt_End
-			# i=1
-			# for iName in Name
-			# 	if  Symbol(iName) == :θs 
-			# 		append!(θs_Min, Param_Min[i])
-			# 		append!(θs_Max, Param_Max[i])
-			# 	end
-			# 	i+=1
-			# end
 
 			if !(Flag_MultiStepOpt)
 				# Hydraulic parameters per horizon to layers
@@ -225,6 +265,8 @@ module readHypix
 			Pr_Through :: Vector{Float64}
 		end
 
+		Option_ReadTemperature = false
+
 		function CLIMATE()
 			if option.hyPix.ClimateDataTimestep == "Daily"
 				Pr_Name          = "Rain(mm)"
@@ -252,8 +294,15 @@ module readHypix
 			Second, ~       = tool.readWrite.READ_HEADER_FAST(Data, Header, "Second")
 			Pr, ~           = tool.readWrite.READ_HEADER_FAST(Data, Header, Pr_Name)
 			Pet, ~          = tool.readWrite.READ_HEADER_FAST(Data, Header, Pet_Name)
-			Temp, ~         = tool.readWrite.READ_HEADER_FAST(Data, Header, Temperature_Name)
-			
+			if Option_ReadTemperature 
+				Temp, ~         = tool.readWrite.READ_HEADER_FAST(Data, Header, Temperature_Name)
+			else
+				Temp = fill(24.0::Float64, N_Climate)
+			end
+
+			# READING DATES FROM FILE
+				param = DATES()
+
 			# REDUCING THE NUMBER OF SIMULATIONS SUCH THAT IT IS WITHIN THE SELECTED RANGE
 				Date_Start = DateTime(param.hyPix.Year_Start, param.hyPix.Month_Start, param.hyPix.Day_Start, param.hyPix.Hour_Start, param.hyPix.Minute_Start, param.hyPix.Second_Start)
 				
@@ -263,8 +312,7 @@ module readHypix
 				# Date_End is feasible
 					Date_End_Maximum = DateTime(Year[N_Climate], Month[N_Climate], Day[N_Climate], Hour[N_Climate], Minute[N_Climate], Second[N_Climate]) 
 
-
-					if Date_End_Maximum > Date_End
+					if Date_End_Maximum < Date_End
 						Date_End = min(Date_End_Maximum, Date_End)
 						println("		~ HyPix WARNING: Date_End not feasible so modified to match the data ")
 					end #warning Date_End
@@ -372,6 +420,9 @@ module readHypix
 					end # occursin("Z=", iHeader)
 				end #  iHeader
 
+			# READING DATES FROM FILE
+				param = DATES()
+
 			# REDUCING THE NUMBER OF SIMULATIONS SUCH THAT IT IS WITHIN THE SELECTED RANGE
 				Date_Start_Calibr = DateTime(param.hyPix.calibr.Year_Start, param.hyPix.calibr.Month_Start, param.hyPix.calibr.Day_Start, param.hyPix.calibr.Hour_Start, param.hyPix.calibr.Minute_Start, param.hyPix.calibr.Second_Start)
 				
@@ -423,7 +474,7 @@ module readHypix
 				∑T    = Array{Float64}(undef, N_iT)
 				iZobs = Array{Int64}(undef, Ndepth)
 
-			return calibr = θOBSERVATION(Date, Z, iZobs, N_iT, Ndepth, θobs, ∑T)
+		return calibr = θOBSERVATION(Date, Z, iZobs, N_iT, Ndepth, θobs, ∑T)
 		end  # function: TIME_SERIES
 
 	

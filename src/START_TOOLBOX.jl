@@ -221,8 +221,8 @@ function START_TOOLBOX()
 	end
 
 	if option.globalopt.Jules
-		SoilName_2_SiteName = jules.START_JULES()
-		smap2hypix.SMAP_2_HYPIX(SoilName_2_SiteName)
+		SoilName_2_SiteName, θᵢₙᵢ = jules.START_JULES()
+		smap2hypix.SMAP_2_HYPIX(SoilName_2_SiteName, θᵢₙᵢ)
 		
 	end  # if: option.START_JULES()
 

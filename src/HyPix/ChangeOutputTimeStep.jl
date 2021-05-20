@@ -2,7 +2,7 @@
 #		MODULE: tincrease
 # =============================================================
 module Δtchange
-	import ..cst, ..tool, ..param, ..interpolate
+	import ..cst, ..tool, ..param, ..interpolate, ..readHypix
 	import Dates: value, DateTime, Day, Second, Hour
 
 	function CHANGE_OUTPUT_ΔT(∑Pet, ∑Pr, ∑T, ∑WaterBalance_η, ∑ΔSink, calibr, clim, N_iT::Int64, N_iZ::Int64, Q, veg, ΔEvaporation, ΔHpond, ΔT, θ, Ψ, ∑T_Climate)
@@ -29,6 +29,8 @@ module Δtchange
 
 		# PREPARING DATA FOR PLOTS
 			Date_Start = clim.Date[2]
+
+			param = readHypix.DATES()
 					
 			Date_Start_Calibr = DateTime(param.hyPix.calibr.Year_Start, param.hyPix.calibr.Month_Start, param.hyPix.calibr.Day_Start, param.hyPix.calibr.Hour_Start, param.hyPix.calibr.Minute_Start, param.hyPix.calibr.Second_Start)
 				

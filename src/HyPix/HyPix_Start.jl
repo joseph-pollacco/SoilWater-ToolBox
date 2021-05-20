@@ -5,7 +5,7 @@ module hypix
 
 	import ..hydroStruct, ..hypixModel, ..hypixOpt, ..interpolate, ..memory, ..ofHypix, ..option, ..param, ..path, ..plotHypix, ..plotOther, ..priorprocess, ..readHypix, ..signature, ..tableHypix, ..tool, ..vegStruct, ..waterBalance, ..zobs, ..Δtchange, ..discretization
 	using Statistics, Dates
-	export HYPIX_START		
+	export HYPIX_START
 
 	function HYPIX_START()
 		println("=== START RUNNING Hypix_1D ==== \n")
@@ -16,15 +16,15 @@ module hypix
 
 		Layer, N_iHorizon, N_iZ, Z, θ_Ini = readHypix.DISCRETIZATION()
 	
-		# Discretisation ~~~~~
+		# DISCRETISATION ~~~~~
 			discret = discretization.DISCRETIZATION(N_iZ, Z)
 
-		# Climate data  ~~~~~
+		# CLIMATE DATA  ~~~~~
 			clim = readHypix.CLIMATE()
 
 			∑Pet_Climate, ∑Pr_Climate, ∑T_Climate, N_∑T_Climate, Temp = priorprocess.CLIMATE(clim)
 
-		# calibr data  ~~~~~
+		# CALIBR DATA  ~~~~~
 			if option.hyPix.calibr
 				calibr = readHypix.TIME_SERIES()
 				

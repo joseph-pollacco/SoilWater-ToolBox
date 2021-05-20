@@ -84,18 +84,18 @@
 		mutable struct HYPIXS
 			iSim_Start
 			iSim_End
-			Year_Start
-			Month_Start
-			Day_Start
-			Hour_Start
-			Minute_Start
-			Second_Start
-			Year_End
-			Month_End
-			Day_End
-			Hour_End
-			Minute_End
-			Second_End
+			Year_Start::Int64
+			Month_Start::Int64
+			Day_Start::Int64
+			Hour_Start::Int64
+			Minute_Start::Int64
+			Second_Start::Int64
+			Year_End::Int64
+			Month_End::Int64
+			Day_End::Int64
+			Hour_End::Int64
+			Minute_End::Int64
+			Second_End::Int64
 			ΔZrz_Max
 			ΔZdeep_max
 			Cosα
@@ -113,18 +113,18 @@
 		end
 		mutable struct CALIBR
 			NmaxFuncEvals
-			Year_Start
-			Month_Start
-			Day_Start
-			Hour_Start
-			Minute_Start
-			Second_Start
-			Year_End
-			Month_End
-			Day_End
-			Hour_End
-			Minute_End
-			Second_End
+			Year_Start::Int64
+			Month_Start::Int64
+			Day_Start::Int64
+			Hour_Start::Int64
+			Minute_Start::Int64
+			Second_Start::Int64
+			Year_End::Int64
+			Month_End::Int64
+			Day_End::Int64
+			Hour_End::Int64
+			Minute_End::Int64
+			Second_End::Int64
 			θobs_Uncert
 		end
 		mutable struct PLOT
@@ -304,8 +304,8 @@
 
 		# Auto discretisation
 			# If auto discretisation is selected to derive the cells sizes
-			ΔZrz_Max   = 10.00 # [mm] maximum discretisation size in the root zone
-			ΔZdeep_max = 20.00 # [mm] maximum discretisation size below the root zone
+			ΔZrz_Max   = 10.00 # [mm] {10-50} maximum discretisation size in the root zone
+			ΔZdeep_max = 50.00 # [mm] {50-100} maximum discretisation size below the root zone
 
 		# Slope[radiant]
 		  Cosα = 1.0
