@@ -387,7 +387,7 @@ module plotHypix
 				function TIMESERIES(∑T_Date_Plot, ∑T_Plot, obsθ, discret, Flag_Plot_Pond, iSim, N_∑T_Plot, N_iZ, ΔEvaporation_Plot, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, θ_Plot, θobs_Plot, clim, i∑T_CalibrStart_Day)
 
 				# PATH
-					Path = path.Hypix_obsθ * "_" * string(iSim) * ".svg"
+					Path = path.Plot_HypixTime * "_" * string(iSim) * ".svg"
 					rm(Path, force=true, recursive=true)
 					
 				# READING DATES

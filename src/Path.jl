@@ -244,7 +244,7 @@ module path
 			# HYPIX
 				FileHypix_Plot = Home * "//OUTPUT//Hypix//" * ProjectName_Hypix  * "//Plots//"
 				mkpath(FileHypix_Plot)
-					Hypix_calibr  = FileHypix_Plot * ProjectName_Hypix  * "_" * "Plot_ThetaCalibr"
+					Plot_HypixTime  = FileHypix_Plot * ProjectName_Hypix  * "_" * "Plot_HypixTime"
 					Plot_Hypix_θΨK = FileHypix_Plot * ProjectName_Hypix  * "_" * "Plot_ThetaPsiK"
 					Plot_Se_Time   = FileHypix_Plot * ProjectName_Hypix  * "_" * "Plot_Se_Time.png"
 					Plot_Se_Z      = FileHypix_Plot * ProjectName_Hypix  * "_" * "Plot_Se_Z.png"
