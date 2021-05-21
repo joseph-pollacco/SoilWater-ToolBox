@@ -2,7 +2,7 @@
 #		MODULE: reading
 # =============================================================
 module reading
-	import ..option, ..path, ..tool, ..param
+	import ..option, ..path, ..tool, ..param, ..vegStruct
 	import  DelimitedFiles
 
 	export ID, θΨ, KUNSATΨ, INFILTRATION, PSD, READ_STRUCT
@@ -182,7 +182,6 @@ module reading
 	#		FUNCTION : KUNSATΨ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function KUNSATΨ(Id_Select, N_SoilSelect)
-
 			# Determeining where to read the data
 			if isfile(path.Kunsat)
 				Path = path.Kunsat
@@ -215,7 +214,7 @@ module reading
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : READ_STRUCT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function READ_STRUCT(param, Path; iStart=1, iEnd=2^63 - 1)
+		function READ_STRUCT(structures, Path; iStart=1, iEnd=2^63 - 1)
 			println("    ~  $(Path) ~")
 
 			# Read data
@@ -224,32 +223,39 @@ module reading
 				Header = Data[1,1:end]
 			# Remove first READ_ROW_SELECT
 				Data = Data[2:end,1:end]
-
-				# Select data of interest
-					N_SoilSelect = size(Data)[1] # Initial
-					iEnd= min(N_SoilSelect, iEnd)
-					Data = Data[iStart:iEnd,1:end]
-					N_SoilSelect = iEnd - iStart + 1 # Final
+			# Select data of interest
+				N_SoilSelect = size(Data)[1] # Initial
+				iEnd= min(N_SoilSelect, iEnd)
+				Data = Data[iStart:iEnd,1:end]
+				N_SoilSelect = iEnd - iStart + 1 # Final
 
 			# Reading the Model data
-			for iFieldname in propertynames(param)
+			for iFieldname in propertynames(structures)
+
+				Output_Vector, Ndata = tool.readWrite.READ_HEADER_FAST(Data, Header, string(iFieldname))
+
+				# Putting the values of Output_Vector into structures					
 				try
 					Output_Vector, Ndata = tool.readWrite.READ_HEADER_FAST(Data, Header, string(iFieldname))
-					# Putting the values of OutPutData into the the structure hydroData
+
+					# Putting the values of OutPutData into the the structures hydroData
 						if length(Output_Vector) == 1 # Not a vector
 							Output_Vector = Output_Vector[1]
 						end
-						setfield!(param, Symbol(iFieldname), Float64.(Output_Vector))
+
+						setfield!(structures, Symbol(iFieldname), Float64.(Output_Vector))
 				catch
 					@warn "SoilWater-ToolBox: cannong find $iFieldname"
 					Output_Vector = fill(0.0::Float64, N_SoilSelect)
 					if length(Output_Vector) == 1 # Not a vector
                   Output_Vector = Output_Vector[1]
                end
-					setfield!(param, Symbol(iFieldname), Float64.(Output_Vector))
+	
+					setfield!(structures, Symbol(iFieldname), Float64.(Output_Vector))
 				end
 			end
-		return param, N_SoilSelect
+
+		return structures, N_SoilSelect
 		end  # function: READ_STRUCT
 
 

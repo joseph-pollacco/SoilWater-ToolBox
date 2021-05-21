@@ -108,11 +108,11 @@
 			Δθ_Max
 			NewtonStepWeaken
 			WaterBalanceResidual_Max
-			calibr # it is a structure
+			obsθ # it is a structure
 			plot # it is a structure
 		end
-		mutable struct CALIBR
-			NmaxFuncEvals
+		mutable struct OBSΘ
+			NmaxFuncEvals::Int64
 			Year_Start::Int64
 			Month_Start::Int64
 			Day_Start::Int64
@@ -332,7 +332,7 @@
 			WaterBalanceResidual_Max = 10.0E-11 # 10.0E-11
 
 		#----------------------
-		#	calibr parameters
+		#	obsθ parameters
 		#----------------------
 			NmaxFuncEvals = 130
 		
@@ -351,7 +351,7 @@
 				Second_End   = Second_End
 				θobs_Uncert = 0.03 # [cm³ cm-³]
 
-			calibr = CALIBR(NmaxFuncEvals, Year_Start, Month_Start, Day_Start, Hour_Start, Minute_Start, Second_Start, Year_End, Month_End, Day_End, Hour_End, Minute_End, Second_End, θobs_Uncert)
+				obsθ = OBSΘ(NmaxFuncEvals, Year_Start, Month_Start, Day_Start, Hour_Start, Minute_Start, Second_Start, Year_End, Month_End, Day_End, Hour_End, Minute_End, Second_End, θobs_Uncert)
 
 		#----------------------
 		#	 Plot \ table parameters
@@ -382,7 +382,7 @@
 			
 	# signatures = SIGNATURES(Month_Winter_Start, Month_Winter_End)
 
-	hyPix = HYPIXS(iSim_Start, iSim_End, Year_Start, Month_Start, Day_Start, Hour_Start, Minute_Start, Second_Start, Year_End, Month_End, Day_End, Hour_End, Minute_End, Second_End,	ΔZrz_Max, ΔZdeep_max, Cosα, ΔHpondMax, Ψ_Bot, ΔT_Min, ΔT_Max, N_Iter, ΔT_Rerun, Δθ_Max, NewtonStepWeaken, WaterBalanceResidual_Max, calibr, plot)
+	hyPix = HYPIXS(iSim_Start, iSim_End, Year_Start, Month_Start, Day_Start, Hour_Start, Minute_Start, Second_Start, Year_End, Month_End, Day_End, Hour_End, Minute_End, Second_End,	ΔZrz_Max, ΔZdeep_max, Cosα, ΔHpondMax, Ψ_Bot, ΔT_Min, ΔT_Max, N_Iter, ΔT_Rerun, Δθ_Max, NewtonStepWeaken, WaterBalanceResidual_Max, obsθ, plot)
 
 
 	# =============================================================

@@ -41,14 +41,16 @@ module path
 			JulesMetadata = "LinkingData.csv"
 
 		# DATA HYPIX
-         Climate        = "Climate_2.csv"
-         Dates          = "Dates.csv"
-         Discretization = "Discretization_2.csv"
-         HyPix_Param    = "HyPix_Param_2.csv"
-         Hydraulic_Kg   = "Hydraulic_Uni_Kg2.csv"
-         Hydraulic_Vang = "Hydraulic_Vang.csv"
-         Input_OfStep   = "Wof_Steps.csv"
-         calibr         = "Soilmoisture.csv"
+         Climate          = "Climate_2.csv"
+         Dates            = "Dates.csv"
+         Discretization   = "Discretization_2.csv"
+         HyPix_Param      = "HyPix_Param_2.csv"
+         HyPix_VegParam   = "Vegetation.csv"
+         HyPix_HydroParam = "HypixHydro.csv"
+         Hydraulic_Kg     = "Hydraulic_Uni_Kg2.csv"
+         Hydraulic_Vang   = "Hydraulic_Vang.csv"
+         Input_OfStep     = "Wof_Steps.csv"
+         obsθ             = "Soilmoisture.csv"
 			
 			
 			if option.hyPix.θΨKmodel == :Kosugi
@@ -60,7 +62,6 @@ module path
 			# DATA LOOKUPTABLE
             LookUpTable_CropCoeficient = "LookUpTable_CropCoeficient.csv"
             LookUpTable_Lai            = "LookUpTable_Lai.csv"
-
 
 	# TABLE OUTPUT PATH
 		# DATA SOIL HYDRO
@@ -138,7 +139,9 @@ module path
 						Hydraulic      = FileHypix_Input * Hydraulic
 						Hypix_Param    = FileHypix_Input * HyPix_Param
 						JulesMetadata  = FileHypix_Input * JulesMetadata
-						calibr         = FileHypix_Input * calibr
+						obsθ         = FileHypix_Input * obsθ
+						HyPix_VegParam   =  FileHypix_Input * HyPix_VegParam
+						HyPix_HydroParam =  FileHypix_Input * HyPix_HydroParam
 					
 					Input_OfStep = Home * "//INPUT//DataHyPix//RESULTS//"
 

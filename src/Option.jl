@@ -10,18 +10,18 @@
 		hyPix 			# Structure
 	end
 		mutable struct GLOBALOPT
-			HydroTranslateModel
-			Hypix
-			Smap
-			BulkDensity
-			θΨ
-			Psd
-			Infilt
-			Temporary
-			Jules
-			DownloadPackage
-			Plot
-			Plot_Show
+			HydroTranslateModel::Bool
+			Hypix::Bool
+			Smap::Bool
+			BulkDensity::Bool
+			θΨ::Symbol
+			Psd::Bool
+			Infilt::Bool
+			Temporary::Bool
+			Jules::Bool
+			DownloadPackage::Bool
+			Plot::Bool
+			Plot_Show::Bool
 		end
 		# mutable struct ROCKFRAGMENT
 		# 	rockFragment
@@ -105,7 +105,8 @@
 			σ_2_Ψm
 			σ_2_θr
 			θs_Opt
-			calibr
+			Optimisation::Bool
+			obsθ
 			θobs_Hourly
 			Signature_Run
 			Table
@@ -151,8 +152,8 @@
 			DownloadPackage = false # <true> For first time user download packages required to run program; <false>*
 
 		# Plotting
-			Plot      = false # <true>* plot; <false> no plotting
-			Plot_Show = false # <true>* plot shown in VScode; <false>
+			Plot      = true # <true>* plot; <false> no plotting
+			Plot_Show = true # <true>* plot shown in VScode; <false>
 
 		globalopt = GLOBALOPT(HydroTranslateModel, Hypix, Smap, BulkDensity, θΨ, Psd, Infilt, Temporary, Jules, DownloadPackage, Plot, Plot_Show)
 
@@ -282,7 +283,7 @@
          RootWaterUptake      = true
 			RootWaterUptakeComp  = true
 			
-		#Ssink term 
+		#S sink term 
          LookupTable_Lai           = true # <false> Lai=constant; <true> Lai varies per month
          LookUpTable_CropCoeficient = true # <false> CropCoeficient=constant; <true> CropCoeficient varies per month
 
@@ -294,7 +295,7 @@
 			∂R∂Ψ_Numerical = false # perform the derivatives numerically <true>; <false>
 
 		# Adaptive time step
-			AdaptiveTimeStep   = :Δθ # <:ΔΨ>; <:Δθ>
+			AdaptiveTimeStep   = :ΔΨ # <:ΔΨ>; <:Δθ>
 			NormMin            = :Norm		#<:Norm>; <:Min>
 			Flag_ReRun         = true # <true>; <false> Rerun after updating the ΔT
 			Qbottom_Correction = true # <true> correction for the mass balance of the last cell
@@ -309,12 +310,13 @@
 			θs_Opt = :No #  <:θs_Opt> θs is derived by multiplying a parameter to Max(θobs) for all profiles; <No>
 
 		# Calibration data available
-         calibr  = true # <true>; <false>
+			Optimisation = false # <true>; <false>
+			obsθ  = true # <true>; <false>
 			θobs_Hourly = false # θ data can be very large so we reduce the data to hourly
 			Signature_Run = false
 
 		# Table true
-         Table = false 
+         Table = true 
 				Table_Discretization  = true
 				Table_Q               = true
 				Table_RootWaterUptake = true
@@ -327,7 +329,7 @@
 			
 		# plot outputs
         Plot_Vegetation   = false
-        Plot_θΨK          = false
+        Plot_θΨK          = true
         Plot_Interception = false
         Plot_Other        = false
         Plot_Sorptivity   = false
@@ -339,7 +341,7 @@
           Plot_WaterBalance = true
           Plot_ΔT           = true
 
-	 hyPix = HYPIX(ClimateDataTimestep, RainfallInterception, Evaporation, RootWaterUptake, RootWaterUptakeComp, LookupTable_Lai, LookUpTable_CropCoeficient, θΨKmodel, BottomBoundary, ∂R∂Ψ_Numerical, AdaptiveTimeStep, NormMin, Flag_ReRun, Qbottom_Correction, Lai_2_SintMax, σ_2_Ψm, σ_2_θr, θs_Opt, calibr, θobs_Hourly, Signature_Run, Table, Table_Discretization, Table_Q, Table_RootWaterUptake, Table_TimeSeries, Table_Ψ, Table_θ, Table_TimeSeriesDaily, Tabule_θΨ, Table_Climate, Plot_Vegetation, Plot_θΨK, Plot_Interception, Plot_Other, Plot_Sorptivity, Plot_Hypix, Plot_Climate, Plot_θ, Plot_Ψ, Plot_Flux, Plot_WaterBalance, Plot_ΔT)
+	 hyPix = HYPIX(ClimateDataTimestep, RainfallInterception, Evaporation, RootWaterUptake, RootWaterUptakeComp, LookupTable_Lai, LookUpTable_CropCoeficient, θΨKmodel, BottomBoundary, ∂R∂Ψ_Numerical, AdaptiveTimeStep, NormMin, Flag_ReRun, Qbottom_Correction, Lai_2_SintMax, σ_2_Ψm, σ_2_θr, θs_Opt, Optimisation, obsθ, θobs_Hourly, Signature_Run, Table, Table_Discretization, Table_Q, Table_RootWaterUptake, Table_TimeSeries, Table_Ψ, Table_θ, Table_TimeSeriesDaily, Tabule_θΨ, Table_Climate, Plot_Vegetation, Plot_θΨK, Plot_Interception, Plot_Other, Plot_Sorptivity, Plot_Hypix, Plot_Climate, Plot_θ, Plot_Ψ, Plot_Flux, Plot_WaterBalance, Plot_ΔT)
 
 
 	# =============================================================

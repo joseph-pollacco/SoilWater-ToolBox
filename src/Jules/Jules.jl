@@ -319,7 +319,7 @@ module jules
          end
 
          # Getting θ observed
-         Path_θjules = Path_θjules_Input * OptionsJules_2_OptionsFile[Options_θjules]
+            Path_θjules = Path_θjules_Input * OptionsJules_2_OptionsFile[Options_θjules]
 
          # println(NCDatasets.Dataset(Path_θjules))
 

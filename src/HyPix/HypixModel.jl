@@ -3,7 +3,7 @@
 # =============================================================
 module hypixModel
 
-	import ..checkerror, ..timeStep, ..discretization, ..evapo, ..flux, ..interception, ..interpolate, ..kunsat, ..memory, ..ofHypix, ..option, ..param, ..path, ..pet, ..plot, ..pond, ..priorprocess, ..residual, ..richard, ..rootwateruptake, ..sorptivity, ..tool, ..wrc, ..Δtchange, ..ΨminΨmax
+	import ..checkerror, ..timeStep, ..discretization, ..evapo, ..flux, ..interception, ..interpolate, ..kunsat, ..memory, ..ofHypix, ..option, ..param, ..path, ..pet, ..plot, ..pond, ..climate, ..residual, ..richard, ..rootwateruptake, ..sorptivity, ..tool, ..wrc, ..Δtchange, ..ΨminΨmax
 
 	export HYPIX
 
@@ -12,7 +12,7 @@ module hypixModel
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	function HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, hydro, Laiᵀ, Laiᵀ_η, N_∑T_Climate, N_iZ::Int64, Q, Residual, veg, Z, ΔEvaporation, ΔHpond, ΔΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θ_Ini, Ψ, Ψ_Max, Ψ_Min, Ψbest)
 
-		# Vegetation parameters which vary with time
+		# VEGETATION PARAMETERS WHICH VARY WITH TIME
 			for iT = 1:clim.N_Climate
 				if option.hyPix.LookupTable_Lai
 					Laiᵀ[iT]  = (veg.Lai_Max - veg.Lai_Min) * Laiᵀ_η[iT] + veg.Lai_Min
@@ -26,13 +26,14 @@ module hypixModel
 				end
 			end # for
 
+		# RAINFALL INTERCEPTION
 		if option.hyPix.RainfallInterception
 			∑Pet_Climate, ∑Pr_Climate, clim = interception.RAINFALL_INTERCEPTION_START(∑Pet_Climate, ∑Pr_Climate, clim, Laiᵀ, veg)
 		end
 		
+		# ROOTS
 		if option.hyPix.RootWaterUptake
-			# Last cell of rootzone
-			N_iRoot = rootwateruptake.rootDistribution.N_IROOT(N_iZ, veg, Z)
+			N_iRoot = rootwateruptake.rootDistribution.N_IROOT(N_iZ, veg, Z)# Last cell of rootzone
 
 			ΔRootDensity = rootwateruptake.rootDistribution.ROOT_DENSITY(discret, N_iRoot, veg, Z)
 		else
@@ -44,22 +45,17 @@ module hypixModel
 		# 	N_iEvapo = evapo.N_IEVAPO(N_iZ, veg, Z) # Depth where evaporation can occure
 		# end # option.hyPix.Evaporation
 
-		# Minimum or maximum Ψ values this is such that ∂θ∂Ψ ≠ 0 which influences the Newton-Raphson method to be removed
+		# MINIMUM OR MAXIMUM Ψ VALUES THIS IS SUCH THAT ∂Θ∂Ψ ≠ 0 WHICH INFLUENCES THE NEWTON-RAPHSON METHOD TO BE REMOVED
 			for iZ=1:N_iZ
 				Ψ_Max[iZ], Ψ_Min[iZ] = ΨminΨmax.ΨMINΨMAX(hydro.θs[iZ],  hydro.θsMacMat[iZ],  hydro.σ[iZ],  hydro.σMac[iZ], hydro.Ψm[iZ],  hydro.ΨmMac[iZ])
 			end  # for iZ=1:N_iZ
 
-		# IF AdaptiveTimeStep
+		# ADAPTIVETIMESTEP
 			if option.hyPix.AdaptiveTimeStep == :ΔΨ
 				ΔΨmax = timeStep.ΔΨMAX(ΔΨmax, hydro, N_iZ)
 			end #  option.hyPix.AdaptiveTimeStep == :ΔΨ
 
-		# Water balance of residuals computed from equation
-			# WaterBalanceResidual_Max = param.hyPix.ΔPr_Error * ∑Pr_Climate[clim.N_Climate] / (Z[N_iZ] * ∑T_Climate[clim.N_Climate])
-		
 		# FIRST TIME STEP
-				# INITIALIZE 
-
          Flag_NoConverge        = false::Bool
          Flag_ReRun             = false::Bool
          Iter_CountTotal        = 0::Int64

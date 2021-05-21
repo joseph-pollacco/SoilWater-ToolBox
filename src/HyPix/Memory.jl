@@ -8,9 +8,11 @@ module memory
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : MEMORY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function MEMORY(calibr, clim, N_∑T_Climate::Int64, N_iZ::Int64)
+	function MEMORY(obsθ, clim, N_∑T_Climate::Int64, N_iZ::Int64)
 
-		N_Memory = ceil(Int, N_∑T_Climate / param.hyPix.ΔT_Min) + Int(N_∑T_Climate % param.hyPix.ΔT_Min + 1)
+		# N_Memory = ceil(Int, N_∑T_Climate / param.hyPix.ΔT_Min) + Int(N_∑T_Climate % param.hyPix.ΔT_Min + 1)
+
+      N_Memory = ceil(Int, N_∑T_Climate / param.hyPix.ΔT_Min)
 		
       ΔEvaporation = fill(0.0::Float64, N_Memory)
       ΔHpond       = fill(0.0::Float64, N_Memory)
@@ -55,7 +57,7 @@ module memory
       Laiᵀ= fill(0.0::Float64, clim.N_Climate)
 		CropCoeficientᵀ = fill(0.0::Float64, clim.N_Climate)
 
-      θSim = Array{Float64}(undef, calibr.N_iT, N_iZ)
+      θSim = Array{Float64}(undef, obsθ.N_iT, N_iZ)
 
 		# INITIALIZE 
          # ∑T[1]           = 0.0

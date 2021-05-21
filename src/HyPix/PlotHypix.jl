@@ -12,7 +12,7 @@ module plotHypix
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : TIME_SERIES
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function TIME_SERIES(∑T_Plot, ∑WaterBalance_η_Plot, calibr, discret, Flag_Plot_Pond, iSim, N_∑T_Plot, N_iZ, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, ΔT_Plot, θ_Plot, θobs_Plot, Ψ_Plot)
+		function TIME_SERIES(∑T_Plot, ∑WaterBalance_η_Plot, obsθ, discret, Flag_Plot_Pond, iSim, N_∑T_Plot, N_iZ, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, ΔT_Plot, θ_Plot, θobs_Plot, Ψ_Plot)
 				
 			# PLOTTING GENERAL	
 				Plot_TimeSeries = PGFPlots.GroupPlot(1, 10, groupStyle = "vertical sep = 3.5cm")
@@ -47,17 +47,17 @@ module plotHypix
 				# PLOT Θ
 				if option.hyPix.Plot_θ
 					# Observation θplot obs
-						Plot_θobs = map(1:calibr.Ndepth) do iZobs
-							Label_Obs = "Obs=" * string((calibr.Z[iZobs])) * "mm"
+						Plot_θobs = map(1:obsθ.Ndepth) do ithetaObs
+							Label_Obs = "Obs=" * string((obsθ.Z[ithetaObs])) * "mm"
 
-						PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], θobs_Plot[1:N_∑T_Plot, iZobs], legendentry=Label_Obs, style=Style_Obs[iZobs], mark="none")		  
+						PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], θobs_Plot[1:N_∑T_Plot, ithetaObs], legendentry=Label_Obs, style=Style_Obs[ithetaObs], mark="none")		  
 						end # loop
 
 					# Simulation θplot
-						Plot_θhypix = map(1:calibr.Ndepth) do iZobs
-							Label_Sim = "HyPix=" * string( (discret.Znode[calibr.iZobs[iZobs]])) * "mm"
+						Plot_θhypix = map(1:obsθ.Ndepth) do ithetaObs
+							Label_Sim = "HyPix=" * string( (discret.Znode[obsθ.ithetaObs[ithetaObs]])) * "mm"
 
-							PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], θ_Plot[1:N_∑T_Plot, calibr.iZobs[iZobs]], style=Style_Hypix[iZobs], legendentry=Label_Sim, mark="none")
+							PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], θ_Plot[1:N_∑T_Plot, obsθ.ithetaObs[ithetaObs]], style=Style_Hypix[ithetaObs], legendentry=Label_Sim, mark="none")
 						end # loop
 
 					# Simulation θtop
@@ -97,10 +97,10 @@ module plotHypix
 				
 				# PLOTTING GRAPH Ψplot
 				if option.hyPix.Plot_Ψ
-						Plot_Ψhypix = map(1:calibr.Ndepth) do iZobs
-							Label_Sim = "HyPix=" * string( (discret.Znode[calibr.iZobs[iZobs]])) * "mm"
+						Plot_Ψhypix = map(1:obsθ.Ndepth) do ithetaObs
+							Label_Sim = "HyPix=" * string( (discret.Znode[obsθ.ithetaObs[ithetaObs]])) * "mm"
 
-							PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], Ψ_Plot[1:N_∑T_Plot, calibr.iZobs[iZobs]],style=Style_Hypix[iZobs], legendentry=Label_Sim, mark="none")
+							PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], Ψ_Plot[1:N_∑T_Plot, obsθ.ithetaObs[ithetaObs]],style=Style_Hypix[ithetaObs], legendentry=Label_Sim, mark="none")
 						end # loop
 
 						Plot_ΨhypixTop = map(1:length(CellTop)) do iTop
@@ -118,10 +118,10 @@ module plotHypix
 
 				# PLOTTING GRAPH FLUX
 				if option.hyPix.Plot_Flux
-					Plot_Qhypix = map(1:calibr.Ndepth) do iZobs
-						Label_Sim = "HyPix=" * string( (discret.Znode[calibr.iZobs[iZobs]])) * "mm"
+					Plot_Qhypix = map(1:obsθ.Ndepth) do ithetaObs
+						Label_Sim = "HyPix=" * string( (discret.Znode[obsθ.ithetaObs[ithetaObs]])) * "mm"
 
-						PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], ΔFlux_Plot[1:N_∑T_Plot, calibr.iZobs[iZobs]],style=Style_Hypix[iZobs], legendentry=Label_Sim, mark="none")
+						PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], ΔFlux_Plot[1:N_∑T_Plot, obsθ.ithetaObs[ithetaObs]],style=Style_Hypix[ithetaObs], legendentry=Label_Sim, mark="none")
 					end # loop
 
 					Plot_QhypixTop = map(1:length(CellTop)) do iTop
@@ -138,7 +138,7 @@ module plotHypix
 
 				end # if option.hyPix.Plot_Flux
 
-			Path = path.Hypix_calibr * "2_" * string(iSim) * ".svg"	
+			Path = path.Hypix_obsθ * "2_" * string(iSim) * ".svg"	
 			PGFPlots.save(Path, Plot_TimeSeries) 
 
 		end  # function: TIME_SERIES
@@ -384,20 +384,20 @@ module plotHypix
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			#		FUNCTION : TIMESERIES
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				function TIMESERIES(∑T_Date_Plot, ∑T_Plot, calibr, discret, Flag_Plot_Pond, iSim, N_∑T_Plot, N_iZ, ΔEvaporation_Plot, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, θ_Plot, θobs_Plot, clim, i∑T_CalibrStart_Day)
+				function TIMESERIES(∑T_Date_Plot, ∑T_Plot, obsθ, discret, Flag_Plot_Pond, iSim, N_∑T_Plot, N_iZ, ΔEvaporation_Plot, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, θ_Plot, θobs_Plot, clim, i∑T_CalibrStart_Day)
 
 				# PATH
-					Path = path.Hypix_calibr * "_" * string(iSim) * ".svg"
+					Path = path.Hypix_obsθ * "_" * string(iSim) * ".svg"
 					rm(Path, force=true, recursive=true)
 					
 				# READING DATES
 					param.readHypix.DATES()
 
 				# TICKS
-					# Date_Start_Calibr = calibr.Date[1]
-					Date_Start_Calibr = DateTime(param.hyPix.calibr.Year_Start, param.hyPix.calibr.Month_Start, param.hyPix.calibr.Day_Start, param.hyPix.calibr.Hour_Start, param.hyPix.calibr.Minute_Start, param.hyPix.calibr.Second_Start) # since we need to compute the culmulativeof the 1rst day
+					# Date_Start_Calibr = obsθ.Date[1]
+					Date_Start_Calibr = DateTime(param.hyPix.obsθ.Year_Start, param.hyPix.obsθ.Month_Start, param.hyPix.obsθ.Day_Start, param.hyPix.obsθ.Hour_Start, param.hyPix.obsθ.Minute_Start, param.hyPix.obsθ.Second_Start) # since we need to compute the culmulativeof the 1rst day
 					
-					# Date_End_Calibr = calibr.Date[end]
+					# Date_End_Calibr = obsθ.Date[end]
 					Date_End_Calibr = DateTime(param.hyPix.Year_End, param.hyPix.Month_End, param.hyPix.Day_End, param.hyPix.Hour_End, param.hyPix.Minute_End, param.hyPix.Second_End)
 					
 					DateTick=range(Date_Start_Calibr,step=Day(14),Date_End_Calibr)
@@ -446,20 +446,20 @@ module plotHypix
 					Style_Hypix = [:red, :darkviolet, :orange, :teal, :blue]
 
 					# Observation θplot obs
-					for iZobs = 1:calibr.Ndepth
+					for ithetaObs = 1:obsθ.Ndepth
 						# lABEL
-							Label_Obs = "Obs=" * string(Int(floor(calibr.Z[iZobs]))) * "mm"
+							Label_Obs = "Obs=" * string(Int(floor(obsθ.Z[ithetaObs]))) * "mm"
 
-							Label_Sim = "Sim=" * string( Int(floor((discret.Znode[calibr.iZobs[iZobs]])))) * "mm"
+							Label_Sim = "Sim=" * string( Int(floor((discret.Znode[obsθ.ithetaObs[ithetaObs]])))) * "mm"
 
 						# Plotting
-							# Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑T_Plot], θobs_Plot[1:N_∑T_Plot, iZobs].+param.hyPix.calibr.θobs_Uncert, line=(0.5,:solid), linecolour=Style_Hypix[iZobs], label=false)
+							# Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑T_Plot], θobs_Plot[1:N_∑T_Plot, ithetaObs].+param.hyPix.obsθ.θobs_Uncert, line=(0.5,:solid), linecolour=Style_Hypix[ithetaObs], label=false)
 		
-							# Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑T_Plot], max.(θobs_Plot[1:N_∑T_Plot, iZobs].-param.hyPix.calibr.θobs_Uncert, 0.0), line=(0.5,:solid), linecolour=Style_Hypix[iZobs], label=false)
+							# Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑T_Plot], max.(θobs_Plot[1:N_∑T_Plot, ithetaObs].-param.hyPix.obsθ.θobs_Uncert, 0.0), line=(0.5,:solid), linecolour=Style_Hypix[ithetaObs], label=false)
 
-							Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑T_Plot], θobs_Plot[1:N_∑T_Plot, iZobs], line=(2.5,:solid), linecolour=Style_Hypix[iZobs], label=Label_Obs)
+							Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑T_Plot], θobs_Plot[1:N_∑T_Plot, ithetaObs], line=(2.5,:solid), linecolour=Style_Hypix[ithetaObs], label=Label_Obs)
 
-							Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑T_Plot], θ_Plot[1:N_∑T_Plot, calibr.iZobs[iZobs]], label=Label_Sim, line=(2.5,:dashdot), linecolour=Style_Hypix[iZobs])
+							Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑T_Plot], θ_Plot[1:N_∑T_Plot, obsθ.ithetaObs[ithetaObs]], label=Label_Sim, line=(2.5,:dashdot), linecolour=Style_Hypix[ithetaObs])
 					end # loop
 
 					Plot_θ = Plots.plot!(subplot=iSubplot, ylabel=L"$\theta \ [mm^3 \ mm^{-3}]$")
@@ -469,7 +469,7 @@ module plotHypix
 				end # if: option.hyPix.Plot_θ
 				
 				Plots.savefig(Plot, Path)
-				println("			 ~ ", path.Hypix_calibr, "~")
+				println("			 ~ ", path.Hypix_obsθ, "~")
 			
 				return nothing
 				end  # function: TIMESERIES

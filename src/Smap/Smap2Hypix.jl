@@ -67,8 +67,6 @@ module smap2hypix
                   TABLE_HYDRO_VEG(hydroSmap, N_iLayers, Path)
 
                 # COMPUTING θᵢₙᵢ ===
-                  
-
                   Path_SmapHydro = Path_Output * "//" * iSiteName * "_HypixHydro.csv"
                      
                   Path_Output_θini =  Path_Output * "//" * iSiteName * "_ThetaIni.csv"

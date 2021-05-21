@@ -85,7 +85,7 @@ module interpolate
 					end
 				end
 			
-			end # for: iT=1:calibr.N_iT
+			end # for: iT=1:obsθ.N_iT
 		
 		return X_Reduced
 	end  # function: θINTERPOLATION
@@ -113,7 +113,7 @@ module interpolate
 
 				X_Reduced[iT] = Slope * ∑T_Reduced[iT] + Intercept
 			
-			end # for: iT=1:calibr.N_iT
+			end # for: iT=1:obsθ.N_iT
 		
 		return X_Reduced
 	end  # function: θINTERPOLATION

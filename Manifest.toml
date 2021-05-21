@@ -31,15 +31,15 @@ uuid = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 
 [[DrWatson]]
 deps = ["Dates", "FileIO", "LibGit2", "MacroTools", "Pkg", "Random", "Requires", "UnPack"]
-git-tree-sha1 = "12bb19e5e6671a0940f2c97c9b01ffeda596ea49"
+git-tree-sha1 = "2f7c2a7d6d842636b7e7345262f19ee4fbe7d9a6"
 uuid = "634d3b9d-ee7a-5ddf-bec9-22491ea816e1"
-version = "2.0.2"
+version = "2.0.3"
 
 [[FileIO]]
 deps = ["Pkg", "Requires", "UUIDs"]
-git-tree-sha1 = "d74fd0dae131104471c849f25ba1179fe0fadf47"
+git-tree-sha1 = "cfb694feaddf4f0381ef3cc9d4c0d8fc6b7e2ea7"
 uuid = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
-version = "1.8.2"
+version = "1.9.0"
 
 [[IOCapture]]
 deps = ["Logging"]

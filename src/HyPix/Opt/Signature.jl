@@ -11,11 +11,11 @@ module signature
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : SIGNATURE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function SIGNATURE(∑T, calibr, hydroHorizon, N_iRoot, N_iT, N_iZ, veg, ΔRootDensity, Ψ)
+	function SIGNATURE(∑T, obsθ, hydroHorizon, N_iRoot, N_iT, N_iZ, veg, ΔRootDensity, Ψ)
 
 		# SIMULATED 
 			# Simulated which matches time of θobs
-				N_∑T_Plot, True = tool.readWrite.DATA_2_ΔTnew(∑T, N_iT, calibr.∑T[1:calibr.N_iT]) # time resolution of θsim at time resolution calibr
+				N_∑T_Plot, True = tool.readWrite.DATA_2_ΔTnew(∑T, N_iT, obsθ.∑T[1:obsθ.N_iT]) # time resolution of θsim at time resolution obsθ
 	
 				Ψ_Sim = Ψ[True[1:N_iT],1:N_iZ]
 
@@ -23,53 +23,53 @@ module signature
             ΔT_Plot   = Matrix{Float64}(undef, N_∑T_Plot, N_iZ) # Reserving memory
             Ψ_SimReduced = Matrix{Float64}(undef, N_∑T_Plot, N_iZ)
 
-				ΔT_Plot[1] = calibr.∑T[1]
+				ΔT_Plot[1] = obsθ.∑T[1]
 				for iT = 1:N_∑T_Plot
-					for iDepth = 1:calibr.Ndepth
-						Ψ_SimReduced[iT,iDepth] = Ψ_Sim[iT, calibr.iZobs[iDepth]]
-					end  # for calibr.Ndepth
+					for iDepth = 1:obsθ.Ndepth
+						Ψ_SimReduced[iT,iDepth] = Ψ_Sim[iT, obsθ.ithetaObs[iDepth]]
+					end  # for obsθ.Ndepth
 					
 					if iT ≥ 2
-						ΔT_Plot[iT] = calibr.∑T[iT] - calibr.∑T[iT-1]
+						ΔT_Plot[iT] = obsθ.∑T[iT] - obsθ.∑T[iT-1]
 					end
 				end  # for iT = 1:N_∑T_Plot
 
 			
 		# OBSERVED
 			# New ΔRootDensity which has the number f layers as observed θ
-				ΔRootDensity_Plot = zeros(Float64, calibr.Ndepth) # Reserving memory
+				ΔRootDensity_Plot = zeros(Float64, obsθ.Ndepth) # Reserving memory
 
 				iDepth = 1
 				for iZ=1:N_iRoot
-					if calibr.iZobs[iDepth] < iZ	
-						if iDepth ≤ calibr.Ndepth
+					if obsθ.ithetaObs[iDepth] < iZ	
+						if iDepth ≤ obsθ.Ndepth
 							iDepth += 1
 						end
-					end #  calibr.iZobs[iDepth] ≤ iZ
+					end #  obsθ.ithetaObs[iDepth] ≤ iZ
 					ΔRootDensity_Plot[iDepth] += ΔRootDensity[iZ]
 				end # for iZ=1:N_iRoot
 			
 			# Ψ_Obs	
-				Ψ_Obs = Matrix{Float64}(undef, N_∑T_Plot, calibr.Ndepth) # Reserving memory
+				Ψ_Obs = Matrix{Float64}(undef, N_∑T_Plot, obsθ.Ndepth) # Reserving memory
 
-				for iT=1:N_∑T_Plot, iZ=1:calibr.Ndepth
-					Ψ_Obs[iT,iZ] = wrc.θ_2_ΨDual(min.( max.(calibr.θobs[iT,iZ], hydroHorizon.θr[iZ]), hydroHorizon.θs[iZ]), iZ, hydroHorizon)
+				for iT=1:N_∑T_Plot, iZ=1:obsθ.Ndepth
+					Ψ_Obs[iT,iZ] = wrc.θ_2_ΨDual(min.( max.(obsθ.θobs[iT,iZ], hydroHorizon.θr[iZ]), hydroHorizon.θs[iZ]), iZ, hydroHorizon)
 				end # for iT iZ
 
-				Signature_Deficit_Obs, Signature_Max_Obs, Signature_Saturated_Obs, Signature_Senescence_Obs, Signature_Deficit_Sim, Signature_Max_Sim, Signature_Saturated_Sim, Signature_Senescence_Sim = SIGNATURE_Ψ(calibr, N_∑T_Plot, veg, ΔRootDensity_Plot, ΔT_Plot, Ψ_Obs, Ψ_SimReduced)
+				Signature_Deficit_Obs, Signature_Max_Obs, Signature_Saturated_Obs, Signature_Senescence_Obs, Signature_Deficit_Sim, Signature_Max_Sim, Signature_Saturated_Sim, Signature_Senescence_Sim = SIGNATURE_Ψ(obsθ, N_∑T_Plot, veg, ΔRootDensity_Plot, ΔT_Plot, Ψ_Obs, Ψ_SimReduced)
 
 		end # function Signatures
 
 	#= ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			FUNCTION : Signature_Ψ
 	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ =#
-		function SIGNATURE_Ψ(calibr, N_∑T_Plot, veg, ΔRootDensity_Plot, ΔT_Plot, Ψ_Obs, Ψ_SimReduced; Wsignature=0.75)
+		function SIGNATURE_Ψ(obsθ, N_∑T_Plot, veg, ΔRootDensity_Plot, ΔT_Plot, Ψ_Obs, Ψ_SimReduced; Wsignature=0.75)
        
 			# OBSERVED
-			Signature_Deficit_Obs, Signature_Max_Obs, Signature_Saturated_Obs, Signature_Senescence_Obs, ∑ΔT_Month = SIGNATURE_FEDDES(calibr, N_∑T_Plot, veg, ΔRootDensity_Plot, ΔT_Plot, Ψ_Obs)
+			Signature_Deficit_Obs, Signature_Max_Obs, Signature_Saturated_Obs, Signature_Senescence_Obs, ∑ΔT_Month = SIGNATURE_FEDDES(obsθ, N_∑T_Plot, veg, ΔRootDensity_Plot, ΔT_Plot, Ψ_Obs)
 			
 			# SIMULATED
-			Signature_Deficit_Sim, Signature_Max_Sim, Signature_Saturated_Sim, Signature_Senescence_Sim, ~ = SIGNATURE_FEDDES(calibr, N_∑T_Plot, veg, ΔRootDensity_Plot, ΔT_Plot, Ψ_SimReduced)
+			Signature_Deficit_Sim, Signature_Max_Sim, Signature_Saturated_Sim, Signature_Senescence_Sim, ~ = SIGNATURE_FEDDES(obsθ, N_∑T_Plot, veg, ΔRootDensity_Plot, ΔT_Plot, Ψ_SimReduced)
 		
 			return Signature_Deficit_Obs, Signature_Max_Obs, Signature_Saturated_Obs, Signature_Senescence_Obs, Signature_Deficit_Sim, Signature_Max_Sim, Signature_Saturated_Sim, Signature_Senescence_Sim
 
@@ -79,7 +79,7 @@ module signature
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : SIGNATURE_FEDDES
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function SIGNATURE_FEDDES(calibr, N_∑T_Plot, veg, ΔRootDensity_Plot, ΔT_Plot, Ψ₂)
+		function SIGNATURE_FEDDES(obsθ, N_∑T_Plot, veg, ΔRootDensity_Plot, ΔT_Plot, Ψ₂)
 
          Signature_Deficit    = zeros(Float64, 12)
          Signature_Max        = zeros(Float64, 12)
@@ -88,14 +88,14 @@ module signature
          ∑ΔT_Month            = zeros(Float64, 12)
 		
 			for iT=2:N_∑T_Plot
-				iMonth = Int64(month(calibr.Date[iT]))
+				iMonth = Int64(month(obsθ.Date[iT]))
 
             Signature_Deficit₁    = 0.0
             Signature_Max₁        = 0.0
             Signature_Saturated₁  = 0.0
             Signature_Senescence₁ = 0.0
 
-				for iZ=1:calibr.Ndepth
+				for iZ=1:obsθ.Ndepth
 					# Signature_Saturated
 						if Ψ₂[iT,iZ] < veg.Ψfeddes2
 							Signature_Saturated₁ += ΔRootDensity_Plot[iZ] # Signature_Saturated = Signature_Saturated + ΔRootDensity_Plot[iZ]

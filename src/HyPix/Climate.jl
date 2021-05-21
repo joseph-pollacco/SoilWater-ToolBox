@@ -1,4 +1,4 @@
-module priorprocess
+module climate
 	import Dates: value, DateTime
 	import ..option
 
@@ -41,8 +41,8 @@ module priorprocess
 
 			N_∑T_Climate = Int(∑T_Climate[clim.N_Climate])
 
-			return ∑Pet_Climate, ∑Pr_Climate, ∑T_Climate, N_∑T_Climate, Temp
+		return ∑Pet_Climate, ∑Pr_Climate, ∑T_Climate, N_∑T_Climate, Temp
 		end # function CLIMATE
 
-end # module priorprocess
+end # module climate
 # ...........................................................................................

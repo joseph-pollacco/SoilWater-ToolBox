@@ -7,7 +7,6 @@ module readHypix
 	import DelimitedFiles
 	export CLIMATE, DISCRETIZATION, HYPIX_PARAM, LOOKUPTABLE_LAI, LOOKUPTABLE_CROPCOEFICIENT
 
-
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : DATES
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -34,15 +33,14 @@ module readHypix
 				Day_End₀, ~     = tool.readWrite.READ_HEADER_FAST(Data, Header, "Day_Sim_End")
 					param.hyPix.Day_End = Day_End₀[1]
 				
-
 			# Dates of observed data
-            param.hyPix.calibr.Year_Start  = param.hyPix.Year_Start
-            param.hyPix.calibr.Month_Start = 12
-            param.hyPix.calibr.Day_Start   = param.hyPix.Day_Start
+            param.hyPix.obsθ.Year_Start  = param.hyPix.Year_Start
+            param.hyPix.obsθ.Month_Start = 12
+            param.hyPix.obsθ.Day_Start   = param.hyPix.Day_Start
 
-            param.hyPix.calibr.Year_End    = param.hyPix.Year_End
-            param.hyPix.calibr.Month_End   = param.hyPix.Month_End
-            param.hyPix.calibr.Day_End     = param.hyPix.Day_End
+            param.hyPix.obsθ.Year_End    = param.hyPix.Year_End
+            param.hyPix.obsθ.Month_End   = param.hyPix.Month_End
+            param.hyPix.obsθ.Day_End     = param.hyPix.Day_End
 
 			# Dates of plots
             param.hyPix.plot.Year_Start  = param.hyPix.Year_Start + 1
@@ -72,7 +70,7 @@ module readHypix
 			Layer, ~ =  tool.readWrite.READ_HEADER_FAST(Data, Header, "Layer")
 
 			N_iHorizon = maximum(Layer)
-			return Layer, N_iHorizon, N_iZ, Z, θ_Ini
+		return Layer, N_iHorizon, N_iZ, Z, θ_Ini
 		end # function DISCRETIZATION
 
 
@@ -248,7 +246,7 @@ module readHypix
 				println("		=== === ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ === === \n \n")
 			end
 
-			return hydro, hydroHorizon, optim, veg
+	return hydro, hydroHorizon, optim, veg
 	end  # function: HYPIX_PARAM
 
 
@@ -279,26 +277,24 @@ module readHypix
 				Temperature_Name = "Temp_c"
 			end #  option.hyPix.ClimateDataTimestep
 
-			# Read data
+			# READ DATA
 				Data = DelimitedFiles.readdlm(path.Climate, ',')
-			# Read header
 				Header = Data[1,1:end]
-			# Remove first READ_ROW_SELECT
 				Data = Data[2:end,begin:end]
 
-			Year, N_Climate = tool.readWrite.READ_HEADER_FAST(Data, Header,"Year")
-			Month, ~        = tool.readWrite.READ_HEADER_FAST(Data, Header, "Month")
-			Day, ~          = tool.readWrite.READ_HEADER_FAST(Data, Header, "Day")
-			Hour, ~         = tool.readWrite.READ_HEADER_FAST(Data, Header, "Hour")
-			Minute, ~       = tool.readWrite.READ_HEADER_FAST(Data, Header, "Minute")
-			Second, ~       = tool.readWrite.READ_HEADER_FAST(Data, Header, "Second")
-			Pr, ~           = tool.readWrite.READ_HEADER_FAST(Data, Header, Pr_Name)
-			Pet, ~          = tool.readWrite.READ_HEADER_FAST(Data, Header, Pet_Name)
-			if Option_ReadTemperature 
-				Temp, ~         = tool.readWrite.READ_HEADER_FAST(Data, Header, Temperature_Name)
-			else
-				Temp = fill(24.0::Float64, N_Climate)
-			end
+				Year, N_Climate = tool.readWrite.READ_HEADER_FAST(Data, Header,"Year")
+				Month, ~        = tool.readWrite.READ_HEADER_FAST(Data, Header, "Month")
+				Day, ~          = tool.readWrite.READ_HEADER_FAST(Data, Header, "Day")
+				Hour, ~         = tool.readWrite.READ_HEADER_FAST(Data, Header, "Hour")
+				Minute, ~       = tool.readWrite.READ_HEADER_FAST(Data, Header, "Minute")
+				Second, ~       = tool.readWrite.READ_HEADER_FAST(Data, Header, "Second")
+				Pr, ~           = tool.readWrite.READ_HEADER_FAST(Data, Header, Pr_Name)
+				Pet, ~          = tool.readWrite.READ_HEADER_FAST(Data, Header, Pet_Name)
+				if Option_ReadTemperature 
+					Temp, ~         = tool.readWrite.READ_HEADER_FAST(Data, Header, Temperature_Name)
+				else
+					Temp = fill(24.0::Float64, N_Climate)
+				end
 
 			# READING DATES FROM FILE
 				param = DATES()
@@ -308,8 +304,8 @@ module readHypix
 				
 				Date_End = DateTime(param.hyPix.Year_End, param.hyPix.Month_End, param.hyPix.Day_End, param.hyPix.Hour_End, param.hyPix.Minute_End, param.hyPix.Second_End)
 
-			# CHECKING THAT
-				# Date_End is feasible
+			# CHECKING
+				# End Date feasible
 					Date_End_Maximum = DateTime(Year[N_Climate], Month[N_Climate], Day[N_Climate], Hour[N_Climate], Minute[N_Climate], Second[N_Climate]) 
 
 					if Date_End_Maximum < Date_End
@@ -317,15 +313,15 @@ module readHypix
 						println("		~ HyPix WARNING: Date_End not feasible so modified to match the data ")
 					end #warning Date_End
 
-				# Date_Start is feasible
+				# Start Date feasible
 					Date_Start_Minimum = DateTime(Year[2], Month[2], Day[2], Hour[2], Minute[2], Second[2]) 
 
 					if Date_Start_Minimum > Date_Start
 						Date_Start = max(Date_Start_Minimum , Date_Start)
 						println("		~HyPix WARNING: Date_Start = $Date_Start not feasible so modified to match the data ")
-					end #warning Date_Start
+					end #warning DATE_START
 
-				# Initializing the Array
+			# SELECTING DATES OF INTEREST
 				True = falses(N_Climate)
 				Date = Array{DateTime}(undef, N_Climate) 
 				for iT=1:N_Climate
@@ -337,8 +333,8 @@ module readHypix
 				end # iT=1:N_Climate
 
 				# Need to include one date iT-1 at the beginning to compute ΔT
-				iTrue_First = findfirst(True[1:N_Climate])
-				True[iTrue_First-1] = true
+					iTrue_First = findfirst(True[1:N_Climate])
+					True[iTrue_First-1] = true
 
 				# New reduced number of simulations
 					Date = Date[True[1:N_Climate]]
@@ -349,12 +345,17 @@ module readHypix
 					N_Climate = count(True[1:N_Climate]) # New number of data
 			
 			# To be used after interception model
-			Pr_Through = zeros(Float64, N_Climate)
+				Pr_Through = zeros(Float64, N_Climate)
 
+		# STRUCTURE
+			clim = CLIMATEDATA(Date, Pr, Pet, Temp, N_Climate, Pr_Through)
 
-			# PUTTING CLIMATE DATA INTO clim STRUCTURE FOR CLEANESS
-			return clim = CLIMATEDATA(Date, Pr, Pet, Temp, N_Climate, Pr_Through)
+		# SAVING SPACE 
+			Data = nothing
+			True = nothing
+			GC.gc()
 
+		return clim
 		end # function: CLIMATE
 
 
@@ -364,7 +365,7 @@ module readHypix
 		mutable struct θOBSERVATION
 			Date    :: Vector{DateTime}
 			Z  	  :: Vector{Float64}
-			iZobs   :: Vector{Int64}
+			ithetaObs   :: Vector{Int64}
 			N_iT    :: Int64 # Number of time steps
 			Ndepth  :: Int64 # Numver of soil profile with observed θ
 			θobs 	  :: Array{Float64,2}
@@ -373,7 +374,7 @@ module readHypix
 
 		function TIME_SERIES()
 		# Read data
-			Data = DelimitedFiles.readdlm(path.calibr, ',')
+			Data = DelimitedFiles.readdlm(path.obsθ, ',')
 		# Read header
 			Header = Data[1,1:end]
 		# Remove first READ_ROW_SELECT
@@ -387,7 +388,7 @@ module readHypix
 			Second, ~  = tool.readWrite.READ_HEADER_FAST(Data, Header, "Second")
 
 			# READING THE DEPTH OF Θ MEASUREMENTS FROM HEADER: data having Z=
-				θobs, Header = DelimitedFiles.readdlm(path.calibr, ','; header=true)
+				θobs, Header = DelimitedFiles.readdlm(path.obsθ, ','; header=true)
 
 				Array_iHeader = []
 				Ndepth = 0
@@ -424,9 +425,9 @@ module readHypix
 				param = DATES()
 
 			# REDUCING THE NUMBER OF SIMULATIONS SUCH THAT IT IS WITHIN THE SELECTED RANGE
-				Date_Start_Calibr = DateTime(param.hyPix.calibr.Year_Start, param.hyPix.calibr.Month_Start, param.hyPix.calibr.Day_Start, param.hyPix.calibr.Hour_Start, param.hyPix.calibr.Minute_Start, param.hyPix.calibr.Second_Start)
+				Date_Start_Calibr = DateTime(param.hyPix.obsθ.Year_Start, param.hyPix.obsθ.Month_Start, param.hyPix.obsθ.Day_Start, param.hyPix.obsθ.Hour_Start, param.hyPix.obsθ.Minute_Start, param.hyPix.obsθ.Second_Start)
 				
-				Date_End_Calibr = DateTime(param.hyPix.calibr.Year_End, param.hyPix.calibr.Month_End, param.hyPix.calibr.Day_End, param.hyPix.calibr.Hour_End, param.hyPix.calibr.Minute_End, param.hyPix.calibr.Second_End)
+				Date_End_Calibr = DateTime(param.hyPix.obsθ.Year_End, param.hyPix.obsθ.Month_End, param.hyPix.obsθ.Day_End, param.hyPix.obsθ.Hour_End, param.hyPix.obsθ.Minute_End, param.hyPix.obsθ.Second_End)
 
 			# ERROR CHECKING Assuring that Date_End ≤ Date_Clim_End
 				Date_Clim_End = DateTime(param.hyPix.Year_End, param.hyPix.Month_End, param.hyPix.Day_End, param.hyPix.Hour_End, param.hyPix.Minute_End, param.hyPix.Second_End)
@@ -472,9 +473,17 @@ module readHypix
 
 			# This will be computed at PrioProcess
 				∑T    = Array{Float64}(undef, N_iT)
-				iZobs = Array{Int64}(undef, Ndepth)
+				ithetaObs = Array{Int64}(undef, Ndepth)
 
-		return calibr = θOBSERVATION(Date, Z, iZobs, N_iT, Ndepth, θobs, ∑T)
+			# STRUCTURE
+				obsθ = θOBSERVATION(Date, Z, ithetaObs, N_iT, Ndepth, θobs, ∑T)
+
+			# SAVING SPACE 
+				Data = nothing
+				True = nothing
+				GC.gc()
+
+		return obsθ
 		end  # function: TIME_SERIES
 
 	
@@ -522,7 +531,6 @@ module readHypix
 
 		return CropCoeficientᵀ_Norm
 		end  # function: LOOKUPTABLE_LAI
-
 
 end  # module: readingHypix
 # ............................................................

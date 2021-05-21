@@ -27,42 +27,35 @@ module vegStruct
       Zevapo               :: Float64
       Sint_Lai             :: Float64
       Sint_Sat             :: Float64
-
-		# FieldName 				::	Vector{Symbol} # Need to pu
 	end # struct VEG
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : VEG
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function VEGSTRUCT()
-		# FieldName            = Array{Symbol}(undef, 1) # Need to put
-		
-      Zroot                = 0.0
-      ΔRdf_Top             = 0.0
-      Zroot_Top            = 0.0
-      Lai                  = 0.0
-      Lai_Min              = 0.0
-      Lai_Max              = 0.0
-      CropCoeficient       = 0.0
-      CropCoeficient_Min   = 0.0
-      CropCoeficient_Max   = 0.0
-      ExtinctCoefRadiation = 0.0
-      Ψfeddes1             = 0.0
-      Ψfeddes2             = 0.0
-      Ψfeddes3             = 0.0
-      Ψfeddes4             = 0.0
-      RootWaterUptakeComp  = 0.0
-      Zevapo               = 0.0
-      Sint_Lai             = 0.0
-      Sint_Sat             = 0.0
+      function VEGSTRUCT()
+         # FieldName            = Array{Symbol}(undef, 1) # Need to put	
+         Zroot                = 0.0
+         ΔRdf_Top             = 0.0
+         Zroot_Top            = 0.0
+         Lai                  = 0.0
+         Lai_Min              = 0.0
+         Lai_Max              = 0.0
+         CropCoeficient       = 0.0
+         CropCoeficient_Min   = 0.0
+         CropCoeficient_Max   = 0.0
+         ExtinctCoefRadiation = 0.0
+         Ψfeddes1             = 0.0
+         Ψfeddes2             = 0.0
+         Ψfeddes3             = 0.0
+         Ψfeddes4             = 0.0
+         RootWaterUptakeComp  = 0.0
+         Zevapo               = 0.0
+         Sint_Lai             = 0.0
+         Sint_Sat             = 0.0
 
-		# veg = VEG(Zroot, ΔRdf_Top, Zroot_Top, Lai, Lai_Min, Lai_Max, CropCoeficient, CropCoeficient_Min, CropCoeficient_Max, ExtinctCoefRadiation, Ψfeddes1, Ψfeddes2, Ψfeddes3, Ψfeddes4, RootWaterUptakeComp, Zevapo, Sint_Lai, Sint_Sat, FieldName)
+         return   veg = VEG(Zroot, ΔRdf_Top, Zroot_Top, Lai, Lai_Min, Lai_Max, CropCoeficient, CropCoeficient_Min, CropCoeficient_Max, ExtinctCoefRadiation, Ψfeddes1, Ψfeddes2, Ψfeddes3, Ψfeddes4, RootWaterUptakeComp, Zevapo, Sint_Lai, Sint_Sat)
 
-      veg = VEG(Zroot, ΔRdf_Top, Zroot_Top, Lai, Lai_Min, Lai_Max, CropCoeficient, CropCoeficient_Min, CropCoeficient_Max, ExtinctCoefRadiation, Ψfeddes1, Ψfeddes2, Ψfeddes3, Ψfeddes4, RootWaterUptakeComp, Zevapo, Sint_Lai, Sint_Sat)
-      return veg
-		
-		# return veg = tool.readWrite.FIELDNAME_2_STRUCT_VECT(VEG, veg) # Saving the FieldNames
-	end # function VEG
+      end # function VEG
 	
 end  # module vegStruct
 # ............................................................		

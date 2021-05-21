@@ -21,8 +21,8 @@ using Suppressor
 	include("Hydro\\HydroRelation.jl")
 	include("Hydro\\WaterRetentionCurve.jl")
 	include("Optim\\Optimize.jl")
+	include("Read.jl")
 	if !(option.globalopt.Hypix)
-		include("Read.jl")
 		include("Hydro\\TotalPorosity.jl")
 	end
 	include("Checking.jl")
@@ -81,12 +81,13 @@ using Suppressor
 		include("Hydro\\ΨminΨmax.jl")
 		include("Infilt\\SorptivityNonInfinity.jl")
 		include("Hypix\\Interpolate.jl")
-		include("Hypix\\Opt\\Zobs.jl")
+		include("Hypix\\Opt\\ThetaObs.jl")
 		include("HyPix\\ThetaIni.jl")
 		# include("Hypix\\Opt\\Signature.jl")
 		include("Hypix\\Opt\\OfHypix.jl")
 		include("Hypix\\TableHypix.jl")
 		include("Hypix\\VegStruct.jl")
+		include("Read.jl")
 		include("Hypix\\HorizonLayer.jl")
 		include("Hypix\\ReadHypix.jl")
 		include("Hypix\\RainfalIntercept.jl")
@@ -103,14 +104,14 @@ using Suppressor
 		include("Hypix\\CheckError.jl")
 		include("Hypix\\Pet.jl")		
 		include("Hypix\\Memory.jl")
-		include("Hypix\\PriorProcess.jl")
-		include("Hypix\\HypixModel.jl")
-		include("Hypix\\Opt\\HypixOpt.jl")
-		include("Hypix\\Hypix_Start.jl")
+		include("Hypix\\Climate.jl")
 		if option.globalopt.Plot
 			include("Hypix\\Other\\PlotOther.jl")
 			include("Hypix\\PlotHypix.jl")
 		end
+		include("Hypix\\HypixModel.jl")
+		include("Hypix\\Opt\\HypixOpt.jl")
+		include("Hypix\\Hypix_Start.jl")
 	end  # if: option.globalopt.Hypix
 
 	if option.globalopt.Jules
@@ -118,7 +119,7 @@ using Suppressor
 		include("Hypix\\Discretisation.jl")
 		include("Jules\\Jules.jl")
 		include("HyPix\\ThetaIni.jl")
-		include("Smap/Smap2Hypix.jl")		
+		include("Smap\\Smap2Hypix.jl")		
 	end  # if: option.Temporay
 end # Suppressor 
 
@@ -201,7 +202,7 @@ function START_TOOLBOX()
 
 			else # TODO: Needs to be removed
 				N_SoilSelect = 1
-			
+				
 			end # Option
 			
 
