@@ -5,6 +5,7 @@
 ##========================================================================================
 
 using Suppressor
+using Revise
 
 @suppress begin
 	include("Option.jl")
@@ -12,10 +13,11 @@ using Suppressor
 	if option.globalopt.DownloadPackage
 		include("Packages.jl")
 	end # option.globalopt.DownloadPackage
+	include("Tool.jl")
+	include("Hypix\\Other\\SiteName.jl")
 	include("Path.jl")
 	include("Cst.jl")
 	include("Param.jl")
-	include("Tool.jl")
 	include("Hydro\\ΨminΨmax.jl")
 	include("Hydro\\HydroStruct.jl")
 	include("Hydro\\HydroRelation.jl")
@@ -78,6 +80,7 @@ using Suppressor
 
 	println(option.globalopt.Hypix)
 	if option.globalopt.Hypix
+
 		include("Hydro\\ΨminΨmax.jl")
 		include("Infilt\\SorptivityNonInfinity.jl")
 		include("Hypix\\Interpolate.jl")
@@ -102,7 +105,8 @@ using Suppressor
 		include("Hypix\\Evaporation.jl")
 		include("Hypix\\RootWaterUptake.jl")
 		include("Hypix\\CheckError.jl")
-		include("Hypix\\Pet.jl")		
+		include("Hypix\\Pet.jl")
+		include("HyPix\\Other\\ThetaAverage.jl")
 		include("Hypix\\Memory.jl")
 		include("Hypix\\Climate.jl")
 		if option.globalopt.Plot
@@ -222,8 +226,8 @@ function START_TOOLBOX()
 	end
 
 	if option.globalopt.Jules
-		SoilName_2_SiteName, θᵢₙᵢ = jules.START_JULES()
-		smap2hypix.SMAP_2_HYPIX(SoilName_2_SiteName, θᵢₙᵢ)
+		SoilName_2_SiteName,  SiteName_2_θini = jules.START_JULES()
+		smap2hypix.SMAP_2_HYPIX(SoilName_2_SiteName,  SiteName_2_θini)
 		
 	end  # if: option.START_JULES()
 

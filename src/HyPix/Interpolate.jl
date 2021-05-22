@@ -55,8 +55,9 @@ module interpolate
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function INTERPOLATE_2D_LOOP(∑T, ∑T_Reduced, NiT_Reduced, N_iT, N_iZ, X_Reduced, X)
 			iT_X = 2
+			iCount_TooEarly = 0 
+
 			for iT=1:NiT_Reduced
-		
 				FlagBreak = false
 				Flag_TooEarly = false
 				while !(FlagBreak)
@@ -65,6 +66,7 @@ module interpolate
 						break
 					elseif ∑T_Reduced[iT] < ∑T[iT_X-1]
 						Flag_TooEarly = true
+						iCount_TooEarly += 1
 						break			
 					else 
 						iT_X += 1
@@ -77,16 +79,25 @@ module interpolate
 					for iZ = 1:N_iZ
 						Slope, Intercept = interpolate.POINTS_2_SlopeIntercept(∑T[iT_X-1], X[iT_X-1,iZ], ∑T[iT_X], X[iT_X,iZ])
 
-						X_Reduced[iT,iZ] = Slope *  ∑T_Reduced[iT] + Intercept
+						X_Reduced[iT,iZ] = Slope * ∑T_Reduced[iT] + Intercept
 					end # for iZ = 1:N_iZ
 				else
 					for iZ = 1:N_iZ
-						X_Reduced[iT,iZ] = NaN
+						X_Reduced[iT,iZ] = X[iT_X,iZ] # TODO problem of shifting of 1 day
 					end
 				end
-			
 			end # for: iT=1:obsθ.N_iT
+
+			# TODO to be checked
+			if iCount_TooEarly ≥ 1
+				for iZ = 1:N_iZ
+					X_Reduced[1:NiT_Reduced-1, iZ] = X_Reduced[2:NiT_Reduced, iZ]
+					X_Reduced[NiT_Reduced, iZ] = X[NiT_Reduced,iZ]
+				end
+
+			end
 		
+			
 		return X_Reduced
 	end  # function: θINTERPOLATION
 

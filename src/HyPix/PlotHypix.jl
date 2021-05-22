@@ -7,166 +7,166 @@ module plotHypix
 	import Dates: value, DateTime
 	using PGFPlots
 
-	export TIME_SERIES, RAINFALL_INTERCEPTION, θΨK
+	export θΨK
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : TIME_SERIES
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function TIME_SERIES(∑T_Plot, ∑WaterBalance_η_Plot, obsθ, discret, Flag_Plot_Pond, iSim, N_∑T_Plot, N_iZ, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, ΔT_Plot, θ_Plot, θobs_Plot, Ψ_Plot)
+		# function TIME_SERIES(∑T_Plot, ∑WaterBalance_η_Plot, obsθ, discret, Flag_Plot_Pond, iSim, N_∑T_Plot, N_iZ, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, ΔT_Plot, θ_Plot, θobs_Plot, Ψ_Plot)
 				
-			# PLOTTING GENERAL	
-				Plot_TimeSeries = PGFPlots.GroupPlot(1, 10, groupStyle = "vertical sep = 3.5cm")
+		# 	# PLOTTING GENERAL	
+		# 		Plot_TimeSeries = PGFPlots.GroupPlot(1, 10, groupStyle = "vertical sep = 3.5cm")
 
-				Style_Obs = ["smooth, red, solid, ultra thick", "smooth, violet, solid, ultra thick", "smooth, orange, solid, ultra thick", "smooth, teal, ultra thick", "smooth, blue, ultra thick"]
+		# 		Style_Obs = ["smooth, red, solid, ultra thick", "smooth, violet, solid, ultra thick", "smooth, orange, solid, ultra thick", "smooth, teal, ultra thick", "smooth, blue, ultra thick"]
 
-				Style_Hypix = ["smooth, red, densely dashed, ultra thick", "smooth, violet, densely dashed, ultra thick", "smooth, orange, densely dashed, ultra thick", "smooth, teal, densely dashed, ultra thick", "smooth, blue, densely dashed, ultra thick"]
+		# 		Style_Hypix = ["smooth, red, densely dashed, ultra thick", "smooth, violet, densely dashed, ultra thick", "smooth, orange, densely dashed, ultra thick", "smooth, teal, densely dashed, ultra thick", "smooth, blue, densely dashed, ultra thick"]
 
-				CellTop=[1,16]
-				Style_HypixTop = ["smooth, blue, densely dashed, thick", "smooth, cyan, densely dashed, thick"]
+		# 		CellTop=[1,16]
+		# 		Style_HypixTop = ["smooth, blue, densely dashed, thick", "smooth, cyan, densely dashed, thick"]
 
-			# PLOTTING GRAPHs
-				#  Plotting Pr and Pet
-				if option.hyPix.Plot_Climate
-					Plot_Pr = PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], ΔPr_Plot[1:N_∑T_Plot].*cst.Mm_2_Cm, style="ybar,fill=blue, blue", mark="none", legendentry=L"$ Pr_{Through} \ [cm \ day^{-1}] $")
+		# 	# PLOTTING GRAPHs
+		# 		#  Plotting Pr and Pet
+		# 		if option.hyPix.Plot_Climate
+		# 			Plot_Pr = PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], ΔPr_Plot[1:N_∑T_Plot].*cst.Mm_2_Cm, style="ybar,fill=blue, blue", mark="none", legendentry=L"$ Pr_{Through} \ [cm \ day^{-1}] $")
 
-					Plot_Pet = PGFPlots.Plots.Linear(∑T_Plot[2:N_∑T_Plot], ΔPet_Plot[2:N_∑T_Plot], mark="none", style=" smooth, red, very thick", legendentry= L"$ Pet \ [mm \ day^{-1}] $")
+		# 			Plot_Pet = PGFPlots.Plots.Linear(∑T_Plot[2:N_∑T_Plot], ΔPet_Plot[2:N_∑T_Plot], mark="none", style=" smooth, red, very thick", legendentry= L"$ Pet \ [mm \ day^{-1}] $")
 
-					Plot_RootWaterUptake = PGFPlots.Plots.Linear(∑T_Plot[2:N_∑T_Plot], ΔSink_Plot[2:N_∑T_Plot], style=" smooth, teal, very thick, densely dashed", mark="none", legendentry=L"$ RootWaterUptake \ [mm \ day^{-1}] $")
+		# 			Plot_RootWaterUptake = PGFPlots.Plots.Linear(∑T_Plot[2:N_∑T_Plot], ΔSink_Plot[2:N_∑T_Plot], style=" smooth, teal, very thick, densely dashed", mark="none", legendentry=L"$ RootWaterUptake \ [mm \ day^{-1}] $")
 
-					if Flag_Plot_Pond
-						Plot_Pond = PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], ΔPond_Plot[1:N_∑T_Plot], style="ycomb, violet", mark="none", legendentry=L"$ Pond \ [mm \ \Delta T ^{-1}] $")
+		# 			if Flag_Plot_Pond
+		# 				Plot_Pond = PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], ΔPond_Plot[1:N_∑T_Plot], style="ycomb, violet", mark="none", legendentry=L"$ Pond \ [mm \ \Delta T ^{-1}] $")
 
-						Plot_Climate = [Plot_Pr; Plot_Pet; Plot_RootWaterUptake; Plot_Pond]
-					else
-						Plot_Climate = [Plot_Pr; Plot_Pet; Plot_RootWaterUptake]
-					end # Flag_Plot_Pond	
+		# 				Plot_Climate = [Plot_Pr; Plot_Pet; Plot_RootWaterUptake; Plot_Pond]
+		# 			else
+		# 				Plot_Climate = [Plot_Pr; Plot_Pet; Plot_RootWaterUptake]
+		# 			end # Flag_Plot_Pond	
 
-					push!(Plot_TimeSeries, PGFPlots.Axis(Plot_Climate, style="width=20cm, height=8cm", xlabel=L"$\ Time \ [Day]$", ylabel=L"$Pr \ [cm \ day^{-1}]  \ \ Pet \ [mm \ day^{-1}]$", title=path.SiteName_Hypix, xmax=∑T_Plot[N_∑T_Plot], ymin=0.0, legendStyle ="{at={(0.0,-0.25)}, anchor=south west, legend columns=4}"))
-				end # if: option.hyPix.Plot_Climate
+		# 			push!(Plot_TimeSeries, PGFPlots.Axis(Plot_Climate, style="width=20cm, height=8cm", xlabel=L"$\ Time \ [Day]$", ylabel=L"$Pr \ [cm \ day^{-1}]  \ \ Pet \ [mm \ day^{-1}]$", title=path.SiteName_Hypix, xmax=∑T_Plot[N_∑T_Plot], ymin=0.0, legendStyle ="{at={(0.0,-0.25)}, anchor=south west, legend columns=4}"))
+		# 		end # if: option.hyPix.Plot_Climate
 					
-				# PLOT Θ
-				if option.hyPix.Plot_θ
-					# Observation θplot obs
-						Plot_θobs = map(1:obsθ.Ndepth) do ithetaObs
-							Label_Obs = "Obs=" * string((obsθ.Z[ithetaObs])) * "mm"
+		# 		# PLOT Θ
+		# 		if option.hyPix.Plot_θ
+		# 			# Observation θplot obs
+		# 				Plot_θobs = map(1:obsθ.Ndepth) do ithetaObs
+		# 					Label_Obs = "Obs=" * string((obsθ.Z[ithetaObs])) * "mm"
 
-						PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], θobs_Plot[1:N_∑T_Plot, ithetaObs], legendentry=Label_Obs, style=Style_Obs[ithetaObs], mark="none")		  
-						end # loop
+		# 				PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], θobs_Plot[1:N_∑T_Plot, ithetaObs], legendentry=Label_Obs, style=Style_Obs[ithetaObs], mark="none")		  
+		# 				end # loop
 
-					# Simulation θplot
-						Plot_θhypix = map(1:obsθ.Ndepth) do ithetaObs
-							Label_Sim = "HyPix=" * string( (discret.Znode[obsθ.ithetaObs[ithetaObs]])) * "mm"
+		# 			# Simulation θplot
+		# 				Plot_θhypix = map(1:obsθ.Ndepth) do ithetaObs
+		# 					Label_Sim = "HyPix=" * string( (discret.Znode[obsθ.ithetaObs[ithetaObs]])) * "mm"
 
-							PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], θ_Plot[1:N_∑T_Plot, obsθ.ithetaObs[ithetaObs]], style=Style_Hypix[ithetaObs], legendentry=Label_Sim, mark="none")
-						end # loop
+		# 					PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], θ_Plot[1:N_∑T_Plot, obsθ.ithetaObs[ithetaObs]], style=Style_Hypix[ithetaObs], legendentry=Label_Sim, mark="none")
+		# 				end # loop
 
-					# Simulation θtop
-						Plot_θhypixTop = map(1:length(CellTop)) do iTop
-							Label_HypixTop = "HyPix=" * string(discret.Znode[CellTop[iTop]]) * "mm"
+		# 			# Simulation θtop
+		# 				Plot_θhypixTop = map(1:length(CellTop)) do iTop
+		# 					Label_HypixTop = "HyPix=" * string(discret.Znode[CellTop[iTop]]) * "mm"
 
-							PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], θ_Plot[1:N_∑T_Plot,CellTop[iTop]] ,style=Style_HypixTop[iTop], legendentry=Label_HypixTop, mark="none")
-						end # loop
+		# 					PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], θ_Plot[1:N_∑T_Plot,CellTop[iTop]] ,style=Style_HypixTop[iTop], legendentry=Label_HypixTop, mark="none")
+		# 				end # loop
 
-					Ploting_θ = [Plot_θobs; Plot_θhypix]
+		# 			Ploting_θ = [Plot_θobs; Plot_θhypix]
 
-					push!(Plot_TimeSeries, PGFPlots.Axis(Ploting_θ, style="width=20cm, height=8cm", xlabel=L"$\ Time \ [Day]$", ylabel=L"$\theta \ [mm^3 \ mm^{-3}]$", xmax=∑T_Plot[N_∑T_Plot], legendStyle ="{at={(0.0,-0.3)}, anchor=south west, legend columns=5}"))
-					#
-				end # if: option.hyPix.Plot_θ
+		# 			push!(Plot_TimeSeries, PGFPlots.Axis(Ploting_θ, style="width=20cm, height=8cm", xlabel=L"$\ Time \ [Day]$", ylabel=L"$\theta \ [mm^3 \ mm^{-3}]$", xmax=∑T_Plot[N_∑T_Plot], legendStyle ="{at={(0.0,-0.3)}, anchor=south west, legend columns=5}"))
+		# 			#
+		# 		end # if: option.hyPix.Plot_θ
 
-				# PLOTTING GRAPH WATER BALANCE
-				if option.hyPix.Plot_WaterBalance
-					Plot_Wb = PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], ∑WaterBalance_η_Plot[1:N_∑T_Plot], style="smooth, red, very thick", mark="none", legendentry=L"$∑WaterBalance_η$")
+		# 		# PLOTTING GRAPH WATER BALANCE
+		# 		if option.hyPix.Plot_WaterBalance
+		# 			Plot_Wb = PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], ∑WaterBalance_η_Plot[1:N_∑T_Plot], style="smooth, red, very thick", mark="none", legendentry=L"$∑WaterBalance_η$")
 
-					# Plot_Line = PGFPlots.Plots.Linear(x->1, (0, ∑T_Plot[N_∑T_Plot]), xbins=10, style="blue, dashed")
+		# 			# Plot_Line = PGFPlots.Plots.Linear(x->1, (0, ∑T_Plot[N_∑T_Plot]), xbins=10, style="blue, dashed")
 
-					Ploting = [Plot_Wb]
+		# 			Ploting = [Plot_Wb]
 
-					push!(Plot_TimeSeries, PGFPlots.Axis(Ploting, style="width=20cm, height=8cm", xlabel=L"$\ Time \ [Day]$", ylabel=L"$ ∑WaterBalance_η \ [mm]$", xmax=∑T_Plot[N_∑T_Plot], legendStyle ="{at={(0.0,-0.3)}, anchor=south west, legend columns=1}"))
-				end # if: Plot_WaterBalance
+		# 			push!(Plot_TimeSeries, PGFPlots.Axis(Ploting, style="width=20cm, height=8cm", xlabel=L"$\ Time \ [Day]$", ylabel=L"$ ∑WaterBalance_η \ [mm]$", xmax=∑T_Plot[N_∑T_Plot], legendStyle ="{at={(0.0,-0.3)}, anchor=south west, legend columns=1}"))
+		# 		end # if: Plot_WaterBalance
 
 
-				# PLOTTING ΔT
-				if option.hyPix.Plot_ΔT
-					Plot_ΔT = PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], ΔT_Plot[1:N_∑T_Plot], style="smooth, cyan, very thick", mark="none", legendentry=L"$ \Delta T $")
+		# 		# PLOTTING ΔT
+		# 		if option.hyPix.Plot_ΔT
+		# 			Plot_ΔT = PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], ΔT_Plot[1:N_∑T_Plot], style="smooth, cyan, very thick", mark="none", legendentry=L"$ \Delta T $")
 
-					Ploting_ΔT = [Plot_ΔT]
+		# 			Ploting_ΔT = [Plot_ΔT]
 
-					push!(Plot_TimeSeries, PGFPlots.Axis(Ploting_ΔT, style="width=20cm, height=8cm", xlabel=L"$\ Time \ [Day]$", ylabel=L"$ \Delta T \ [mm]$",xmax=∑T_Plot[N_∑T_Plot], ymode="log", legendStyle ="{at={(0.0,-0.3)}, anchor=south west, legend columns=1}"))
-				end
+		# 			push!(Plot_TimeSeries, PGFPlots.Axis(Ploting_ΔT, style="width=20cm, height=8cm", xlabel=L"$\ Time \ [Day]$", ylabel=L"$ \Delta T \ [mm]$",xmax=∑T_Plot[N_∑T_Plot], ymode="log", legendStyle ="{at={(0.0,-0.3)}, anchor=south west, legend columns=1}"))
+		# 		end
 
 				
-				# PLOTTING GRAPH Ψplot
-				if option.hyPix.Plot_Ψ
-						Plot_Ψhypix = map(1:obsθ.Ndepth) do ithetaObs
-							Label_Sim = "HyPix=" * string( (discret.Znode[obsθ.ithetaObs[ithetaObs]])) * "mm"
+		# 		# PLOTTING GRAPH Ψplot
+		# 		if option.hyPix.Plot_Ψ
+		# 				Plot_Ψhypix = map(1:obsθ.Ndepth) do ithetaObs
+		# 					Label_Sim = "HyPix=" * string( (discret.Znode[obsθ.ithetaObs[ithetaObs]])) * "mm"
 
-							PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], Ψ_Plot[1:N_∑T_Plot, obsθ.ithetaObs[ithetaObs]],style=Style_Hypix[ithetaObs], legendentry=Label_Sim, mark="none")
-						end # loop
+		# 					PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], Ψ_Plot[1:N_∑T_Plot, obsθ.ithetaObs[ithetaObs]],style=Style_Hypix[ithetaObs], legendentry=Label_Sim, mark="none")
+		# 				end # loop
 
-						Plot_ΨhypixTop = map(1:length(CellTop)) do iTop
-							Label_HypixTop = "HyPix=" * string(discret.Znode[CellTop[iTop]]) * "mm"
+		# 				Plot_ΨhypixTop = map(1:length(CellTop)) do iTop
+		# 					Label_HypixTop = "HyPix=" * string(discret.Znode[CellTop[iTop]]) * "mm"
 
-							PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], Ψ_Plot[1:N_∑T_Plot,CellTop[iTop]] ,style=Style_HypixTop[iTop], legendentry=Label_HypixTop, mark="none")
-						end # loop
+		# 					PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], Ψ_Plot[1:N_∑T_Plot,CellTop[iTop]] ,style=Style_HypixTop[iTop], legendentry=Label_HypixTop, mark="none")
+		# 				end # loop
 
-						Ploting_Ψ = [Plot_Ψhypix;]
+		# 				Ploting_Ψ = [Plot_Ψhypix;]
 
-						push!(Plot_TimeSeries, PGFPlots.Axis(Ploting_Ψ, style="width=20cm, height=8cm", xlabel=L"$\ Time \ [Day]$", ylabel=L"$\Psi \ [cm]$", xmax=∑T_Plot[N_∑T_Plot], ymode="log", legendStyle ="{at={(0.0,-0.3)}, anchor=south west, legend columns=5}"))
+		# 				push!(Plot_TimeSeries, PGFPlots.Axis(Ploting_Ψ, style="width=20cm, height=8cm", xlabel=L"$\ Time \ [Day]$", ylabel=L"$\Psi \ [cm]$", xmax=∑T_Plot[N_∑T_Plot], ymode="log", legendStyle ="{at={(0.0,-0.3)}, anchor=south west, legend columns=5}"))
 
-				end # if option.hyPix.Plot_Ψ
-
-
-				# PLOTTING GRAPH FLUX
-				if option.hyPix.Plot_Flux
-					Plot_Qhypix = map(1:obsθ.Ndepth) do ithetaObs
-						Label_Sim = "HyPix=" * string( (discret.Znode[obsθ.ithetaObs[ithetaObs]])) * "mm"
-
-						PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], ΔFlux_Plot[1:N_∑T_Plot, obsθ.ithetaObs[ithetaObs]],style=Style_Hypix[ithetaObs], legendentry=Label_Sim, mark="none")
-					end # loop
-
-					Plot_QhypixTop = map(1:length(CellTop)) do iTop
-						Label_HypixTop = "HyPix=" * string(discret.Znode[CellTop[iTop]]) * "mm"
-
-						PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], ΔFlux_Plot[1:N_∑T_Plot,CellTop[iTop]] ,style=Style_HypixTop[iTop], legendentry=Label_HypixTop, mark="none")
-					end # loop
-
-					Plot_Recharge = PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], -ΔFlux_Plot[1:N_∑T_Plot, N_iZ+1], style="ybar,fill=red, very thick, solid", mark="none", legendentry=L"$\Delta recharge \ [mm \ day^{-1}]$")					
-
-					Ploting_Q = [Plot_Qhypix; Plot_Recharge]
-
-					push!(Plot_TimeSeries, PGFPlots.Axis(Ploting_Q, style="width=20cm, height=8cm", xlabel=L"$\ Time \ [Day]$", ylabel=L"$\Delta Q \ [mm \ day^{-1}]$", xmax=∑T_Plot[N_∑T_Plot], legendStyle ="{at={(0.0,-0.3)}, anchor=south west, legend columns=6}"))
-
-				end # if option.hyPix.Plot_Flux
-
-			Path = path.Hypix_obsθ * "2_" * string(iSim) * ".svg"	
-			PGFPlots.save(Path, Plot_TimeSeries) 
-
-		end  # function: TIME_SERIES
+		# 		end # if option.hyPix.Plot_Ψ
 
 
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : INTERCEPTION
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function RAINFALL_INTERCEPTION(clim, ∑T_Climate, iSim)
+		# 		# PLOTTING GRAPH FLUX
+		# 		if option.hyPix.Plot_Flux
+		# 			Plot_Qhypix = map(1:obsθ.Ndepth) do ithetaObs
+		# 				Label_Sim = "HyPix=" * string( (discret.Znode[obsθ.ithetaObs[ithetaObs]])) * "mm"
 
-			Plot_TimeSeries = PGFPlots.GroupPlot(1, 1, groupStyle = "horizontal sep = 3cm, vertical sep = 3cm")
+		# 				PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], ΔFlux_Plot[1:N_∑T_Plot, obsθ.ithetaObs[ithetaObs]],style=Style_Hypix[ithetaObs], legendentry=Label_Sim, mark="none")
+		# 			end # loop
 
-			local ∑T_Int = ceil.(Int, ∑T_Climate[1:clim.N_Climate] .* cst.Second_2_Day)
+		# 			Plot_QhypixTop = map(1:length(CellTop)) do iTop
+		# 				Label_HypixTop = "HyPix=" * string(discret.Znode[CellTop[iTop]]) * "mm"
 
-			Plot_PrThrough = PGFPlots.Plots.Linear(∑T_Int[1:clim.N_Climate], clim.Pr_Through[1:clim.N_Climate], style="const plot, fill=teal, teal", mark="none", legendentry=L"$ Pr_{through} \ [mm \ day^{-1}] $")
+		# 				PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], ΔFlux_Plot[1:N_∑T_Plot,CellTop[iTop]] ,style=Style_HypixTop[iTop], legendentry=Label_HypixTop, mark="none")
+		# 			end # loop
 
-			Plot_Pr = PGFPlots.Plots.Linear(∑T_Int[1:clim.N_Climate], clim.Pr[1:clim.N_Climate], style= "const plot, blue", mark="none", legendentry= L"$ Pr \ [mm \ day^{-1}] $")
+		# 			Plot_Recharge = PGFPlots.Plots.Linear(∑T_Plot[1:N_∑T_Plot], -ΔFlux_Plot[1:N_∑T_Plot, N_iZ+1], style="ybar,fill=red, very thick, solid", mark="none", legendentry=L"$\Delta recharge \ [mm \ day^{-1}]$")					
 
-			Plot_Pet = PGFPlots.Plots.Linear(∑T_Int[1:clim.N_Climate], clim.Pet[1:clim.N_Climate], style= "orange", mark="none", legendentry= L"$ Pet_{int} \ [mm \ day^{-1}] $")
+		# 			Ploting_Q = [Plot_Qhypix; Plot_Recharge]
 
-			Plot_Climate = [Plot_Pr, Plot_Pet, Plot_PrThrough]
+		# 			push!(Plot_TimeSeries, PGFPlots.Axis(Ploting_Q, style="width=20cm, height=8cm", xlabel=L"$\ Time \ [Day]$", ylabel=L"$\Delta Q \ [mm \ day^{-1}]$", xmax=∑T_Plot[N_∑T_Plot], legendStyle ="{at={(0.0,-0.3)}, anchor=south west, legend columns=6}"))
 
-			push!(Plot_TimeSeries, PGFPlots.Axis(Plot_Climate, style="width=25cm, height=10cm", xlabel=L"$\ Time \ [Day]$", ylabel=L"$Pr \ [cm \ day^{-1}] $",  xmin=0.0, xmax=∑T_Int[clim.N_Climate], ymin=0.0, legendStyle ="{at={(0.0,-0.25)}, anchor=south west, legend columns=3}"))
+		# 		end # if option.hyPix.Plot_Flux
 
-			Path = path.Plot_RainfallInterception * "_" * string(iSim) * ".svg"
-			PGFPlots.save(Path, Plot_TimeSeries) 
+		# 	Path = path.Hypix_obsθ * "2_" * string(iSim) * ".svg"	
+		# 	PGFPlots.save(Path, Plot_TimeSeries) 
+
+		# end  # function: TIME_SERIES
+
+
+	# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	# #		FUNCTION : INTERCEPTION
+	# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	# 	function RAINFALL_INTERCEPTION(clim, ∑T_Climate, iSim)
+
+	# 		Plot_TimeSeries = PGFPlots.GroupPlot(1, 1, groupStyle = "horizontal sep = 3cm, vertical sep = 3cm")
+
+	# 		local ∑T_Int = ceil.(Int, ∑T_Climate[1:clim.N_Climate] .* cst.Second_2_Day)
+
+	# 		Plot_PrThrough = PGFPlots.Plots.Linear(∑T_Int[1:clim.N_Climate], clim.Pr_Through[1:clim.N_Climate], style="const plot, fill=teal, teal", mark="none", legendentry=L"$ Pr_{through} \ [mm \ day^{-1}] $")
+
+	# 		Plot_Pr = PGFPlots.Plots.Linear(∑T_Int[1:clim.N_Climate], clim.Pr[1:clim.N_Climate], style= "const plot, blue", mark="none", legendentry= L"$ Pr \ [mm \ day^{-1}] $")
+
+	# 		Plot_Pet = PGFPlots.Plots.Linear(∑T_Int[1:clim.N_Climate], clim.Pet[1:clim.N_Climate], style= "orange", mark="none", legendentry= L"$ Pet_{int} \ [mm \ day^{-1}] $")
+
+	# 		Plot_Climate = [Plot_Pr, Plot_Pet, Plot_PrThrough]
+
+	# 		push!(Plot_TimeSeries, PGFPlots.Axis(Plot_Climate, style="width=25cm, height=10cm", xlabel=L"$\ Time \ [Day]$", ylabel=L"$Pr \ [cm \ day^{-1}] $",  xmin=0.0, xmax=∑T_Int[clim.N_Climate], ymin=0.0, legendStyle ="{at={(0.0,-0.25)}, anchor=south west, legend columns=3}"))
+
+	# 		Path = path.Plot_RainfallInterception * "_" * string(iSim) * ".svg"
+	# 		PGFPlots.save(Path, Plot_TimeSeries) 
 			
-		end  # function: INTERCEPTION
+	# 	end  # function: INTERCEPTION
 
 
 	# ========================================
@@ -310,8 +310,8 @@ module plotHypix
 			#		module: plots
 			# =============================================================
 			module plots
-			import ...sorptivity, ..wrc, ..path, ..cst, ...option, ...param
-			export RAINFALL_INTERCEPTION, PLOT_SORPTIVITY
+			import ...sorptivity, ..wrc, ..path, ..cst, ...option, ..param, ...readHypix
+			export PLOT_SORPTIVITY
 
 				using Plots.PlotMeasures, LaTeXStrings
 				using Plots;pgfplotsx()
@@ -352,46 +352,46 @@ module plotHypix
 				end  # function: PLOT_SORPTIVITY
 
 
-			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			# 		FUNCTION : INTERCEPTION
-			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				function RAINFALL_INTERCEPTION(clim, i∑T_CalibrStart_Day, iSim)
+			# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			# # 		FUNCTION : INTERCEPTION
+			# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			# 	function RAINFALL_INTERCEPTION(clim, i∑T_CalibrStart_Day, iSim)
 
-					# TICKS
-						DateTick=range(clim.Date[i∑T_CalibrStart_Day],step=Day(7),clim.Date[clim.N_Climate])
+			# 		# TICKS
+			# 			DateTick=range(clim.Date[i∑T_CalibrStart_Day],step=Day(7),clim.Date[clim.N_Climate])
 						
-						DateTick2= Dates.format.(DateTick, "d u Y")
+			# 			DateTick2= Dates.format.(DateTick, "d u Y")
 					
-					# PLOT
-						Plot1=Plots.plot(layout=1)
+			# 		# PLOT
+			# 			Plot1=Plots.plot(layout=1)
 
-						Title =" $(path.SiteName_Hypix)" 
+			# 			Title =" $(path.SiteName_Hypix)" 
 						
-						Plots.plot!(Plot1, clim.Date[i∑T_CalibrStart_Day:clim.N_Climate], clim.Pr[i∑T_CalibrStart_Day:clim.N_Climate], color=:blue, colorbar=false,  line = :solid, label= L"$\Delta Pr  $")
+			# 			Plots.plot!(Plot1, clim.Date[i∑T_CalibrStart_Day:clim.N_Climate], clim.Pr[i∑T_CalibrStart_Day:clim.N_Climate], color=:blue, colorbar=false,  line = :solid, label= L"$\Delta Pr  $")
 						
-						Plots.plot!(Plot1, clim.Date[i∑T_CalibrStart_Day:clim.N_Climate], clim.Pr_Through[i∑T_CalibrStart_Day:clim.N_Climate], color=:cyan, colorbar=false, label=L"$\Delta Pr_{through}$")
+			# 			Plots.plot!(Plot1, clim.Date[i∑T_CalibrStart_Day:clim.N_Climate], clim.Pr_Through[i∑T_CalibrStart_Day:clim.N_Climate], color=:cyan, colorbar=false, label=L"$\Delta Pr_{through}$")
 
-						Plots.plot!(Plot1, clim.Date[i∑T_CalibrStart_Day:clim.N_Climate], 10.0*clim.Pet[i∑T_CalibrStart_Day:clim.N_Climate], color=:green, colorbar=false, label= L"$10x\Delta Pet_{int}$")
+			# 			Plots.plot!(Plot1, clim.Date[i∑T_CalibrStart_Day:clim.N_Climate], 10.0*clim.Pet[i∑T_CalibrStart_Day:clim.N_Climate], color=:green, colorbar=false, label= L"$10x\Delta Pet_{int}$")
 						
-						Plots.plot!(Plot1, grid=false, framestyle=:origin, size=(1000, 600), legend=:topright, xrotation=rad2deg(pi/3), xticks=(DateTick, DateTick2), title=Title, xlabel=L"$Day$", ylabel=L"$Daily \ \Delta Pr  \ \slash \ \Delta Pr_{through} \ \slash \ \Delta Pet_{int} \ [mm] $")
+			# 			Plots.plot!(Plot1, grid=false, framestyle=:origin, size=(1000, 600), legend=:topright, xrotation=rad2deg(pi/3), xticks=(DateTick, DateTick2), title=Title, xlabel=L"$Day$", ylabel=L"$Daily \ \Delta Pr  \ \slash \ \Delta Pr_{through} \ \slash \ \Delta Pet_{int} \ [mm] $")
 
 												
-					Path = path.Plot_RainfallInterception * "_" * string(iSim) * ".svg"
-					Plots.savefig(Plot1, Path)
-					println("			 ~ ", Path, "~")
-				end  # function: INTERCEPTION
+			# 		Path = path.Plot_RainfallInterception * "_" * string(iSim) * ".svg"
+			# 		Plots.savefig(Plot1, Path)
+			# 		println("			 ~ ", Path, "~")
+			# 	end  # function: INTERCEPTION
 
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			#		FUNCTION : TIMESERIES
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				function TIMESERIES(∑T_Date_Plot, ∑T_Plot, obsθ, discret, Flag_Plot_Pond, iSim, N_∑T_Plot, N_iZ, ΔEvaporation_Plot, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, θ_Plot, θobs_Plot, clim, i∑T_CalibrStart_Day)
+				function TIMESERIES(∑T_Date_Plot, ∑T_Plot, obsθ, discret, Flag_Plot_Pond, iSim, N_∑T_Plot, N_iZ, ΔEvaporation_Plot, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, θ_Plot, θobs_Plot, clim, i∑T_CalibrStart_Day, θsim_Aver)
 
 				# PATH
 					Path = path.Plot_HypixTime * "_" * string(iSim) * ".svg"
 					rm(Path, force=true, recursive=true)
 					
 				# READING DATES
-					param.readHypix.DATES()
+					param = readHypix.DATES()
 
 				# TICKS
 					# Date_Start_Calibr = obsθ.Date[1]
@@ -408,7 +408,6 @@ module plotHypix
 					Plot = Plots.plot(layout=(3, 1), size=(2500,2200), bottom_margin=0.01mm)
 					
 					default(titlefont=(20,"times"), legendfontsize=24, guidefont=18, tickfont=18, grid=true)
-
 
 				# Plot Climate	
 				iSubplot = 0
@@ -459,7 +458,13 @@ module plotHypix
 
 							Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑T_Plot], θobs_Plot[1:N_∑T_Plot, ithetaObs], line=(2.5,:solid), linecolour=Style_Hypix[ithetaObs], label=Label_Obs)
 
+						if option.hyPix.θobs_Average
 							Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑T_Plot], θ_Plot[1:N_∑T_Plot, obsθ.ithetaObs[ithetaObs]], label=Label_Sim, line=(2.5,:dashdot), linecolour=Style_Hypix[ithetaObs])
+						else
+							Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑T_Plot], θsim_Aver[1:N_∑T_Plot], label=Label_Sim, line=(2.5,:dashdot), linecolour=Style_Hypix[ithetaObs])
+						end  # if: option.hyPix.
+
+
 					end # loop
 
 					Plot_θ = Plots.plot!(subplot=iSubplot, ylabel=L"$\theta \ [mm^3 \ mm^{-3}]$")
@@ -469,7 +474,7 @@ module plotHypix
 				end # if: option.hyPix.Plot_θ
 				
 				Plots.savefig(Plot, Path)
-				println("			 ~ ", path.Hypix_obsθ, "~")
+				println("			 ~ ", Path, "~")
 			
 				return nothing
 				end  # function: TIMESERIES

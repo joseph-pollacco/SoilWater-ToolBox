@@ -4,6 +4,7 @@
 module jules
    import ..option, ..param, ..path, ..tool, ..θini, ..hydroStruct, ..reading, ..tool, ..wrc
    import DelimitedFiles, Dates, CSV, Tables, NCDatasets, NetCDF
+   export READ_JULES_SITES
 
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    #		FUNCTION : START_JULES
@@ -34,12 +35,12 @@ module jules
 
       # Dictionary
       # SiteName_2_VCSNgridnumber::Dict{String, Int64} 
-
-         θᵢₙᵢ = fill(0.0::Float64, NsiteName)
          iSite = 1
          SiteName_2_VCSNgridnumber = Dict("a"=>9999) # Initializing
          SiteName_2_SiteNumber  = Dict("a"=>9999)
          SoilName_2_SiteName = Dict("a"=>"b")
+         SiteName_2_θini = Dict("a"=>9999.0) # Initializing
+             
          for iSiteName in SiteName
 
             # Making a new path if not exist
@@ -50,7 +51,6 @@ module jules
                SiteName_2_VCSNgridnumber[iSiteName] = VCSNgridnumber[iSite]
                SiteName_2_SiteNumber[iSiteName] = SiteNumber[iSite]
                SoilName_2_SiteName[SoilName[iSite]] = iSiteName
-
           
             # Reading climate
                Path_Climate_Input = Path_Climate * "VCSN_obsSM_" * string(SiteName_2_VCSNgridnumber[iSiteName]) * ".csv"
@@ -66,7 +66,10 @@ module jules
 
                Path_Date_Output = Path_Output * "//" * iSiteName * "_Dates.csv"
 
-               θᵢₙᵢ[iSite] = READ_WRITE_θobs(iSiteName, Path_Date_Output, Path_θ_Input, Path_θ_Output)
+               θᵢₙᵢ= READ_WRITE_θobs(iSiteName, Path_Date_Output, Path_θ_Input, Path_θ_Output)
+
+               SiteName_2_θini[iSiteName] = θᵢₙᵢ
+      
 
                # Reading Jules simulated θ
                   # Path_θjules_Input = Path_θJules * "Sta_" * string(SiteName_2_SiteNumber[iSiteName]) * "/"
@@ -77,7 +80,7 @@ module jules
             iSite += 1
          end #  for iSiteName
 
-   return SoilName_2_SiteName, θᵢₙᵢ
+   return SoilName_2_SiteName,  SiteName_2_θini
    end  # function: START_JULES
 
    
@@ -123,17 +126,25 @@ module jules
 
          # NETCDF
             # Getting daily θ observed
-            θdata = Float64.(NetCDF.open(Path_θ_Input, "obsm"))
+            θdata₀ = Float64.(NetCDF.open(Path_θ_Input, "obsm"))
 
-            θdata =  θdata ./ 100.0
-            N = length(θdata)
+            N = length(θdata₀)
+
+            θdata = fill(0.0::Float64, N)
+
+            for i=1:N
+               θdata[i] =  θdata₀[i] / 100.0
+               if θdata[i] < 0.0
+                  θdata[i] = NaN
+               end
+            end
 
             # Getting the inititilal starting date in the format 1 January 2008   
                Data = NetCDF.open(Path_θ_Input)
 
                Data2 = NCDatasets.Dataset(Path_θ_Input)
 
-               Date_Start_Obs = Data2[ "obsm"].attrib["initial_date"]
+               Date_Start_Obs = Data2["obsm"].attrib["initial_date"]
 
                # Converting to Year Month Day
                   # Day
@@ -212,15 +223,15 @@ module jules
 
          # SIMULATING DATES      
             # Initial guess
-               Year_Sim_Start = 2008
-               Month_Sim_Start = 7
-               Day_Sim_Start = 1
+               Year_Sim_Start = 2008 #2008
+               Month_Sim_Start = 7 #7
+               Day_Sim_Start = 1 #1
 
                Date_Start_Sim = Dates.Date(Year_Sim_Start, Month_Sim_Start, Day_Sim_Start)
 
-               Year_Sim_End = 2011
-               Month_Sim_End = 12
-               Day_Sim_End = 1
+               Year_Sim_End = 2009 #2011
+               Month_Sim_End = 7 #12
+               Day_Sim_End = 1 #1
 
                Date_End_Sim = Dates.Date(Year_Sim_End, Month_Sim_End, Day_Sim_End)
 
@@ -252,7 +263,7 @@ module jules
             # Searching for θᵢₙᵢ
                θᵢₙᵢ = 0.0
                for iDay = 1:N
-                  param.hyPix.Year_Start = 2010
+                  # param.hyPix.Year_Start = 2010
                   if Years[iDay]==Year_Sim_Start && Months[iDay]==Month_Sim_Start && Days[iDay]==Day_Sim_Start
                      θᵢₙᵢ = θdata[iDay]
                   break
@@ -282,6 +293,9 @@ module jules
                Output = Tables.table([Year_Obs_Start Month_Obs_Start Day_Obs_Start Year_Obs_End Month_Obs_End Day_Obs_End Year_Sim_Start Month_Sim_Start Day_Sim_Start Year_Sim_End Month_Sim_End Day_Sim_End])
          
                CSV.write(Path_Date_Output, Output, header=Header)
+
+
+         # println(iSiteName, "=", θᵢₙᵢ)
 
       return θᵢₙᵢ
       end  # function: READ_WRITE_θobs
@@ -341,7 +355,21 @@ module jules
       end  # function: READ_WRITE_θobs
 
 
-     
+
+      # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      #		FUNCTION : READ_JULESSITES
+      # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         function READ_JULES_SITES()
+            # Read data
+               Data = DelimitedFiles.readdlm(path.JulesMetadata, ',')
+            # Read header
+               Header = Data[1,1:end]
+            # Remove first READ_ROW_SELECT
+               Data = Data[2:end,begin:end]
+            # Reading
+               SiteName, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "SiteName")
+         return SiteName
+         end  # function: READ_JULESSITES
 
    end  # module: jules
 # ............................................................

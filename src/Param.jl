@@ -205,7 +205,7 @@
 		#----------------------
 		#		smap parameters
 		#----------------------
-			Ψ_Table = [0.0, 500.0, 1000.0, 2000.0, 3300.0, 4000.0,  10000.0,  150000.0 ] # mm
+		Ψ_Table = [0.0, 500.0, 1000.0, 2000.0, 3300.0, 4000.0,  10000.0,  150000.0 ] # mm
 
 		smap = SMAPS(Ψ_Table)
 
@@ -285,8 +285,8 @@
 	#		HYPIX PARAMETERS
 	# =============================================================
 		# Simulation wanted to run 
-		  iSim_Start = 100
-		  iSim_End   = 100
+		  iSim_Start = 1
+		  iSim_End   = 30
 
 		# Simulations start end
          Year_Start   = 2015 # 2017
@@ -304,8 +304,8 @@
 
 		# Auto discretisation
 			# If auto discretisation is selected to derive the cells sizes
-			ΔZrz_Max   = 10.00 # [mm] {10-50} maximum discretisation size in the root zone
-			ΔZdeep_max = 50.00 # [mm] {50-100} maximum discretisation size below the root zone
+			ΔZrz_Max   = 25.00 # [mm] {10-50} maximum discretisation size in the root zone
+			ΔZdeep_max = 75.00 # [mm] {50-100} maximum discretisation size below the root zone
 
 		# Slope[radiant]
 		  Cosα = 1.0

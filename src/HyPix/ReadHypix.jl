@@ -27,7 +27,7 @@ module readHypix
 					param.hyPix.Day_Start = Day_Start₀[1]
 
 				Year_End₀, ~    = tool.readWrite.READ_HEADER_FAST(Data, Header, "Year_Sim_End")
-					param.hyPix.Year_End = Year_End₀[1] - 2
+					param.hyPix.Year_End = Year_End₀[1]
 				Month_End₀, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "Month_Sim_End")
 					param.hyPix.Month_End = Month_End₀[1]
 				Day_End₀, ~     = tool.readWrite.READ_HEADER_FAST(Data, Header, "Day_Sim_End")
@@ -35,7 +35,7 @@ module readHypix
 				
 			# Dates of observed data
             param.hyPix.obsθ.Year_Start  = param.hyPix.Year_Start
-            param.hyPix.obsθ.Month_Start = 12
+            param.hyPix.obsθ.Month_Start = param.hyPix.Month_Start
             param.hyPix.obsθ.Day_Start   = param.hyPix.Day_Start
 
             param.hyPix.obsθ.Year_End    = param.hyPix.Year_End
@@ -43,7 +43,7 @@ module readHypix
             param.hyPix.obsθ.Day_End     = param.hyPix.Day_End
 
 			# Dates of plots
-            param.hyPix.plot.Year_Start  = param.hyPix.Year_Start + 1
+            param.hyPix.plot.Year_Start  = param.hyPix.Year_Start
             param.hyPix.plot.Month_Start = param.hyPix.Month_Start
             param.hyPix.plot.Day_Start   = param.hyPix.Day_Start
 
@@ -353,7 +353,6 @@ module readHypix
 		# SAVING SPACE 
 			Data = nothing
 			True = nothing
-			GC.gc()
 
 		return clim
 		end # function: CLIMATE
@@ -406,7 +405,7 @@ module readHypix
 				θobs = θobs[1:N_iT, minimum(Array_iHeader): maximum(Array_iHeader)]
 
 				# The depths were we have θ measurements
-				Z =  Vector{Float64}(undef, Ndepth)
+				Z = fill(0.0::Float64, Ndepth)
 
 				i = 0
 				for iHeader in Header
@@ -454,7 +453,8 @@ module readHypix
 				N_iT = iCount # New number of data
 
 			# REDUCING THE AMOUNT OF DATA TO HOURLY
-				if option.hyPix.θobs_Hourly
+				ΔTimeStep = value(Date[5]-Date[4])/ 1000
+				if option.hyPix.θobs_Hourly && ΔTimeStep < 86400
 					True = falses(N_iT)
 					iCount = 0 
 					for iT=1:N_iT
@@ -472,8 +472,8 @@ module readHypix
 				end # θobs_Hourly)
 
 			# This will be computed at PrioProcess
-				∑T    = Array{Float64}(undef, N_iT)
-				ithetaObs = Array{Int64}(undef, Ndepth)
+            ∑T        = fill(0.0::Float64, N_iT)
+            ithetaObs = fill(0::Int64, Ndepth)
 
 			# STRUCTURE
 				obsθ = θOBSERVATION(Date, Z, ithetaObs, N_iT, Ndepth, θobs, ∑T)
@@ -481,8 +481,6 @@ module readHypix
 			# SAVING SPACE 
 				Data = nothing
 				True = nothing
-				GC.gc()
-
 		return obsθ
 		end  # function: TIME_SERIES
 

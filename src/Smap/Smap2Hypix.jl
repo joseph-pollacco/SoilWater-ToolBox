@@ -8,7 +8,7 @@ module smap2hypix
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    #		FUNCTION : SMAP_2_HYDRO
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   function SMAP_2_HYPIX(SoilName_2_SiteName, θᵢₙᵢ)
+   function SMAP_2_HYPIX(SoilName_2_SiteName,  SiteName_2_θini)
 
       # DERIVING HYDRAULIC PARAMETER
          IgnoreSoil = "Rang_81a.2" #TODO remove 
@@ -49,7 +49,7 @@ module smap2hypix
          
         
          for iSite = 1:Nsoil
-
+            println(iSite , "=", SoilName_Layer[iSite], " =", SoilName_2_SiteName[SoilName_Layer[iSite]])
             iSiteName = SoilName_2_SiteName[SoilName_Layer[iSite]]
 
             Path_Output =  path.Home * "//INPUT//DataHyPix//JULES//" * iSiteName
@@ -70,8 +70,10 @@ module smap2hypix
                   Path_SmapHydro = Path_Output * "//" * iSiteName * "_HypixHydro.csv"
                      
                   Path_Output_θini =  Path_Output * "//" * iSiteName * "_ThetaIni.csv"
+
+                  θᵢₙᵢ = SiteName_2_θini[iSiteName]
                      
-                  θᵢₙᵢ_Layer = COMPUTE_θINI(hydroSmap, Path_Output_θini, Path_SmapHydro, θᵢₙᵢ[iSite])
+                  θᵢₙᵢ_Layer = COMPUTE_θINI(hydroSmap, iSiteName, Path_Output_θini, Path_SmapHydro, θᵢₙᵢ)
  
 
              # DISCRETISATION ====
@@ -112,7 +114,7 @@ module smap2hypix
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    #		FUNCTION : COMPUTE_θINI
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      function COMPUTE_θINI(hydroSmap, Path_Output_θini, Path_SmapHydro, θᵢₙᵢ)
+      function COMPUTE_θINI(hydroSmap, iSiteName, Path_Output_θini, Path_SmapHydro, θᵢₙᵢ)
          # READING HYDRAULIC PARAMETERS
             # Deriving the number of soil layers
             println(Path_SmapHydro)
@@ -120,21 +122,18 @@ module smap2hypix
 
                N_iZ = size(Data)[1] - 1
 
-            #    hydroSmap = hydroStruct.HYDROSTRUCT(N_iZ) # Making a structure
-
-            # # Reading structure of hydro parameters
-            #    hydroSmap, N_SoilSelect = reading.READ_STRUCT(hydroSmap, Path_SmapHydro)
+         println(iSiteName," ====" ,θᵢₙᵢ)
 
          # COMPUTING θini
             θ₁ = fill(0.0::Float64, N_iZ)
 
-            θ₁[1] = max(min(θᵢₙᵢ, hydroSmap.θs[1]), hydroSmap.θr[1])
+            θ₁[1] = max( min(θᵢₙᵢ, hydroSmap.θs[1]), hydroSmap.θr[1])
 
             Se = wrc.θ_2_Se(θ₁[1], 1, hydroSmap)
 
             # Assuming that all layers have the same Se
-            for iZ=1:N_iZ
-               θ₁[iZ] = wrc.Se_2_θ(Se, iZ,hydroSmap)
+            for iZ=2:N_iZ
+               θ₁[iZ] = wrc.Se_2_θ(Se, iZ, hydroSmap)
             end
 
          # Computing 1..N_iZ for output file

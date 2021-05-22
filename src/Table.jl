@@ -76,7 +76,8 @@ module table
 						pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
 							
 				# Computing θ at required θ
-					θ₂ = Array{Float64}(undef, (N_SoilSelect, N_Ψ))
+					θ₂ = fill(0.0::Float64, (N_SoilSelect, N_Ψ))
+
 
 					for iZ=1:N_SoilSelect
 						for iΨ =1:N_Ψ

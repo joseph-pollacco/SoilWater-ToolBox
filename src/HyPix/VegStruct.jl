@@ -33,7 +33,6 @@ module vegStruct
 	#		FUNCTION : VEG
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       function VEGSTRUCT()
-         # FieldName            = Array{Symbol}(undef, 1) # Need to put	
          Zroot                = 0.0
          ΔRdf_Top             = 0.0
          Zroot_Top            = 0.0

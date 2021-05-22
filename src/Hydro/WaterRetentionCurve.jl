@@ -263,7 +263,7 @@ module wrc
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function ∂θ∂Ψ2(Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ])
 						
-				ψ =Vector{Float64}(undef, 1)
+				ψ = fill(0.0::Float64, 1)
 				∂Ψ∂θ_Numerical(ψ::Vector) = Ψ_2_θDual(abs(ψ[1]), iZ, hydroParam)
 				ψ[1] = Ψ₁
 				Func_∂Ψ∂θ_Numerical = ψ -> ForwardDiff.gradient(∂Ψ∂θ_Numerical, ψ)
@@ -277,7 +277,8 @@ module wrc
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function ∂Ψ∂θ(θ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ])
 					
-				θ₂ =Vector{Float64}(undef, 1)
+				θ₂ = fill(0.0::Float64, 1)
+				
 				∂Ψ∂θ_Numerical(θ₂::Vector) = θ_2_ΨDual(abs(θ₂[1]), iZ, hydroParam)
 				θ₂[1] = θ₁
 				Func_∂Ψ∂θ_Numerical = θ₂ -> ForwardDiff.gradient(∂Ψ∂θ_Numerical, θ₂)
@@ -291,7 +292,7 @@ module wrc
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function ∂Ψ∂Se(Se₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ])
 				
-				Se₂ =Vector{Float64}(undef, 1)
+				Se₂ = fill(0.0::Float64, 1)
 				∂Ψ∂Se_Numerical(Se₂::Vector) = Se_2_ΨDual(abs(Se₂[1]), iZ, hydroParam)
 				Se₂[1] = Se₁
 				Func_∂Ψ∂Se_Numerical = Se₂ -> ForwardDiff.gradient(∂Ψ∂Se_Numerical, Se₂)
@@ -305,7 +306,8 @@ module wrc
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function ∂Se∂Ψ(Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ])
 					
-				ψ=Vector{Float64}(undef, 1)
+				ψ = fill(0.0::Float64, 1)
+
 				∂Ψ∂Se_Numerical(ψ::Vector) = Ψ_2_SeDual(abs(ψ[1]), iZ, hydroParam)
 				ψ[1] = Ψ₁
 				Func_∂Ψ∂Se_Numerical = ψ -> ForwardDiff.gradient(∂Ψ∂Se_Numerical, ψ)

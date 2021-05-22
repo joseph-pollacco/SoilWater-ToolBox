@@ -44,7 +44,7 @@ module reading
 		
 			N_SoilSelect = sum(Id_True)
 
-			Id_Select = Array{Int64}(undef, N_SoilSelect)
+			Id_Select = fill(0::Int64, N_SoilSelect)
 			# Id_Select_True =  Array{Bool}(undef, N_iZ_All)
 			iTrue = 1
 
@@ -232,8 +232,6 @@ module reading
 			# Reading the Model data
 			for iFieldname in propertynames(structures)
 
-				Output_Vector, Ndata = tool.readWrite.READ_HEADER_FAST(Data, Header, string(iFieldname))
-
 				# Putting the values of Output_Vector into structures					
 				try
 					Output_Vector, Ndata = tool.readWrite.READ_HEADER_FAST(Data, Header, string(iFieldname))
@@ -245,7 +243,7 @@ module reading
 
 						setfield!(structures, Symbol(iFieldname), Float64.(Output_Vector))
 				catch
-					@warn "SoilWater-ToolBox: cannong find $iFieldname"
+					# @warn "SoilWater-ToolBox: cannong find $iFieldname"
 					Output_Vector = fill(0.0::Float64, N_SoilSelect)
 					if length(Output_Vector) == 1 # Not a vector
                   Output_Vector = Output_Vector[1]

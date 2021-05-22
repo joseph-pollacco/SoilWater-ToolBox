@@ -106,31 +106,32 @@
 			σ_2_θr
 			θs_Opt
 			Optimisation::Bool
-			obsθ
-			θobs_Hourly
+			θobs
+			θobs_Average::Bool
+			θobs_Hourly::Bool
 			Signature_Run
-			Table
-			Table_Discretization
-			Table_Q
-			Table_RootWaterUptake
-			Table_TimeSeries
-			Table_Ψ
-			Table_θ
-			Table_TimeSeriesDaily
-			Tabule_θΨ
-			Table_Climate
-			Plot_Vegetation
-			Plot_θΨK
-			Plot_Interception
-			Plot_Other
-			Plot_Sorptivity
-			Plot_Hypix
-			Plot_Climate
-			Plot_θ
-			Plot_Ψ
-			Plot_Flux
-			Plot_WaterBalance
-			Plot_ΔT
+			Table::Bool
+			Table_Discretization::Bool
+			Table_Q::Bool
+			Table_RootWaterUptake::Bool
+			Table_TimeSeries::Bool
+			Table_Ψ::Bool
+			Table_θ::Bool
+			Table_TimeSeriesDaily::Bool
+			Tabule_θΨ::Bool
+			Table_Climate::Bool
+			Plot_Vegetation::Bool
+			Plot_θΨK::Bool
+			Plot_Interception::Bool
+			Plot_Other::Bool
+			Plot_Sorptivity::Bool
+			Plot_Hypix::Bool
+			Plot_Climate::Bool
+			Plot_θ::Bool
+			Plot_Ψ::Bool
+			Plot_Flux::Bool
+			Plot_WaterBalance::Bool
+			Plot_ΔT::Bool
 		end
 #..................................................................
 	
@@ -152,8 +153,8 @@
 			DownloadPackage = false # <true> For first time user download packages required to run program; <false>*
 
 		# Plotting
-			Plot      = true # <true>* plot; <false> no plotting
-			Plot_Show = true # <true>* plot shown in VScode; <false>
+			Plot      = false # <true>* plot; <false> no plotting
+			Plot_Show = false # <true>* plot shown in VScode; <false>
 
 		globalopt = GLOBALOPT(HydroTranslateModel, Hypix, Smap, BulkDensity, θΨ, Psd, Infilt, Temporary, Jules, DownloadPackage, Plot, Plot_Show)
 
@@ -310,9 +311,11 @@
 			θs_Opt = :No #  <:θs_Opt> θs is derived by multiplying a parameter to Max(θobs) for all profiles; <No>
 
 		# Calibration data available
-			Optimisation = false # <true>; <false>
-			obsθ  = true # <true>; <false>
-			θobs_Hourly = false # θ data can be very large so we reduce the data to hourly
+         Optimisation = false # <true>; <false>
+         θobs         = true # <true>; <false>
+         θobs_Average = true; #<true> ; <false>determine if the observed θ is an average of different layers
+
+			θobs_Hourly = true # θ data can be very large so we reduce the data to hourly
 			Signature_Run = false
 
 		# Table true
@@ -341,7 +344,7 @@
           Plot_WaterBalance = true
           Plot_ΔT           = true
 
-	 hyPix = HYPIX(ClimateDataTimestep, RainfallInterception, Evaporation, RootWaterUptake, RootWaterUptakeComp, LookupTable_Lai, LookUpTable_CropCoeficient, θΨKmodel, BottomBoundary, ∂R∂Ψ_Numerical, AdaptiveTimeStep, NormMin, Flag_ReRun, Qbottom_Correction, Lai_2_SintMax, σ_2_Ψm, σ_2_θr, θs_Opt, Optimisation, obsθ, θobs_Hourly, Signature_Run, Table, Table_Discretization, Table_Q, Table_RootWaterUptake, Table_TimeSeries, Table_Ψ, Table_θ, Table_TimeSeriesDaily, Tabule_θΨ, Table_Climate, Plot_Vegetation, Plot_θΨK, Plot_Interception, Plot_Other, Plot_Sorptivity, Plot_Hypix, Plot_Climate, Plot_θ, Plot_Ψ, Plot_Flux, Plot_WaterBalance, Plot_ΔT)
+	 hyPix = HYPIX(ClimateDataTimestep, RainfallInterception, Evaporation, RootWaterUptake, RootWaterUptakeComp, LookupTable_Lai, LookUpTable_CropCoeficient, θΨKmodel, BottomBoundary, ∂R∂Ψ_Numerical, AdaptiveTimeStep, NormMin, Flag_ReRun, Qbottom_Correction, Lai_2_SintMax, σ_2_Ψm, σ_2_θr, θs_Opt, Optimisation, θobs,θobs_Average, θobs_Hourly, Signature_Run, Table, Table_Discretization, Table_Q, Table_RootWaterUptake, Table_TimeSeries, Table_Ψ, Table_θ, Table_TimeSeriesDaily, Tabule_θΨ, Table_Climate, Plot_Vegetation, Plot_θΨK, Plot_Interception, Plot_Other, Plot_Sorptivity, Plot_Hypix, Plot_Climate, Plot_θ, Plot_Ψ, Plot_Flux, Plot_WaterBalance, Plot_ΔT)
 
 
 	# =============================================================

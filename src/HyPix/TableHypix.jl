@@ -7,7 +7,7 @@ module tableHypix
 	import DelimitedFiles
 	import Dates: value, DateTime, year, month, day, hour, minute, second
 	
-	export DAILY_CLIMATE, DISCRETIZATION, HYDRO, PERFORMANCE, Q, SIGNATURE, TIME_SERIES, TIME_SERIES_DAILY, VEG, θ, θΨ, Ψ
+	export DAILY_CLIMATE, DISCRETIZATION, HYDRO, PERFORMANCE, Q, TIME_SERIES, TIME_SERIES_DAILY, VEG, θ, θΨ, Ψ, θAVERAGE
 
 	# ===================================================
 	#          Discretization
@@ -18,7 +18,7 @@ module tableHypix
 			Header =  ["Z" "ΔZ" "ΔZ_⬓" "Znode" "ΔZ_Aver" "ΔZ_W" "Z_CellUp"]
 
 			open(path.Table_Discretisation, "w") do io
-				DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
+				# DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
 				DelimitedFiles.writedlm(io,[Header] , ",",) # Header
 				DelimitedFiles.writedlm(io, [Z[1:N_iZ] discret.ΔZ[1:N_iZ] discret.ΔZ_⬓[1:N_iZ] discret.Znode[1:N_iZ] discret.ΔZ_Aver[1:N_iZ] discret.ΔZ_W[1:N_iZ] discret.Z_CellUp[1:N_iZ]], ",")
 			end
@@ -39,7 +39,7 @@ module tableHypix
 			pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
 
 			open(Path, "w") do io
-				DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
+				# DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
 				DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
 				DelimitedFiles.writedlm(io, [Int64.(Id) Matrix], ",")
 			end
@@ -50,18 +50,16 @@ module tableHypix
 	#		FUNCTION : veg
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function VEG(veg, iSim)
-
 			Path = path.Table_Veg * "_" * string(iSim) * ".csv"
 			println("			~  $(Path) ~")
 
-			Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME_PARAM(veg)
+			Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(1, veg)
 
 			open(Path, "w") do io
-				DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
+				# DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
 				DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
 				DelimitedFiles.writedlm(io, [Matrix], ",")
 			end
-			
 		end  # function: VEG
 
 
@@ -75,7 +73,7 @@ module tableHypix
 			println("			~  $(Path) ~")
 
 			open(Path, "w") do io
-				DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
+				# DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
 				DelimitedFiles.writedlm(io,[Header] , ",",) # Header
 				DelimitedFiles.writedlm(io, [∑T ΔT ∑Pr ΔPr Hpond Recharge ∑WaterBalance_η], ",")
 			end
@@ -260,31 +258,31 @@ module tableHypix
 			Id = 1:1:length(WofBest)
 
 			open(Path, "w") do io
-				DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
+				# DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
 				DelimitedFiles.writedlm(io,[Header] , ",",) # Header
 				DelimitedFiles.writedlm(io, [Id WofBest RmseBest Efficiency Global_WaterBalance Global_WaterBalance_NormPr ΔT_Average ∑∑ΔSink ∑ΔQ_Bot SwcRoots iNonConverge_iSim ΔRunTimeHypix], ",")
 			end
 		end # function PERFORMACE
 
 
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : SIGNATURE
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function SIGNATURE(iSim, Signature_Deficit_Obs, Signature_Max_Obs, Signature_Saturated_Obs, Signature_Senescence_Obs, Signature_Deficit_Sim, Signature_Max_Sim, Signature_Saturated_Sim, Signature_Senescence_Sim)
+	# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	# #		FUNCTION : SIGNATURE
+	# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	# 	function SIGNATURE(iSim, Signature_Deficit_Obs, Signature_Max_Obs, Signature_Saturated_Obs, Signature_Senescence_Obs, Signature_Deficit_Sim, Signature_Max_Sim, Signature_Saturated_Sim, Signature_Senescence_Sim)
 			
-			Path = path.Table_Signature * "_" * string(iSim) * ".csv"
-			println("			~  $(Path) ~")
+	# 		Path = path.Table_Signature * "_" * string(iSim) * ".csv"
+	# 		println("			~  $(Path) ~")
 
-			Header = ["Month" "Sign_Deficit_Obs" "Sign_Max_Obs" "Sign_Saturated_Obs" "Sign_Senescence_Obs" "Sign_Deficit_Sim" "Sign_Max_Sim" "Sign_Saturated_Sim" "Sign_Senescence_Sim"]
+	# 		Header = ["Month" "Sign_Deficit_Obs" "Sign_Max_Obs" "Sign_Saturated_Obs" "Sign_Senescence_Obs" "Sign_Deficit_Sim" "Sign_Max_Sim" "Sign_Saturated_Sim" "Sign_Senescence_Sim"]
 
-			Month = 1:1:12
+	# 		Month = 1:1:12
 
-			open(Path, "w") do io
-				DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
-				DelimitedFiles.writedlm(io,[Header] , ",",) # Header
-				DelimitedFiles.writedlm(io, [Month Signature_Deficit_Obs Signature_Max_Obs Signature_Saturated_Obs Signature_Senescence_Obs Signature_Deficit_Sim Signature_Max_Sim Signature_Saturated_Sim Signature_Senescence_Sim], ",")
-			end
-		end  # function: SIGNITURE
+	# 		open(Path, "w") do io
+	# 			DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
+	# 			DelimitedFiles.writedlm(io,[Header] , ",",) # Header
+	# 			DelimitedFiles.writedlm(io, [Month Signature_Deficit_Obs Signature_Max_Obs Signature_Saturated_Obs Signature_Senescence_Obs Signature_Deficit_Sim Signature_Max_Sim Signature_Saturated_Sim Signature_Senescence_Sim], ",")
+	# 		end
+	# 	end  # function: SIGNITURE
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : DAILY_CLIMATE
@@ -298,13 +296,30 @@ module tableHypix
 			Header = ["Year" "Month" "Day" "Pr" "Pr_Ground"]
 
 			open(Path, "w") do io
-				DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
+				# DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
 				DelimitedFiles.writedlm(io,[Header] , ",",) # Header
 				DelimitedFiles.writedlm(io, [year.(clim.Date[1:clim.N_Climate]) month.(clim.Date[1:clim.N_Climate]) day.(clim.Date[1:clim.N_Climate]) clim.Pr[1:clim.N_Climate] clim.Pr_Through] , ",")
-			end
-			
+			end	
 		end  # function: DAILY_CLIMATE
 
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#		FUNCTION : θAVERAGE
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			function θAVERAGE(Date_Plot, iSim, θobs_Plot, θsim_Aver)
+				Path = path.Table_θaverage * "_" * string(iSim) * ".csv"
+				println("			~  $(Path) ~")
+
+				Header = ["Year","Month","Day" ,"θobs_Aver", "θsim_Aver"]
+
+				Year = year.(Date_Plot)
+				Month = month.(Date_Plot)
+				Day = day.(Date_Plot)
+
+				open(Path, "w") do io
+					DelimitedFiles.writedlm(io,[Header] , ",",) # Header
+					DelimitedFiles.writedlm(io, [Year Month Day θobs_Plot θsim_Aver] , ",")
+				end # open			
+			end # function: θAVERAGE
 	
 end  # module tableHypix
 # ............................................................
