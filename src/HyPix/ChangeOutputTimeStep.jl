@@ -2,14 +2,14 @@
 #		MODULE: tincrease
 # =============================================================
 module Δtchange
-	import ..cst, ..tool, ..param, ..interpolate, ..readHypix
-	import Dates: value, DateTime, Day, Second, Hour
+	import ..interpolate, ..param, ..readHypix, ..tool, ..cst
+	import Dates: value, DateTime, Day, Second, Hour, now
 
-	function CHANGE_OUTPUT_ΔT(∑Pet, ∑Pr, ∑T, ∑WaterBalance_η, ∑ΔSink, obsθ, clim, N_iT::Int64, N_iZ::Int64, Q, veg, ΔEvaporation, ΔHpond, ΔT, θ, Ψ, ∑T_Climate)
+	function CHANGE_OUTPUT_ΔT(∑Pet, ∑Pr, ∑T, ∑WaterBalance_η, ∑ΔSink, obsθ, clim, N_iT::Int64, N_iZ::Int64, Q, veg, ΔEvaporation, ΔHpond, ΔT, θ, Ψ, ∑T_Climate, pathHyPix)
 
 		# PREPROCESSING ∑Evaporation, ∑ΔQ
-         ∑Evaporation = Vector{Float64}(undef, N_iT)
-         ∑ΔQ          = Array{Float64}(undef, N_iT, N_iZ+1)
+         ∑Evaporation = fill(0.0::Float64, N_iT)
+         ∑ΔQ          = fill(0.0::Float64, N_iT, N_iZ+1)
 
 			∑Evaporation[1]    = 0.0
          ∑ΔQ[1, 1:N_iZ+1]  .= 0.0
@@ -21,7 +21,7 @@ module Δtchange
 			end
 
 		# ∑Pr_Gross
-			∑Pr_Gross = Vector{Float64}(undef, clim.N_Climate)
+			∑Pr_Gross = fill(0.0::Float64, clim.N_Climate)
 			∑Pr_Gross[1] = 0.0
 			for iT= 2:clim.N_Climate
 				∑Pr_Gross[iT] = ∑Pr_Gross[iT-1] + clim.Pr[iT]
@@ -30,7 +30,7 @@ module Δtchange
 		# PREPARING DATA FOR PLOTS
 			Date_Start = clim.Date[2]
 
-			param = readHypix.DATES()
+			param = readHypix.DATES(pathHyPix)
 					
 			Date_Start_Calibr = DateTime(param.hyPix.obsθ.Year_Start, param.hyPix.obsθ.Month_Start, param.hyPix.obsθ.Day_Start, param.hyPix.obsθ.Hour_Start, param.hyPix.obsθ.Minute_Start, param.hyPix.obsθ.Second_Start)
 				
@@ -91,7 +91,7 @@ module Δtchange
 				ΔPr_Plot          = fill(0.0::Float64, N_∑T_Plot)
 				ΔPrGross_Plot     = fill(0.0::Float64, N_∑T_Plot)
             ΔSink_Plot        = fill(0.0::Float64, N_∑T_Plot)
-            Date_Plot         = Vector{DateTime}(undef, N_∑T_Plot)
+				Date_Plot         = fill(now()::DateTime, N_∑T_Plot)
 
 			# Root Water Uptake daily 
 				# Initial condition

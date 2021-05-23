@@ -3,7 +3,7 @@
 # =============================================================
 module plotHypix
 
-	import  ..cst, ..kunsat, ..option, ..param, ..path, ..rootwateruptake, ..tool, ..wrc, ..ΨminΨmax
+	import  ..cst, ..kunsat, ..option, ..param, ..rootwateruptake, ..tool, ..wrc, ..ΨminΨmax
 	import Dates: value, DateTime
 	using PGFPlots
 
@@ -12,7 +12,7 @@ module plotHypix
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : TIME_SERIES
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		# function TIME_SERIES(∑T_Plot, ∑WaterBalance_η_Plot, obsθ, discret, Flag_Plot_Pond, iSim, N_∑T_Plot, N_iZ, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, ΔT_Plot, θ_Plot, θobs_Plot, Ψ_Plot)
+		# function TIME_SERIES(∑T_Plot, ∑WaterBalance_η_Plot, obsθ, discret, Flag_Plot_Pond, iSim, N_∑T_Plot, N_iZ, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, ΔT_Plot, θ_Plot, θobs_Plot, Ψ_Plot, pathHyPix)
 				
 		# 	# PLOTTING GENERAL	
 		# 		Plot_TimeSeries = PGFPlots.GroupPlot(1, 10, groupStyle = "vertical sep = 3.5cm")
@@ -41,7 +41,7 @@ module plotHypix
 		# 				Plot_Climate = [Plot_Pr; Plot_Pet; Plot_RootWaterUptake]
 		# 			end # Flag_Plot_Pond	
 
-		# 			push!(Plot_TimeSeries, PGFPlots.Axis(Plot_Climate, style="width=20cm, height=8cm", xlabel=L"$\ Time \ [Day]$", ylabel=L"$Pr \ [cm \ day^{-1}]  \ \ Pet \ [mm \ day^{-1}]$", title=path.SiteName_Hypix, xmax=∑T_Plot[N_∑T_Plot], ymin=0.0, legendStyle ="{at={(0.0,-0.25)}, anchor=south west, legend columns=4}"))
+		# 			push!(Plot_TimeSeries, PGFPlots.Axis(Plot_Climate, style="width=20cm, height=8cm", xlabel=L"$\ Time \ [Day]$", ylabel=L"$Pr \ [cm \ day^{-1}]  \ \ Pet \ [mm \ day^{-1}]$", title=pathHyPix.SiteName_Hypix, xmax=∑T_Plot[N_∑T_Plot], ymin=0.0, legendStyle ="{at={(0.0,-0.25)}, anchor=south west, legend columns=4}"))
 		# 		end # if: option.hyPix.Plot_Climate
 					
 		# 		# PLOT Θ
@@ -138,7 +138,7 @@ module plotHypix
 
 		# 		end # if option.hyPix.Plot_Flux
 
-		# 	Path = path.Hypix_obsθ * "2_" * string(iSim) * ".svg"	
+		# 	Path = pathHyPix.Hypix_obsθ * "2_" * string(iSim) * ".svg"	
 		# 	PGFPlots.save(Path, Plot_TimeSeries) 
 
 		# end  # function: TIME_SERIES
@@ -147,7 +147,7 @@ module plotHypix
 	# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# #		FUNCTION : INTERCEPTION
 	# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# 	function RAINFALL_INTERCEPTION(clim, ∑T_Climate, iSim)
+	# 	function RAINFALL_INTERCEPTION(clim, ∑T_Climate, iSim, pathHyPix)
 
 	# 		Plot_TimeSeries = PGFPlots.GroupPlot(1, 1, groupStyle = "horizontal sep = 3cm, vertical sep = 3cm")
 
@@ -163,7 +163,7 @@ module plotHypix
 
 	# 		push!(Plot_TimeSeries, PGFPlots.Axis(Plot_Climate, style="width=25cm, height=10cm", xlabel=L"$\ Time \ [Day]$", ylabel=L"$Pr \ [cm \ day^{-1}] $",  xmin=0.0, xmax=∑T_Int[clim.N_Climate], ymin=0.0, legendStyle ="{at={(0.0,-0.25)}, anchor=south west, legend columns=3}"))
 
-	# 		Path = path.Plot_RainfallInterception * "_" * string(iSim) * ".svg"
+	# 		Path = pathHyPix.Plot_RainfallInterception * "_" * string(iSim) * ".svg"
 	# 		PGFPlots.save(Path, Plot_TimeSeries) 
 			
 	# 	end  # function: INTERCEPTION
@@ -172,11 +172,11 @@ module plotHypix
 	# ========================================
 	# PLOTTING HYDRAULIC RELATIONSHIP FOR EVERY HORIZON
 	# ======================================== 
-	function θΨK(hydroHorizon, N_iHorizon, iSim)
+	function θΨK(hydroHorizon, N_iHorizon, iSim, pathHyPix)
 
 		# Deriving the Min and Max Ψ from principals of soil physics
-		Ψ_Min_Horizon = Vector{Float64}(undef, N_iHorizon)
-		Ψ_Max_Horizon = Vector{Float64}(undef, N_iHorizon)
+		Ψ_Min_Horizon = fill(0.0::Float64, N_iHorizon)
+		Ψ_Max_Horizon = fill(0.0::Float64, N_iHorizon)
 		for iZ=1:N_iHorizon
 			Ψ_Max_Horizon[iZ], Ψ_Min_Horizon[iZ] = ΨminΨmax.ΨMINΨMAX(hydroHorizon.θs[iZ], hydroHorizon.θsMacMat[iZ], hydroHorizon.σ[iZ], hydroHorizon.σMac[iZ], hydroHorizon.Ψm[iZ], hydroHorizon.ΨmMac[iZ])
 		end  # for iZ=1:N_iHorizon
@@ -185,10 +185,10 @@ module plotHypix
 			N_Se = 1000
 			local Ψplot = exp.(range(log(minimum(Ψ_Min_Horizon[1:N_iHorizon])), stop = log(maximum(Ψ_Max_Horizon[1:N_iHorizon])), length=N_Se)) 
 
-			local θplot    = Vector{Float64}(undef, N_Se)
-			local Kplot    = Vector{Float64}(undef, N_Se)
-			local ∂θ∂Ψplot = Vector{Float64}(undef, N_Se)
-			local ∂K∂Ψplot = Vector{Float64}(undef, N_Se)
+			local θplot    = fill(0.0::Float64, N_Se)
+			local Kplot    = fill(0.0::Float64, N_Se)
+			local ∂θ∂Ψplot = fill(0.0::Float64, N_Se)
+			local ∂K∂Ψplot = fill(0.0::Float64, N_Se)
 
 			Plot_θΨK = PGFPlots.GroupPlot(4, 100, groupStyle = "horizontal sep = 3.5cm, vertical sep = 3.5cm")
 
@@ -219,7 +219,7 @@ module plotHypix
 			Ks_Min = 10.0 ^ -7 * cst.MmS_2_CmH
 			Ks_Max = maximum(hydroHorizon.Ks[1:N_iHorizon]) * cst.MmS_2_CmH * 1.1
 
-			Title =" $(path.SiteName_Hypix)  Layer = $(iZ)"
+			Title =" $(pathHyPix.SiteName_Hypix)  Layer = $(iZ)"
 		
 		# Plot 1: θΨ
 			Plot_θΨ = PGFPlots.Plots.Linear(log.(Ψplot) , θplot, style=" smooth, blue, very thick", mark="none", legendentry=L"$ \theta ( \Psi ) $")
@@ -251,7 +251,7 @@ module plotHypix
 
 		end #iZ ............................................
 
-		Path = path.Plot_Hypix_θΨK * "_" * string(iSim) * ".svg"
+		Path = pathHyPix.Plot_Hypix_θΨK * "_" * string(iSim) * ".svg"
 		PGFPlots.save(Path, Plot_θΨK) 
 	end # function θΨK
 
@@ -259,12 +259,12 @@ module plotHypix
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ROOTDENSITY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function VEG_FUNCTIONS(discret, iSim, N_iRoot, veg, Z, ΔRootDensity)
+		function VEG_FUNCTIONS(discret, iSim, N_iRoot, veg, Z, ΔRootDensity, pathHyPix)
 
 			Plot_All = PGFPlots.GroupPlot(2, 1, groupStyle = "horizontal sep = 3cm, vertical sep = 3cm")
 
 			# PLOT VEG_FUNCTIONS
-				ΔRootDensity_Norm = Vector{Float64}(undef, N_iRoot)
+				ΔRootDensity_Norm = fill(0.0::Float64, N_iRoot)
 				# Taking accoung the tickness of the discretisation
 				# for iZ=1:N_iRoot
 				# 		ΔRootDensity_Norm[iZ] = Z[N_iRoot] * ΔRootDensity[iZ] / discret.ΔZ[iZ]
@@ -280,7 +280,7 @@ module plotHypix
 			# PLOT StressReduction
 				# Data	
 				N_Se = 6
-				Ψstress = Array{Float64}(undef, 2, N_Se) 
+				Ψstress = fill(0.0::Float64, 2, N_Se) 
 				Ψstress[1,1] = veg.Ψfeddes1 / 10.0
 				Ψstress[1,2] = veg.Ψfeddes1
 				Ψstress[1,3] = veg.Ψfeddes2
@@ -288,7 +288,7 @@ module plotHypix
 				Ψstress[1,5] = veg.Ψfeddes4
 				Ψstress[1,6] = veg.Ψfeddes4 * 2.0
 
-				Wsf = Vector{Float64}(undef, N_Se)
+				Wsf = fill(0.0::Float64, N_Se)
 				for iΨ ∈ 1:N_Se
 					Wsf[iΨ] = rootwateruptake.stressReduction.WATER_STRESS_FUNCTION(2, iΨ, veg, Ψstress)
 				end
@@ -299,7 +299,7 @@ module plotHypix
 
 				push!(Plot_All, PGFPlots.Axis(Plot, style="width=12cm, height=8cm", xlabel=L"$ \Psi \ [kPa]$", xmode="log", ylabel=L"$ F_{waterStress} \ [-]$", title="(b)"))
 
-			Path = path.Vegetation * "_" * string(iSim) * ".svg"
+			Path = pathHyPix.Vegetation * "_" * string(iSim) * ".svg"
 			PGFPlots.save(Path, Plot_All)	
 		end  # function ROOTDENSITY
 
@@ -310,7 +310,7 @@ module plotHypix
 			#		module: plots
 			# =============================================================
 			module plots
-			import ...sorptivity, ..wrc, ..path, ..cst, ...option, ..param, ...readHypix
+			import ...sorptivity, ..wrc, ..cst, ...option, ..param, ...readHypix
 			export PLOT_SORPTIVITY
 
 				using Plots.PlotMeasures, LaTeXStrings
@@ -321,14 +321,14 @@ module plotHypix
 				# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				#		FUNCTION : PLOT_SORPTIVITY
 				# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				function PLOT_SORPTIVITY(iSim, hydro)
+				function PLOT_SORPTIVITY(iSim, hydro, pathHyPix)
 					println("  ==  START: PLOT_SORPTIVITY_SeIni  ==")
 
 					# Setting the range of values for Se
                   Se_Ini         = collect(0.0:0.001:1.0)
                   N_SeIni        = length(Se_Ini)
-                  Sorptivity_Mod = Array{Float64}(undef, (N_SeIni))
-                  θ_Ini          = Array{Float64}(undef, (N_SeIni))
+                  Sorptivity_Mod = fill(0.0::Float64, (N_SeIni))
+                  θ_Ini          = fill(0.0::Float64, (N_SeIni))
 
 					for iSeIni=1:N_SeIni
 						θ_Ini[iSeIni] = wrc.Se_2_θ(Se_Ini[iSeIni], 1, hydro)
@@ -339,11 +339,11 @@ module plotHypix
 					# PLOTTING ====================	
 						Plot1=Plots.plot(layout=1)
 
-						Title =" $(path.SiteName_Hypix)"
+						Title =" $(pathHyPix.SiteName_Hypix)"
 
 						Plots.plot!(Plot1, Se_Ini[1:N_SeIni] , Sorptivity_Mod[1:N_SeIni], framestyle = [:box :semi :origin :zerolines :grid :true], xlabel=L"Initial \ Se \ [-]", ylabel=L"Sorptivity \  [ \ mm \ \sqrt s \ ]", label="", grid=false) 
 					
-						Path =path.Plot_Sorptivity  * "_" * string(iSim) * ".svg"
+						Path =pathHyPix.Plot_Sorptivity  * "_" * string(iSim) * ".svg"
 
 						Plots.savefig(Plot1, Path)
 
@@ -355,7 +355,7 @@ module plotHypix
 			# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			# # 		FUNCTION : INTERCEPTION
 			# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			# 	function RAINFALL_INTERCEPTION(clim, i∑T_CalibrStart_Day, iSim)
+			# 	function RAINFALL_INTERCEPTION(clim, i∑T_CalibrStart_Day, iSim, pathHyPix)
 
 			# 		# TICKS
 			# 			DateTick=range(clim.Date[i∑T_CalibrStart_Day],step=Day(7),clim.Date[clim.N_Climate])
@@ -365,7 +365,7 @@ module plotHypix
 			# 		# PLOT
 			# 			Plot1=Plots.plot(layout=1)
 
-			# 			Title =" $(path.SiteName_Hypix)" 
+			# 			Title =" $(pathHyPix.SiteName_Hypix)" 
 						
 			# 			Plots.plot!(Plot1, clim.Date[i∑T_CalibrStart_Day:clim.N_Climate], clim.Pr[i∑T_CalibrStart_Day:clim.N_Climate], color=:blue, colorbar=false,  line = :solid, label= L"$\Delta Pr  $")
 						
@@ -376,7 +376,7 @@ module plotHypix
 			# 			Plots.plot!(Plot1, grid=false, framestyle=:origin, size=(1000, 600), legend=:topright, xrotation=rad2deg(pi/3), xticks=(DateTick, DateTick2), title=Title, xlabel=L"$Day$", ylabel=L"$Daily \ \Delta Pr  \ \slash \ \Delta Pr_{through} \ \slash \ \Delta Pet_{int} \ [mm] $")
 
 												
-			# 		Path = path.Plot_RainfallInterception * "_" * string(iSim) * ".svg"
+			# 		Path = pathHyPix.Plot_RainfallInterception * "_" * string(iSim) * ".svg"
 			# 		Plots.savefig(Plot1, Path)
 			# 		println("			 ~ ", Path, "~")
 			# 	end  # function: INTERCEPTION
@@ -384,14 +384,14 @@ module plotHypix
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			#		FUNCTION : TIMESERIES
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				function TIMESERIES(∑T_Date_Plot, ∑T_Plot, obsθ, discret, Flag_Plot_Pond, iSim, N_∑T_Plot, N_iZ, ΔEvaporation_Plot, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, θ_Plot, θobs_Plot, clim, i∑T_CalibrStart_Day, θsim_Aver)
+				function TIMESERIES(∑T_Date_Plot, ∑T_Plot, obsθ, discret, Flag_Plot_Pond, iSim, N_∑T_Plot, N_iZ, ΔEvaporation_Plot, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, θ_Plot, θobs_Plot, clim, i∑T_CalibrStart_Day, θsim_Aver, pathHyPix)
 
 				# PATH
-					Path = path.Plot_HypixTime * "_" * string(iSim) * ".svg"
+					Path = pathHyPix.Plot_HypixTime * "_" * string(iSim) * ".svg"
 					rm(Path, force=true, recursive=true)
 					
 				# READING DATES
-					param = readHypix.DATES()
+					param = readHypix.DATES(pathHyPix)
 
 				# TICKS
 					# Date_Start_Calibr = obsθ.Date[1]
@@ -400,7 +400,7 @@ module plotHypix
 					# Date_End_Calibr = obsθ.Date[end]
 					Date_End_Calibr = DateTime(param.hyPix.Year_End, param.hyPix.Month_End, param.hyPix.Day_End, param.hyPix.Hour_End, param.hyPix.Minute_End, param.hyPix.Second_End)
 					
-					DateTick=range(Date_Start_Calibr,step=Day(14),Date_End_Calibr)
+					DateTick=range(Date_Start_Calibr,step=Day(61),Date_End_Calibr)
 					
 					DateTick2= Dates.format.(DateTick, "d u Y")
 				
@@ -422,7 +422,7 @@ module plotHypix
 
 					Plot_Climate = Plots.plot!(Plot, clim.Date[i∑T_CalibrStart_Day:clim.N_Climate], clim.Pr_Through[i∑T_CalibrStart_Day:clim.N_Climate], color=:cyan, line =(:sticks, :solid, 4), colorbar=false, label=L"$\Delta Pr_{through}$")
 	
-					Plot_Climate = Plots.plot!(Plot, subplot=iSubplot, ylabel=L"$Daily \ Simulation \ [mm]$", title=path.SiteName_Hypix, xtickfont = (0.01, :white), xrotation=rad2deg(pi/2))
+					Plot_Climate = Plots.plot!(Plot, subplot=iSubplot, ylabel=L"$Daily \ Simulation \ [mm]$", title=pathHyPix.SiteName_Hypix, xtickfont = (0.01, :white), xrotation=rad2deg(pi/2))
 				end # if: option.hyPix.Plot_Climate
 
 				# PLOT EVAPOYTRANSPIRATION
@@ -459,7 +459,7 @@ module plotHypix
 							Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑T_Plot], θobs_Plot[1:N_∑T_Plot, ithetaObs], line=(2.5,:solid), linecolour=Style_Hypix[ithetaObs], label=Label_Obs)
 
 						if option.hyPix.θobs_Average
-							Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑T_Plot], θ_Plot[1:N_∑T_Plot, obsθ.ithetaObs[ithetaObs]], label=Label_Sim, line=(2.5,:dashdot), linecolour=Style_Hypix[ithetaObs])
+							Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑T_Plot], θ_Plot[1:N_∑T_Plot, obsθ.ithetaObs[ithetaObs]], label=Label_Sim, line=(2.5,:dashdot), linecolour=:blue)
 						else
 							Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑T_Plot], θsim_Aver[1:N_∑T_Plot], label=Label_Sim, line=(2.5,:dashdot), linecolour=Style_Hypix[ithetaObs])
 						end  # if: option.hyPix.

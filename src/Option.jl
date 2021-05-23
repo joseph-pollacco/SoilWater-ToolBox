@@ -153,7 +153,7 @@
 			DownloadPackage = false # <true> For first time user download packages required to run program; <false>*
 
 		# Plotting
-			Plot      = false # <true>* plot; <false> no plotting
+			Plot      = true # <true>* plot; <false> no plotting
 			Plot_Show = false # <true>* plot shown in VScode; <false>
 
 		globalopt = GLOBALOPT(HydroTranslateModel, Hypix, Smap, BulkDensity, θΨ, Psd, Infilt, Temporary, Jules, DownloadPackage, Plot, Plot_Show)
@@ -285,7 +285,7 @@
 			RootWaterUptakeComp  = true
 			
 		#S sink term 
-         LookupTable_Lai           = true # <false> Lai=constant; <true> Lai varies per month
+         LookupTable_Lai            = true # <false> Lai=constant; <true> Lai varies per month
          LookUpTable_CropCoeficient = true # <false> CropCoeficient=constant; <true> CropCoeficient varies per month
 
 		# Hydraulic model 

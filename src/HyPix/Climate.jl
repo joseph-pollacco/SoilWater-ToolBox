@@ -9,12 +9,12 @@ module climate
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function CLIMATE(clim)
 
-			Vector{Float64}(undef, clim.N_Climate)
+			fill(0.0::Float64, clim.N_Climate)
 
-         ∑Pr_Climate      = Vector{Float64}(undef, clim.N_Climate)
-         ∑Pet_Climate	  = Vector{Float64}(undef, clim.N_Climate)
-         ∑T_Climate       = Vector{Float64}(undef, clim.N_Climate)
-         Temp             = Vector{Float64}(undef, clim.N_Climate)
+         ∑Pr_Climate      = fill(0.0::Float64, clim.N_Climate)
+         ∑Pet_Climate	  = fill(0.0::Float64, clim.N_Climate)
+         ∑T_Climate       = fill(0.0::Float64, clim.N_Climate)
+         Temp             = fill(0.0::Float64, clim.N_Climate)
 
 			# Computing Pr, PotEvap, Temp in the correct format
 	 		Start_Date = clim.Date[1]

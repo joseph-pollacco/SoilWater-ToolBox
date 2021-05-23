@@ -3,7 +3,7 @@
 # =============================================================
 module plotOther
 
-		import ..wrc,  ..ΨminΨmax, ..hydroRelation, ..hydroStruct, ..path, ..param, ..tool, ..cst, ..kunsat
+		import ..wrc,  ..ΨminΨmax, ..hydroRelation, ..hydroStruct, ..param, ..tool, ..cst, ..kunsat
 		using Plots.PlotMeasures, LaTeXStrings
 		using Plots; pgfplotsx()
 		export ΨMINΨMAX, WOF_STEPS, SE_Ψ_CONSTRAINED, PLOT_σ_2_θr, PLOT_θΨ_Δθ, σ_ψM_SCEARIO
@@ -12,16 +12,16 @@ module plotOther
 	# ========================================
 	# 		ΨMINΨMAX
 	# ======================================== 
-		function ΨMINΨMAX(hydro)
+		function ΨMINΨMAX(hydro, pathHyPix)
 			# PREPARING THE DATA
 				N_Se = 1000
-				local θplot = Vector{Float64}(undef, N_Se)
+				local θplot = fill(0.0::Float64, N_Se)
 			N_σ = 5
 			σ = range(hydro.σ_Min[1], stop=hydro.σ_Max[1], length=N_σ)
-         Ψm_Unique = Vector{Float64}(undef, N_σ)
+         Ψm_Unique = fill(0.0::Float64, N_σ)
 
-         Ψ_Min_σ   = Vector{Float64}(undef, N_σ)
-         Ψ_Max_σ   = Vector{Float64}(undef, N_σ)
+         Ψ_Min_σ   = fill(0.0::Float64, N_σ)
+         Ψ_Max_σ   = fill(0.0::Float64, N_σ)
 
 			hydroHorizon₂ = hydroStruct.HYDROSTRUCT(N_σ)
 
@@ -63,8 +63,8 @@ module plotOther
 			# , xlims =(log(minimum(Ψ_Min_σ)), log(maximum(Ψ_Max_σ)))
 			Plots.plot!(Plot1,  xlabel=L"ln \ \psi \ [mm]", ylabel=L"Normalised \ \theta \ [mm^3 mm^{-3}]", ylims =(0.0, 1.0), size=(1000,400), legend=:topright, framestyle = [:box :semi :origin :zerolines :grid :true])
 
-			Plots.savefig(Plot1, path.Plot_Ψmin_Ψmax)
-			println("			 ~ ", path.Plot_Ψmin_Ψmax, "~")
+			Plots.savefig(Plot1, pathHyPix.Plot_Ψmin_Ψmax)
+			println("			 ~ ", pathHyPix.Plot_Ψmin_Ψmax, "~")
 
 		end # function: ΨMINΨMAX
 
@@ -73,9 +73,9 @@ module plotOther
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : WOF_STEPS
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function WOF_STEPS()
+		function WOF_STEPS(pathHyPix)
 
-			Path_Output = path.Plot_OfStep * "Multiplestep.svg"
+			Path_Output = pathHyPix.Plot_OfStep * "Multiplestep.svg"
 
 			rm(Path_Output, force=true, recursive=true)	
 
@@ -88,7 +88,7 @@ module plotOther
 				Ticks =[ "1","2a","2b","3a","3b","4a","4b","5a","5b"]
 
 			# OF STEP
-				Path = path.Input_OfStep * "Of_Step.CSV"
+				Path = pathHyPix.Input_OfStep * "Of_Step.CSV"
 
 				Of_Waitoa, N_Waitoa = tool.readWrite.READ_HEADER(Path, "Waitoa")
 				Of_Waihou, N_Waihou = tool.readWrite.READ_HEADER(Path, "Waihou")
@@ -106,7 +106,7 @@ module plotOther
 				Plots.plot!(Plot1, subplot=1,  xlabel="", ylabel=L"WOF _{\theta} \ [mm^{3} \ mm^{-3}]", xticks=(1:1:9, Ticks), xtickfont=(12, :white), legend=false, title="(a) Weighted Objective Function", titlelocation = :left)
 
 			# GROUNDWATER STEP
-				Path = path.Input_OfStep * "Groundwater_Step.csv"
+				Path = pathHyPix.Input_OfStep * "Groundwater_Step.csv"
 
 				Groundwater_Waitoa, N_Waitoa = tool.readWrite.READ_HEADER(Path, "Waitoa")
 				Groundwater_Waihou, N_Waihou = tool.readWrite.READ_HEADER(Path, "Waihou")
@@ -125,7 +125,7 @@ module plotOther
 
 
 			# EvapoTranspiration STEP
-				Path = path.Input_OfStep * "Sink_Step.csv"
+				Path = pathHyPix.Input_OfStep * "Sink_Step.csv"
 
 				Sink_Waitoa, N_Waitoa = tool.readWrite.READ_HEADER(Path, "Waitoa")
 				Sink_Waihou, N_Waihou = tool.readWrite.READ_HEADER(Path, "Waihou")
@@ -144,7 +144,7 @@ module plotOther
 
 
 			# Soil Water Content STEP
-				Path = path.Input_OfStep * "Swc_Step.csv"
+				Path = pathHyPix.Input_OfStep * "Swc_Step.csv"
 
 				Swc_Waitoa, N_Waitoa = tool.readWrite.READ_HEADER(Path, "Waitoa")
 				Swc_Waihou, N_Waihou = tool.readWrite.READ_HEADER(Path, "Waihou")
@@ -170,30 +170,30 @@ module plotOther
 	# ========================================
 	# PLOTTING HYDRAULIC RELATIONSHIP FOR EVERY HORIZON
 	# ======================================== 
-		function SE_Ψ_CONSTRAINED(hydro)
+		function SE_Ψ_CONSTRAINED(hydro, pathHyPix)
 				
 			# PREPARING THE DATA
 				N_Se = 1500
-				local θplot_Min    = Vector{Float64}(undef, N_Se)
-				local θplot_Max    = Vector{Float64}(undef, N_Se)
-				local Kplot_Min    = Vector{Float64}(undef, N_Se)
-				local Kplot_Max    = Vector{Float64}(undef, N_Se)
+				local θplot_Min    = fill(0.0::Float64, N_Se)
+				local θplot_Max    = fill(0.0::Float64, N_Se)
+				local Kplot_Min    = fill(0.0::Float64, N_Se)
+				local Kplot_Max    = fill(0.0::Float64, N_Se)
 		
 			N_σ = 3
 			σ = range(hydro.σ_Min[1], stop=hydro.σ_Max[1], length=N_σ)
 
-			Ψm_Unique_Min = Vector{Float64}(undef, N_σ)
-			Ψm_Unique_Max = Vector{Float64}(undef, N_σ)
+			Ψm_Unique_Min = fill(0.0::Float64, N_σ)
+			Ψm_Unique_Max = fill(0.0::Float64, N_σ)
 			for iσ = 1:N_σ
 				Ψm_Unique_Min[iσ] = hydroRelation.σ_2_Ψm(σ[iσ], param.hydro.kg.Ψσ_Min, param.hydro.kg.Ψσ_Min, param.hydro.kg.Ψσ_Max)
 				Ψm_Unique_Max[iσ] = hydroRelation.σ_2_Ψm(σ[iσ], param.hydro.kg.Ψσ_Max, param.hydro.kg.Ψσ_Min, param.hydro.kg.Ψσ_Max)
 			end
 
 			# Min and Max Ψ
-			Ψ_Min_σ_Min = Vector{Float64}(undef, N_σ)
-			Ψ_Max_σ_Min = Vector{Float64}(undef, N_σ)
-			Ψ_Min_σ_Max = Vector{Float64}(undef, N_σ)
-			Ψ_Max_σ_Max = Vector{Float64}(undef, N_σ)
+			Ψ_Min_σ_Min = fill(0.0::Float64, N_σ)
+			Ψ_Max_σ_Min = fill(0.0::Float64, N_σ)
+			Ψ_Min_σ_Max = fill(0.0::Float64, N_σ)
+			Ψ_Max_σ_Max = fill(0.0::Float64, N_σ)
 			for iσ=1:N_σ
 				Ψ_Min_σ_Min[iσ] , Ψ_Max_σ_Min[iσ] = ΨminΨmax.ΨMINΨMAX(1.0, 0.85, σ[iσ], param.hydro.kg.σMac, Ψm_Unique_Min[iσ], param.hydro.kg.ΨmMac)
 
@@ -255,8 +255,8 @@ module plotOther
 			end #iZ ............................................
 			# ylims=(0.0,1.0),
 
-			Plots.savefig(Plot1, path.Plot_Se_Ψ_Constrained)
-			println("			 ~ ",  path.Plots_θ∂θ∂Ψ, "~")
+			Plots.savefig(Plot1, pathHyPix.Plot_Se_Ψ_Constrained)
+			println("			 ~ ",  pathHyPix.Plots_θ∂θ∂Ψ, "~")
 		end # function: SE_Ψ_CONSTRAINED
 
 
@@ -264,13 +264,13 @@ module plotOther
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : PLOT_θr
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function PLOT_σ_2_θr(hydro)
+		function PLOT_σ_2_θr(hydro, pathHyPix)
 			N_σ = 100
 			σ = range(hydro.σ_Min[1], stop=hydro.σ_Max[1], length=N_σ)
 
 			hydro₂=deepcopy(hydro)
 
-			θr = Vector{Float64}(undef, N_σ)
+			θr = fill(0.0::Float64, N_σ)
 			for i=1:N_σ
 				hydro₂.σ[1] = σ[i]
 				θr[i] = hydroRelation.σ_2_θr(hydro₂, 1)
@@ -282,8 +282,8 @@ module plotOther
 
 			Plots.plot!(Plot1, σ, θr, label=false, xlabel=L"\sigma \ [-]", ylabel=L"\theta _r \ [m^3 \ m^{-3}]", linewidth = 1.8, linecolour=:mediumblue, grid=false, ticks=true)
 
-			Plots.savefig(Plot1, path.Plot_σ2θr)
-			println("			 ~ ", path.Plot_σ2θr, "~")
+			Plots.savefig(Plot1, pathHyPix.Plot_σ2θr)
+			println("			 ~ ", pathHyPix.Plot_σ2θr, "~")
 
 		end # function: PLOT_θr
 
@@ -292,7 +292,7 @@ module plotOther
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : PLOT_θψ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function PLOT_θΨ_Δθ(hydro)
+	function PLOT_θΨ_Δθ(hydro, pathHyPix)
 		N_Se = 100
 
 		hydroHorizon₂ = hydroStruct.HYDROSTRUCT(1)
@@ -310,7 +310,7 @@ module plotOther
 
 		# Plotting the curve
 			Ψplot = exp.(range(log(Ψ_Min), stop=log(Ψ_Max), length=N_Se)) 
-			θplot = Vector{Float64}(undef, N_Se)
+			θplot = fill(0.0::Float64, N_Se)
 			for iΨ = 1:N_Se
 				θplot[iΨ] = wrc.Ψ_2_θDual(Ψplot[iΨ], 1, hydroHorizon₂)			
 			end # for iΨ
@@ -321,7 +321,7 @@ module plotOther
 			Plots.plot!(Plot1, log.(Ψplot), θplot, label=false, xlabel=L"ln \ \psi \ [mm]", ylabel=L"\theta \ [mm^3 \ mm^{-3}]")
 		# Plotting points on the curve
 			N_Δθ = 10
-			# Ψ_Δθ = Vector{Float64}(undef, N_Δθ)
+			# Ψ_Δθ = fill(0.0::Float64, N_Δθ)
 			θ_Min =  wrc.Ψ_2_θDual(Ψ_Min, 1, hydroHorizon₂) +  eps(10.0)
 			θ_Max =  wrc.Ψ_2_θDual(Ψ_Max, 1, hydroHorizon₂) -  eps(10.0)
 			Δθ = range(θ_Min, stop=θ_Max , length=N_Δθ)
@@ -333,8 +333,8 @@ module plotOther
 				Plots.plot!(Plot1, [log(Ψ_Min), log(Ψ_Δθ)], [Δθ[iθ], Δθ[iθ]], label=false, line=(:dashdot, 1), color=:grey)
 			end
 
-			Plots.savefig(Plot1, path.Plot_θΨ_Δθ)
-			println("			 ~ ", path.Plot_θΨ_Δθ, "~")
+			Plots.savefig(Plot1, pathHyPix.Plot_θΨ_Δθ)
+			println("			 ~ ", pathHyPix.Plot_θΨ_Δθ, "~")
 		return
 	end  # function: PLOT_θψ
 
@@ -342,13 +342,13 @@ module plotOther
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : PLOT_θψ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function σ_ψM_SCEARIO()
-		σ_F, ~   = tool.readWrite.READ_HEADER(path.σ_ψM_Scenario, "σ_F")
-		σ_G, ~   = tool.readWrite.READ_HEADER(path.σ_ψM_Scenario, "σ_G")
-		σ_J, ~   = tool.readWrite.READ_HEADER(path.σ_ψM_Scenario, "σ_J")
-		Ψm_F, ~   = tool.readWrite.READ_HEADER(path.σ_ψM_Scenario, "Ψm_F")
-		Ψm_G, ~   = tool.readWrite.READ_HEADER(path.σ_ψM_Scenario, "Ψm_G")
-		Ψm_J, ~   = tool.readWrite.READ_HEADER(path.σ_ψM_Scenario, "Ψm_J")
+	function σ_ψM_SCEARIO(pathHyPix)
+		σ_F, ~   = tool.readWrite.READ_HEADER(pathHyPix.σ_ψM_Scenario, "σ_F")
+		σ_G, ~   = tool.readWrite.READ_HEADER(pathHyPix.σ_ψM_Scenario, "σ_G")
+		σ_J, ~   = tool.readWrite.READ_HEADER(pathHyPix.σ_ψM_Scenario, "σ_J")
+		Ψm_F, ~   = tool.readWrite.READ_HEADER(pathHyPix.σ_ψM_Scenario, "Ψm_F")
+		Ψm_G, ~   = tool.readWrite.READ_HEADER(pathHyPix.σ_ψM_Scenario, "Ψm_G")
+		Ψm_J, ~   = tool.readWrite.READ_HEADER(pathHyPix.σ_ψM_Scenario, "Ψm_J")
 
 		# Plots.PGFPlotsXBackend()
 		Plots.pgfplotsx()
@@ -365,7 +365,7 @@ module plotOther
 		Plots.plot!(Plot1, subplot=2 , xlims=(7.0,12.0), ylims =(7.0,12.0))
 		Plots.plot!(Plot1, subplot=2, xlims=(7.0,12.0), ylims =(7.0,12.0) , xlabel=L"ln \ \psi_{m} \ [mm] \ Scenario \_ G", ylabel=L"ln \ \psi_{m} \ [mm]")
 
-		Path = path.Plots_σΨm * "Plot_σ_ψM_Scenario.svg"
+		Path = pathHyPix.Plots_σΨm * "Plot_σ_ψM_Scenario.svg"
 		Plots.savefig(Plot1, Path)
 		println("			 ~ ", Path, "~")
 	end

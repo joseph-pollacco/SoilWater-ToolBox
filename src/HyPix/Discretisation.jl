@@ -19,12 +19,12 @@ module discretization
 		end
 		
 		function DISCRETIZATION(N_iZ::Int64, Z)
-			Z_CellUp = Vector{Float64}(undef, N_iZ)
-			Znode    = Vector{Float64}(undef, N_iZ)
-			ΔZ       = Vector{Float64}(undef, N_iZ)
-			ΔZ_⬓     = Vector{Float64}(undef, N_iZ)
-			ΔZ_Aver  = Vector{Float64}(undef, N_iZ+1)
-			ΔZ_W     = Vector{Float64}(undef, N_iZ+1)
+			Z_CellUp = fill(0.0::Float64, N_iZ)
+			Znode    = fill(0.0::Float64, N_iZ)
+			ΔZ       = fill(0.0::Float64, N_iZ)
+			ΔZ_⬓     = fill(0.0::Float64, N_iZ)
+			ΔZ_Aver  = fill(0.0::Float64, N_iZ+1)
+			ΔZ_W     = fill(0.0::Float64, N_iZ+1)
 			
 			# Cell 1
 				ΔZ[1]       = Z[1]

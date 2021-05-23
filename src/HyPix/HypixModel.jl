@@ -3,7 +3,7 @@
 # =============================================================
 module hypixModel
 
-	import ..checkerror, ..timeStep, ..discretization, ..evapo, ..flux, ..interception, ..interpolate, ..kunsat, ..memory, ..ofHypix, ..option, ..param, ..path, ..pet, ..plot, ..pond, ..climate, ..residual, ..richard, ..rootwateruptake, ..sorptivity, ..tool, ..wrc, ..Δtchange, ..ΨminΨmax
+	import ..checkerror, ..timeStep, ..discretization, ..evapo, ..flux, ..interception, ..interpolate, ..kunsat, ..memory, ..ofHypix, ..option, ..param, ..pathHypix, ..pet, ..plot, ..pond, ..climate, ..residual, ..richard, ..rootwateruptake, ..sorptivity, ..tool, ..wrc, ..Δtchange, ..ΨminΨmax
 
 	export HYPIX
 

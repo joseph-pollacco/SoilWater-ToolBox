@@ -8,7 +8,7 @@ module memory
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : MEMORY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function MEMORY(obsθ, clim, N_∑T_Climate::Int64, N_iZ::Int64)
+	function MEMORY(clim, iSim_Count::Int64, N_∑T_Climate::Int64, N_iZ::Int64, obsθ)
 
 		# N_Memory = ceil(Int, N_∑T_Climate / param.hyPix.ΔT_Min) + Int(N_∑T_Climate % param.hyPix.ΔT_Min + 1)
 
@@ -43,34 +43,14 @@ module memory
 
       iNonConverge_iSim          = fill(0  ::Int64, N_∑T_Plot)
       
-      Efficiency                 = fill(0.0::Float64, N_∑T_Plot)
-      Global_WaterBalance        = fill(0.0::Float64, N_∑T_Plot)
-      Global_WaterBalance_NormPr = fill(0.0::Float64, N_∑T_Plot)
-      RmseBest                   = fill(0.0::Float64, N_∑T_Plot)
-      SwcRoots                   = fill(0.0::Float64, N_∑T_Plot)
-      WofBest                    = fill(0.0::Float64, N_∑T_Plot)
-      ΔRunTimeHypix              = fill(0.0::Float64, N_∑T_Plot)
-      ΔT_Average                 = fill(0.0::Float64, N_∑T_Plot)
-      ∑ΔQ_Bot                    = fill(0.0::Float64, N_∑T_Plot)
-      ∑∑ΔSink                    = fill(0.0::Float64, N_∑T_Plot)
+
 
       Laiᵀ= fill(0.0::Float64, clim.N_Climate)
 		CropCoeficientᵀ = fill(0.0::Float64, clim.N_Climate)
 
-      θSim = Array{Float64}(undef, obsθ.N_iT, N_iZ)
-
-		# INITIALIZE 
-         # ∑T[1]           = 0.0
-         # ∑Pr[1]          = 0.0
-         # ΔPr[1]          = 0.0
-         # ΔT[1]           = 0.0
-         # ΔPet[1]         = 0.0
-         # ΔEvaporation[1] = 0.0
-         # ∑Pet[1]         = 0.0
-         # ΔHpond[1]       = 0.0
-         # θ[iT,1:N_iZ]    .= 0.0
+      θSim = fill(0.0::Float64, obsθ.N_iT, N_iZ)
 		
-		return ∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑∑ΔSink, ∑Pet, ∑Pr, ∑T, ∑ΔQ_Bot, CropCoeficientᵀ, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, iNonConverge_iSim, Laiᵀ, N_Memory, Q, Residual, RmseBest, SwcRoots, WofBest, ΔEvaporation, ΔHpond, ΔΨmax, ΔPet, ΔPr, ΔRunTimeHypix, ΔSink, ΔT, ΔT_Average, θ, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest
+		return ∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pr, ∑T, CropCoeficientᵀ, iNonConverge_iSim, Laiᵀ, N_Memory, Q, Residual, ΔEvaporation, ΔHpond, ΔΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest
 	end  # function: MEMORY
 
 end  # module: memory 

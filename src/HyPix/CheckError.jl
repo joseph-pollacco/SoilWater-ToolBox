@@ -3,7 +3,7 @@
 
 # =============================================================
 module checkerror
-	import ..option, ..param, ..path
+	import ..option, ..param, ..pathHypix
 	import Dates: value, DateTime
 	export CHECK_IFOPEN
 
@@ -13,14 +13,14 @@ module checkerror
 	function CHECK_ERROR(N_iRoot, N_iZ, N_iHorizon, Z, clim, veg, hydroHorizon)
 
 		# DETERMENING IF PATH IS OPEN
-			CHECK_IFOPEN(path.Table_Discretisation)
-			CHECK_IFOPEN(path.Table_TimeSerie)
-			CHECK_IFOPEN(path.Table_θ)
-			CHECK_IFOPEN(path.Table_Q)
-			CHECK_IFOPEN(path.Table_Ψ)
-			CHECK_IFOPEN(path.Table_WaterBalance)
-			CHECK_IFOPEN(path.Table_RootWaterUptake)
-			CHECK_IFOPEN(path.Table_Se)
+			CHECK_IFOPEN(pathHyPix.Table_Discretisation)
+			CHECK_IFOPEN(pathHyPix.Table_TimeSerie)
+			CHECK_IFOPEN(pathHyPix.Table_θ)
+			CHECK_IFOPEN(pathHyPix.Table_Q)
+			CHECK_IFOPEN(pathHyPix.Table_Ψ)
+			CHECK_IFOPEN(pathHyPix.Table_WaterBalance)
+			CHECK_IFOPEN(pathHyPix.Table_RootWaterUptake)
+			CHECK_IFOPEN(pathHyPix.Table_Se)
 
 		# CHECKING IF THE OPTIONS ARE VALID	
 			if option.hyPix.θΨKmodel ≠ :Kosugi && option.hyPix.θΨKmodel ≠ :vanGenuchten
@@ -43,7 +43,7 @@ module checkerror
 			if option.hyPix.θΨKmodel == :Kosugi
 				for iHorizon in 1:N_iHorizon
 					if hydroHorizon.θs[iHorizon] <  hydroHorizon.θsMacMat[iHorizon]
-						error("\n Hypix error: at iHorizon = $iHorizon θs must be ≥ θsMacMat : $(path.Hydraulic)")
+						error("\n Hypix error: at iHorizon = $iHorizon θs must be ≥ θsMacMat : $(pathHyPix.Hydraulic)")
 					end
 				end # for iHorizon in 1:N_iHorizon
 			end # option.hyPix.θΨKmodel

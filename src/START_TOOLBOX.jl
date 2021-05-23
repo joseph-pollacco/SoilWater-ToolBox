@@ -81,6 +81,7 @@ using Revise
 	println(option.globalopt.Hypix)
 	if option.globalopt.Hypix
 
+		include("Hypix\\PathHypix.jl")
 		include("Hydro\\ΨminΨmax.jl")
 		include("Infilt\\SorptivityNonInfinity.jl")
 		include("Hypix\\Interpolate.jl")
@@ -119,6 +120,7 @@ using Revise
 	end  # if: option.globalopt.Hypix
 
 	if option.globalopt.Jules
+		include("Hypix\\PathHypix.jl")
 		include("Hypix\\VegStruct.jl")
 		include("Hypix\\Discretisation.jl")
 		include("Jules\\Jules.jl")
@@ -464,7 +466,8 @@ function START_TOOLBOX()
 
 	# Playing sounds...
 		println("\007")
-		
+
+		GC.gc()	
 end  # function: START_TOOLBOX
 # ..............................................................
 

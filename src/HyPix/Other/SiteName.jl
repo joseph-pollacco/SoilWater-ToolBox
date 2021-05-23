@@ -2,7 +2,7 @@ module sitename
    import ..tool
    import DelimitedFiles
 
-   function SITENEAME(iSim)
+   function SITENEAME()
 
       Path = "D:\\Main\\MODELS\\SoilWater-ToolBox2\\src\\INPUT\\DataHyPix\\JULES\\JULES_LinkingData.csv"
 
@@ -16,6 +16,6 @@ module sitename
          # Reading
             SiteName, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "SiteName")
 
-        return SiteName[iSim]    
+        return SiteName    
    end
 end

@@ -3,7 +3,7 @@
 # =============================================================
 module tableHypix
 
-	import ..cst, ..param, ..path, ..tool, ..wrc, ..kunsat
+	import ..cst, ..param, ..tool, ..wrc, ..kunsat
 	import DelimitedFiles
 	import Dates: value, DateTime, year, month, day, hour, minute, second
 	
@@ -12,12 +12,12 @@ module tableHypix
 	# ===================================================
 	#          Discretization
 	# ===================================================
-		function DISCRETIZATION(discret, N_iZ, Z)
-			println("			~  $(path.Table_Discretisation) ~")
+		function DISCRETIZATION(discret, N_iZ, Z, pathHyPix)
+			println("			~  $(pathHyPix.Table_Discretisation) ~")
 
 			Header =  ["Z" "ΔZ" "ΔZ_⬓" "Znode" "ΔZ_Aver" "ΔZ_W" "Z_CellUp"]
 
-			open(path.Table_Discretisation, "w") do io
+			open(pathHyPix.Table_Discretisation, "w") do io
 				# DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
 				DelimitedFiles.writedlm(io,[Header] , ",",) # Header
 				DelimitedFiles.writedlm(io, [Z[1:N_iZ] discret.ΔZ[1:N_iZ] discret.ΔZ_⬓[1:N_iZ] discret.Znode[1:N_iZ] discret.ΔZ_Aver[1:N_iZ] discret.ΔZ_W[1:N_iZ] discret.Z_CellUp[1:N_iZ]], ",")
@@ -28,8 +28,8 @@ module tableHypix
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYDRO
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function HYDRO(hydroHorizon, iSim, N_iHorizon)
-			Path = path.Table_Hydro * "_" * string(iSim) * ".csv"
+		function HYDRO(hydroHorizon, iSim, N_iHorizon, pathHyPix)
+			Path = pathHyPix.Table_Hydro * "_" * string(iSim) * ".csv"
 			println("			~ $(Path) ~")
 
 			Id = 1:1:N_iHorizon
@@ -49,8 +49,8 @@ module tableHypix
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : veg
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function VEG(veg, iSim)
-			Path = path.Table_Veg * "_" * string(iSim) * ".csv"
+		function VEG(veg, iSim, pathHyPix)
+			Path = pathHyPix.Table_Veg * "_" * string(iSim) * ".csv"
 			println("			~  $(Path) ~")
 
 			Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(1, veg)
@@ -66,10 +66,10 @@ module tableHypix
 	# ===================================================
 	#          TimeStep at ΔT
 	# ===================================================
-		function TIME_SERIES(∑T, ΔT, ∑Pr, ΔPr, Hpond, Recharge, ∑WaterBalance_η, iSim)
+		function TIME_SERIES(∑T, ΔT, ∑Pr, ΔPr, Hpond, Recharge, ∑WaterBalance_η, iSim, pathHyPix)
 			Header =  ["∑T[mm]" "ΔT[mm]" "∑Pr[mm/ΔT]" "ΔPr[mm/ΔT]" "Hpond[mm]" "Recharge[mm/ΔT]" "∑WaterBalance_η[mm]"]
 
-			Path = path.Table_TimeSerie * "_" * string(iSim) * ".csv"
+			Path = pathHyPix.Table_TimeSerie * "_" * string(iSim) * ".csv"
 			println("			~  $(Path) ~")
 
 			open(Path, "w") do io
@@ -83,20 +83,20 @@ module tableHypix
 	# ===================================================
 	#          TimeStep daily
 	# ===================================================
-		function TIME_SERIES_DAILY(∑T_Plot, ∑WaterBalance_η_Plot, Date_Plot, iSim, N_∑T_Plot, ΔEvaporation_Plot, ΔRecharge_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot)
+		function TIME_SERIES_DAILY(∑T_Plot, ∑WaterBalance_η_Plot, Date_Plot, iSim, N_∑T_Plot, ΔEvaporation_Plot, ΔRecharge_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, pathHyPix)
 			Header =  ["iD" "Year" "Month" "Day" "Hour" "Minute" "Second" "∑T[Hour]" "ΔPr_Through[mm/day]" "ΔPet[mm/day]" "ΔSink[mm/day]" "ΔEvaporation[mm/day]" "Hpond≈[mm]" "Recharge[mm/day]" "∑WaterBalance_η_Profile[mm/day]"]
 
-			Path = path.Table_TimeSerie_Daily * "_" * string(iSim) * ".csv"
+			Path = pathHyPix.Table_TimeSerie_Daily * "_" * string(iSim) * ".csv"
 			println("			~  $(Path) ~")
 
 			Id = 1:1:N_∑T_Plot
 
-			Year₁   = Vector{Int64}(undef, N_∑T_Plot)
-			Month₁  = Vector{Int64}(undef, N_∑T_Plot)
-			Day₁    = Vector{Int64}(undef, N_∑T_Plot)
-			Hour₁   = Vector{Int64}(undef, N_∑T_Plot)
-			Minute₁ = Vector{Int64}(undef, N_∑T_Plot)
-			Second₁ = Vector{Int64}(undef, N_∑T_Plot)
+			Year₁   =fill(0::Int64, N_∑T_Plot)
+			Month₁  =fill(0::Int64, N_∑T_Plot)
+			Day₁    =fill(0::Int64, N_∑T_Plot)
+			Hour₁   =fill(0::Int64, N_∑T_Plot)
+			Minute₁ =fill(0::Int64, N_∑T_Plot)
+			Second₁ =fill(0::Int64, N_∑T_Plot)
 
 			for iT=1:N_∑T_Plot
 				Year₁[iT] = year(Date_Plot[iT])
@@ -118,8 +118,8 @@ module tableHypix
 	# ===================================================
 	#          θ
 	# ===================================================
-		function θ(∑T, θ, Znode, iSim)
-			Path = path.Table_θ * "_" * string(iSim) * ".csv"
+		function θ(∑T, θ, Znode, iSim, pathHyPix)
+			Path = pathHyPix.Table_θ * "_" * string(iSim) * ".csv"
 			println("			~  $(Path) ~")
 
 			# Adding an other column
@@ -132,8 +132,8 @@ module tableHypix
 	# ===================================================
 	#          Q
 	# ===================================================
-		function Q(∑T, Q, Z_Bottom, Znode, iSim)	
-			Path = path.Table_Q * "_" * string(iSim) * ".csv"
+		function Q(∑T, Q, Z_Bottom, Znode, iSim, pathHyPix)	
+			Path = pathHyPix.Table_Q * "_" * string(iSim) * ".csv"
 			println("			~  $(Path) ~")
 			
 			# Adding an other column
@@ -147,9 +147,9 @@ module tableHypix
 	# ===================================================
 	#          Ψ
 	# ===================================================
-		function Ψ(∑T, Ψ, Znode, iSim)
+		function Ψ(∑T, Ψ, Znode, iSim, pathHyPix)
 
-			Path = path.Table_Ψ * "_" * string(iSim) * ".csv"
+			Path = pathHyPix.Table_Ψ * "_" * string(iSim) * ".csv"
 			println("			~  $(Path) ~")
 
 			# Adding an other column
@@ -164,15 +164,15 @@ module tableHypix
 	#		FUNCTION : θΨ
 	# 		Tabular values of the hydroParam model
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function θΨ(hydroHorizon, iSim, N_iHorizon)
+		function θΨ(hydroHorizon, iSim, N_iHorizon, pathHyPix)
 			
-			Path = path.Table_θΨ * "_" * string(iSim) * ".csv"
+			Path = pathHyPix.Table_θΨ * "_" * string(iSim) * ".csv"
 			println("			~  $(Path) ~")
 
 			N_θΨ = Int64(length(param.hyPix.plot.θΨ_Table))
 
 			# Writting the Header
-				FieldName_String = Array{String}(undef, N_θΨ)
+				FieldName_String = fill(""::String, N_θΨ)
 
 				for i =1:N_θΨ
 					FieldName_String[i] = string(param.hyPix.plot.θΨ_Table[i] * cst.Mm_2_Cm) * "cm"
@@ -180,7 +180,7 @@ module tableHypix
 				pushfirst!(FieldName_String, string("Layer")) # Write the "Id" at the very begenning
 			
 			# Computing θ at required θ
-				θ_Mod = Array{Float64}(undef, (N_iHorizon, N_θΨ))
+				θ_Mod = fill(0.0::Float64, (N_iHorizon, N_θΨ))
 				for iZ=1:N_iHorizon, iΨ =1:N_θΨ
 						Ψ_Mod = param.hyPix.plot.θΨ_Table[iΨ]
 						θ_Mod[iZ, iΨ] = wrc.Ψ_2_θDual(Ψ_Mod, iZ, hydroHorizon)
@@ -207,15 +207,15 @@ module tableHypix
 	#		FUNCTION : KΨ
 	# 		Tabular values of the hydroParam model
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function KΨ(hydroHorizon, iSim, N_iHorizon)
+		function KΨ(hydroHorizon, iSim, N_iHorizon, pathHyPix)
 				
-			Path = path.Table_KΨ * "_" * string(iSim) * ".csv"
+			Path = pathHyPix.Table_KΨ * "_" * string(iSim) * ".csv"
 			println("			~  $(Path) ~")
 
 			N_θΨ = Int64(length(param.hyPix.plot.θΨ_Table))
 
 			# Writting the Header
-				FieldName_String = Array{String}(undef, N_θΨ)
+				FieldName_String = fill(""::String, N_θΨ)
 
 				for i =1:N_θΨ
 					FieldName_String[i] = string(param.hyPix.plot.θΨ_Table[i] * cst.Mm_2_Cm) * "cm"
@@ -223,7 +223,7 @@ module tableHypix
 				pushfirst!(FieldName_String, string("Layer Cm/H")) # Write the "Id" at the very begenning
 			
 			# Computing θ at required θ
-				K_Mod = Array{Float64}(undef, (N_iHorizon, N_θΨ))
+				K_Mod = fill(0.0::Float64, (N_iHorizon, N_θΨ))
 				for iZ=1:N_iHorizon, iΨ =1:N_θΨ
 						Ψ_Mod = param.hyPix.plot.θΨ_Table[iΨ]
 						K_Mod[iZ, iΨ] = kunsat.Ψ_2_KUNSAT(Ψ_Mod, iZ, hydroHorizon) .* cst.MmS_2_CmH
@@ -249,18 +249,19 @@ module tableHypix
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : PERFORMACE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function PERFORMANCE(∑∑ΔSink, ∑ΔQ_Bot, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, iNonConverge_iSim, iSim, RmseBest, SwcRoots, WofBest, ΔRunTimeHypix, ΔT_Average)
-			Path = path.Table_Performance * "_" * string(iSim) * ".csv"
+		function PERFORMANCE(∑∑ΔSink, ∑ΔQ_Bot, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, iNonConverge_iSim, iSim, RmseBest, SwcRoots, WofBest, ΔRunTimeHypix, ΔT_Average, SiteName_Hypix, pathHyPix)
+			# Path = pathHyPix.Table_Performance * "_" * string(iSim) * ".csv"
+			Path = pathHyPix.Table_Performance * ".csv"
 			println("			~  $(Path) ~")
 
-			Header = ["Id" "WofBest" "RmseBest" "Efficiency" "Global_WaterBalance" "Global_WaterBalance_NormPr" "ΔT_Average" "∑∑ΔSink" "∑ΔQ_Bot" "SwcRoots" "iNonConverge" "ΔRunTimeHypix"]
+			Header = ["Id" "SiteName" "WofBest" "RmseBest" "Efficiency" "Global_WaterBalance" "Global_WaterBalance_NormPr" "ΔT_Average" "∑∑ΔSink" "∑ΔQ_Bot" "SwcRoots" "iNonConverge" "ΔRunTimeHypix"]
 
 			Id = 1:1:length(WofBest)
 
 			open(Path, "w") do io
 				# DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
 				DelimitedFiles.writedlm(io,[Header] , ",",) # Header
-				DelimitedFiles.writedlm(io, [Id WofBest RmseBest Efficiency Global_WaterBalance Global_WaterBalance_NormPr ΔT_Average ∑∑ΔSink ∑ΔQ_Bot SwcRoots iNonConverge_iSim ΔRunTimeHypix], ",")
+				DelimitedFiles.writedlm(io, [Id SiteName_Hypix WofBest RmseBest Efficiency Global_WaterBalance Global_WaterBalance_NormPr ΔT_Average ∑∑ΔSink ∑ΔQ_Bot SwcRoots iNonConverge_iSim ΔRunTimeHypix], ",")
 			end
 		end # function PERFORMACE
 
@@ -268,9 +269,9 @@ module tableHypix
 	# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# #		FUNCTION : SIGNATURE
 	# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# 	function SIGNATURE(iSim, Signature_Deficit_Obs, Signature_Max_Obs, Signature_Saturated_Obs, Signature_Senescence_Obs, Signature_Deficit_Sim, Signature_Max_Sim, Signature_Saturated_Sim, Signature_Senescence_Sim)
+	# 	function SIGNATURE(iSim, Signature_Deficit_Obs, Signature_Max_Obs, Signature_Saturated_Obs, Signature_Senescence_Obs, Signature_Deficit_Sim, Signature_Max_Sim, Signature_Saturated_Sim, Signature_Senescence_Sim, pathHyPix)
 			
-	# 		Path = path.Table_Signature * "_" * string(iSim) * ".csv"
+	# 		Path = pathHyPix.Table_Signature * "_" * string(iSim) * ".csv"
 	# 		println("			~  $(Path) ~")
 
 	# 		Header = ["Month" "Sign_Deficit_Obs" "Sign_Max_Obs" "Sign_Saturated_Obs" "Sign_Senescence_Obs" "Sign_Deficit_Sim" "Sign_Max_Sim" "Sign_Saturated_Sim" "Sign_Senescence_Sim"]
@@ -287,8 +288,8 @@ module tableHypix
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : DAILY_CLIMATE
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function DAILY_CLIMATE(∑T_Climate, clim, iSim)
-			Path = path.Table_DailyClimate * "_" * string(iSim) * ".csv"
+		function DAILY_CLIMATE(∑T_Climate, clim, iSim, pathHyPix)
+			Path = pathHyPix.Table_DailyClimate * "_" * string(iSim) * ".csv"
 			println("			~  $(Path) ~")
 
 			local ∑T_Int = ceil.(Int, ∑T_Climate[1:clim.N_Climate] .* cst.Second_2_Day)
@@ -305,11 +306,13 @@ module tableHypix
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : θAVERAGE
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function θAVERAGE(Date_Plot, iSim, θobs_Plot, θsim_Aver)
-				Path = path.Table_θaverage * "_" * string(iSim) * ".csv"
+			function θAVERAGE(Date_Plot, iSim, θobs_Plot, θsim_Aver, pathHyPix)
+				Path = pathHyPix.Table_θaverage * ".csv"
 				println("			~  $(Path) ~")
 
-				Header = ["Year","Month","Day" ,"θobs_Aver", "θsim_Aver"]
+				Header = ["Id", "Year","Month","Day" ,"θobs_Aver", "θsim_Aver"]
+
+				Id = 1:1:length(θsim_Aver)
 
 				Year = year.(Date_Plot)
 				Month = month.(Date_Plot)
@@ -317,7 +320,7 @@ module tableHypix
 
 				open(Path, "w") do io
 					DelimitedFiles.writedlm(io,[Header] , ",",) # Header
-					DelimitedFiles.writedlm(io, [Year Month Day θobs_Plot θsim_Aver] , ",")
+					DelimitedFiles.writedlm(io, [Id Year Month Day θobs_Plot θsim_Aver] , ",")
 				end # open			
 			end # function: θAVERAGE
 	

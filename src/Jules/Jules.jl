@@ -2,7 +2,7 @@
 #		module: jules joseph2
 # =============================================================
 module jules
-   import ..option, ..param, ..path, ..tool, ..θini, ..hydroStruct, ..reading, ..tool, ..wrc
+   import ..option, ..param, ..path, ..tool, ..θini, ..hydroStruct, ..reading, ..tool, ..wrc, ..pathHypix
    import DelimitedFiles, Dates, CSV, Tables, NCDatasets, NetCDF
    export READ_JULES_SITES
 
@@ -13,7 +13,9 @@ module jules
 
       Options_θjules = "BrookCorey" # <"Texture">,<"vanGenuchten">,<"BrookCorey">
 
-      println("    ~  $(path.JulesMetadata) ~")
+      pathHyPix = pathHypix.PATHHYPIX(1)
+
+      println("    ~  $(pathHyPix.JulesMetadata) ~")
 
       Path_Climate = "D:\\DATAraw\\JULESdata\\Climate\\VCSN_Obs\\"
 
@@ -22,7 +24,7 @@ module jules
       Path_θJules  = "D:\\DATAraw\\JULESdata\\SoilMoisture_Jules\\SoilMoistureJules_Site\\"
 
       # Read data
-         Data = DelimitedFiles.readdlm(path.JulesMetadata, ',')
+         Data = DelimitedFiles.readdlm(pathHyPix.JulesMetadata, ',')
       # Read header
          Header = Data[1,1:end]
       # Remove first READ_ROW_SELECT
@@ -229,8 +231,8 @@ module jules
 
                Date_Start_Sim = Dates.Date(Year_Sim_Start, Month_Sim_Start, Day_Sim_Start)
 
-               Year_Sim_End = 2009 #2011
-               Month_Sim_End = 7 #12
+               Year_Sim_End = 2011 #2011
+               Month_Sim_End = 12 #12
                Day_Sim_End = 1 #1
 
                Date_End_Sim = Dates.Date(Year_Sim_End, Month_Sim_End, Day_Sim_End)

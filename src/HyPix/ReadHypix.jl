@@ -2,17 +2,17 @@
 #		module: readingHypix
 # =============================================================
 module readHypix
-	import ..path, ..option, ..tool, ..param, ..horizonLayer
-	import Dates: value, DateTime, hour, minute, month
+	import  ..option, ..tool, ..param, ..horizonLayer
+	import Dates: value, DateTime, hour, minute, month, now
 	import DelimitedFiles
 	export CLIMATE, DISCRETIZATION, HYPIX_PARAM, LOOKUPTABLE_LAI, LOOKUPTABLE_CROPCOEFICIENT
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : DATES
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function DATES()
+		function DATES(pathHyPix)
 			# Read data
-				Data = DelimitedFiles.readdlm(path.Dates, ',')
+				Data = DelimitedFiles.readdlm(pathHyPix.Dates, ',')
 			# Read header
 				Header = Data[1,1:end]
 			# Remove first READ_ROW_SELECT
@@ -57,9 +57,9 @@ module readHypix
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : DISCRETIZATION
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function DISCRETIZATION()
+		function DISCRETIZATION(pathHyPix)
 			# Read data
-				Data = DelimitedFiles.readdlm(path.Discretization, ',')
+				Data = DelimitedFiles.readdlm(pathHyPix.Discretization, ',')
 			# Read header
 				Header = Data[1,1:end]
 			# Remove first READ_ROW_SELECT
@@ -79,7 +79,7 @@ module readHypix
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function HYPIX_PARAM(Layer, hydro, hydroHorizon, iSim::Int64, N_iZ::Int64, veg)
 			# Read data
-				Data = DelimitedFiles.readdlm(path.Hypix_Param, ',')
+				Data = DelimitedFiles.readdlm(pathHyPix.Hypix_Param, ',')
 			# Read header
 				Header = Data[1,1:end]
 			# Remove first READ_ROW_SELECT
@@ -265,7 +265,7 @@ module readHypix
 
 		Option_ReadTemperature = false
 
-		function CLIMATE()
+		function CLIMATE(pathHyPix)
 			if option.hyPix.ClimateDataTimestep == "Daily"
 				Pr_Name          = "Rain(mm)"
 				Pet_Name         = "PET(mm)"
@@ -278,7 +278,7 @@ module readHypix
 			end #  option.hyPix.ClimateDataTimestep
 
 			# READ DATA
-				Data = DelimitedFiles.readdlm(path.Climate, ',')
+				Data = DelimitedFiles.readdlm(pathHyPix.Climate, ',')
 				Header = Data[1,1:end]
 				Data = Data[2:end,begin:end]
 
@@ -297,7 +297,7 @@ module readHypix
 				end
 
 			# READING DATES FROM FILE
-				param = DATES()
+				param = DATES(pathHyPix)
 
 			# REDUCING THE NUMBER OF SIMULATIONS SUCH THAT IT IS WITHIN THE SELECTED RANGE
 				Date_Start = DateTime(param.hyPix.Year_Start, param.hyPix.Month_Start, param.hyPix.Day_Start, param.hyPix.Hour_Start, param.hyPix.Minute_Start, param.hyPix.Second_Start)
@@ -323,7 +323,7 @@ module readHypix
 
 			# SELECTING DATES OF INTEREST
 				True = falses(N_Climate)
-				Date = Array{DateTime}(undef, N_Climate) 
+				Date = fill(now()::DateTime,  N_Climate) 
 				for iT=1:N_Climate
 					Date[iT] = DateTime(Year[iT], Month[iT], Day[iT], Hour[iT], Minute[iT], Second[iT])
 
@@ -371,9 +371,9 @@ module readHypix
 			∑T  	  :: Vector{Float64}
 		end # mutable struct
 
-		function TIME_SERIES()
+		function TIME_SERIES(pathHyPix)
 		# Read data
-			Data = DelimitedFiles.readdlm(path.obsθ, ',')
+			Data = DelimitedFiles.readdlm(pathHyPix.obsθ, ',')
 		# Read header
 			Header = Data[1,1:end]
 		# Remove first READ_ROW_SELECT
@@ -387,7 +387,7 @@ module readHypix
 			Second, ~  = tool.readWrite.READ_HEADER_FAST(Data, Header, "Second")
 
 			# READING THE DEPTH OF Θ MEASUREMENTS FROM HEADER: data having Z=
-				θobs, Header = DelimitedFiles.readdlm(path.obsθ, ','; header=true)
+				θobs, Header = DelimitedFiles.readdlm(pathHyPix.obsθ, ','; header=true)
 
 				Array_iHeader = []
 				Ndepth = 0
@@ -421,7 +421,7 @@ module readHypix
 				end #  iHeader
 
 			# READING DATES FROM FILE
-				param = DATES()
+				param = DATES(pathHyPix)
 
 			# REDUCING THE NUMBER OF SIMULATIONS SUCH THAT IT IS WITHIN THE SELECTED RANGE
 				Date_Start_Calibr = DateTime(param.hyPix.obsθ.Year_Start, param.hyPix.obsθ.Month_Start, param.hyPix.obsθ.Day_Start, param.hyPix.obsθ.Hour_Start, param.hyPix.obsθ.Minute_Start, param.hyPix.obsθ.Second_Start)
@@ -435,7 +435,7 @@ module readHypix
 
 			# SELECTING THE DATA WITHING FEASIBLE RANGE
 				True = falses(N_iT) # Initiating with false
-				Date = Array{DateTime}(undef, N_iT)
+				Date = fill(now()::DateTime,  N_iT)
 				iCount = 0 
 				for iT=1:N_iT
 					Date[iT] = DateTime(Year[iT], Month[iT], Day[iT], Hour[iT], Minute[iT], Second[iT])
@@ -489,13 +489,13 @@ module readHypix
 	#		FUNCTION : LOOKUPTABLE
 	#		Parameters as a function of time
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function LOOKUPTABLE_LAI(clim, veg)	
+		function LOOKUPTABLE_LAI(clim, pathHyPix, veg)	
 			if option.hyPix.LookupTable_Lai == true
-				LookUpTable_Lai, ~   = tool.readWrite.READ_HEADER(path.LookUpTable_Lai, "Lai")
+				LookUpTable_Lai, ~   = tool.readWrite.READ_HEADER(pathHyPix.LookUpTable_Lai, "Lai")
 			end
 			
 			i = 1
-			Laiᵀ_Norm = Array{Float64}(undef, clim.N_Climate) 
+			Laiᵀ_Norm = fill(0.0::Float64, clim.N_Climate) 
 			for Date in clim.Date
 				Month = month(Date)
 				if option.hyPix.LookupTable_Lai == true
@@ -510,13 +510,13 @@ module readHypix
 		end  # function: LOOKUPTABLE_LAI
 
 
-		function LOOKUPTABLE_CROPCOEFICIENT(clim, veg)
+		function LOOKUPTABLE_CROPCOEFICIENT(clim, pathHyPix, veg)
 			if option.hyPix.LookUpTable_CropCoeficient == true
-				LookUpTable_CropCoeficient, ~   = tool.readWrite.READ_HEADER(path.LookUpTable_CropCoeficient, "CropCoeficient")
+				LookUpTable_CropCoeficient, ~   = tool.readWrite.READ_HEADER(pathHyPix.LookUpTable_CropCoeficient, "CropCoeficient")
 			end
 			
 			i = 1
-			CropCoeficientᵀ_Norm = Array{Float64}(undef, clim.N_Climate) 
+			CropCoeficientᵀ_Norm = fill(0.0::Float64, clim.N_Climate) 
 			for Date in clim.Date
 				Month = month(Date)
 				if option.hyPix.LookUpTable_CropCoeficient == true
